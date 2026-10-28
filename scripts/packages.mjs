@@ -1,4 +1,4 @@
-// The released packages (every packages/* folder), each with its own version (ADR 0001).
+// The released packages (every packages/* folder) and the one version they share (ADR 0028).
 import { execFileSync } from 'node:child_process';
 import { readFileSync, readdirSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
@@ -12,29 +12,32 @@ export function packages() {
     .map((entry) => {
       const dir = new URL(`packages/${entry.name}/`, root);
       const { name, version } = JSON.parse(readFileSync(new URL('package.json', dir), 'utf8'));
-      return { name, version, dir: fileURLToPath(dir), tag: `${name}@${version}` };
+      return { name, version, dir: fileURLToPath(dir) };
     })
     .sort((a, b) => a.name.localeCompare(b.name));
 }
 
-/** The package called `name` (`@solid-slopkit/flow` or just `flow`). Exits when there is none. */
-export function packageNamed(name) {
-  const found = packages().find((pkg) => pkg.name === name || pkg.name === `@solid-slopkit/${name}`);
-  if (!found) {
-    console.error(
-      `No package called ${name}. The packages: ${packages()
-        .map((pkg) => pkg.name)
-        .join(', ')}`,
-    );
+/** The version every package has: Changesets moves them together (a `fixed` group). Exits when they disagree. */
+export function sharedVersion() {
+  const all = packages();
+  const versions = new Set(all.map(({ version }) => version));
+  if (versions.size > 1) {
+    console.error('Every package must have the same version, but:');
+    for (const { name, version } of all) console.error(`  ${name} is ${version}`);
+    console.error('Versions move together through `pnpm changeset version`; see .changeset/config.json.');
     process.exit(1);
   }
-  return found;
+  return all[0].version;
 }
 
 /** Whether `name@version` is on the registry. `npm view` prints nothing for a missing version of a known package. */
-export function published({ name, version }) {
+export function published(name, version) {
   try {
-    return execFileSync('npm', ['view', `${name}@${version}`, 'version'], { encoding: 'utf8' }).trim() === version;
+    const out = execFileSync('npm', ['view', `${name}@${version}`, 'version'], {
+      encoding: 'utf8',
+      stdio: ['ignore', 'pipe', 'ignore'],
+    });
+    return out.trim() === version;
   } catch {
     return false; // E404: the package itself isn't on npm yet.
   }

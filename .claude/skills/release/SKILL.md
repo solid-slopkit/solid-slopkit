@@ -1,11 +1,11 @@
 ---
 name: release
-description: Release one or more @solid-slopkit packages under new versions - draft changesets, apply them, run the checks, commit, push to main, and watch the release workflow publish to npm. Use when the user asks to release, cut a release, publish, ship a version, or bump a version.
+description: Release the @solid-slopkit packages under a new shared version - draft changesets, apply them, run the checks, commit, push to main, and watch the release workflow publish to npm. Use when the user asks to release, cut a release, publish, ship a version, or bump the version.
 ---
 
 # Releasing slopkit packages
 
-Every package under `packages/` has its own version (ADR 0028). Changesets sets the versions. Pushing the commit that applies them to `main` starts `.github/workflows/release.yml`, which runs every check, builds, publishes each package whose version isn't on npm yet through trusted publishing, and creates a GitHub Release tagged `<name>@<version>` (e.g. `@solid-slopkit/components@0.8.0`) for each, with its changelog section as notes. The README's "Releasing" section is the human version of these steps.
+Every package under `packages/` has the same version, and they release together (ADR 0028). Changesets sets the version: the packages are one `fixed` group, so the largest pending bump moves all of them. Pushing the commit that applies the changesets to `main` starts `.github/workflows/release.yml`, which runs every check, builds, publishes every package at the new version through trusted publishing, and creates one GitHub Release tagged `v<version>` (e.g. `v1.1.0`), with each package's changelog section as notes. The README's "Releasing" section is the human version of these steps.
 
 Committing and pushing are the user's calls. Stop and ask before each one, and show what will happen.
 
@@ -14,14 +14,14 @@ Run every command with Node 24 from `mise.toml`: start each shell with `eval "$(
 ## 1. Check the starting point
 
 - `git status --short` is clean, and the branch is `main`, up to date with `origin/main` (`git fetch origin && git status -sb`). If not, tell the user and ask how to proceed. Don't switch branches or pull over their work yourself.
-- The current versions: `node -e "import('./scripts/packages.mjs').then((m) => console.table(m.packages().map(({ name, version }) => ({ name, version }))))"`.
-- The last release of a package: `git tag -l '@solid-slopkit/<package>@*' --sort=-v:refname | head -1`, and what npm has: `npm view @solid-slopkit/<package> versions` (an E404 means nothing is on npm yet; see "First publish" below).
+- The current version: `node -e "import('./scripts/packages.mjs').then((m) => console.log(m.sharedVersion()))"`. It exits listing every package's version when they disagree, which only happens before the first shared release: the next `pnpm changeset version` aligns them.
+- The last release: `git tag -l 'v*' --sort=-v:refname | head -1`, and what npm has: `npm view @solid-slopkit/<package> versions` (an E404 means nothing is on npm yet; see "First publish" below).
 
 ## 2. Make sure there are changesets
 
 List the pending ones: `ls .changeset/*.md | grep -v README.md`, and read each.
 
-If there are none, or they miss changes, draft them from the history since each package's last tag (`git log --oneline <last-tag>..HEAD -- packages/<package>`):
+If there are none, or they miss changes, draft them from the history since the last tag (`git log --oneline <last-tag>..HEAD -- packages/<package>` for each package; before the first shared release, the whole history):
 
 ```md
 ---
@@ -31,9 +31,9 @@ If there are none, or they miss changes, draft them from the history since each 
 Add the `Spotlight` component.
 ```
 
-Pick the bump with semver while a version is 0.x: `minor` for new features or breaking changes, `patch` for fixes. One changeset can name several packages. Show the user the drafted changesets and the resulting versions, and let them edit or confirm before going on. Name the files after what they describe (`.changeset/spotlight.md`).
+Pick the bump with semver: `major` for a breaking change in any package, `minor` for new features, `patch` for fixes only. A changeset names the packages its change is about, so their changelogs say what changed; the other packages get a release with no changes of their own. Show the user the drafted changesets and the resulting version, and let them edit or confirm before going on. Name the files after what they describe (`.changeset/spotlight.md`).
 
-A package that peers on another (flow on components, components on i18n) only gets bumped with it when the new version leaves its peer range (`onlyUpdatePeerDependentsWhenOutOfRange` in `.changeset/config.json`). When a release needs a new feature of a sibling, raise the peer range in the same changeset and say so in its note.
+A package's peer range on a sibling (flow on components, components on i18n) moves with the version when a release leaves it, which a `major` bump does. Changesets does that on its own; check the new ranges in the diff.
 
 ## 3. Apply them
 
@@ -41,7 +41,7 @@ A package that peers on another (flow on components, components on i18n) only ge
 pnpm changeset version
 ```
 
-This writes the new versions into each `packages/*/package.json`, appends their `CHANGELOG.md` and deletes the applied changesets. Check `git diff --stat` and the new changelog sections.
+This writes the new version into every `packages/*/package.json`, appends their `CHANGELOG.md` and deletes the applied changesets. Check `git diff --stat`, that every package has the same version, and the new changelog sections.
 
 ## 4. Run the checks
 
@@ -53,7 +53,7 @@ pnpm lint
 pnpm release:check                      # builds the packages and lists what npm would publish
 pnpm test
 pnpm --filter docs build && pnpm typecheck
-node scripts/release-notes.mjs <package>   # the release notes the workflow will publish, per package
+node scripts/release-notes.mjs          # the release notes the workflow will publish
 ```
 
 In `release:check`'s output, check each file list: `dist/source`, `dist/types`, `skills` and `package.json`, nothing from `src` or tests.
@@ -62,14 +62,14 @@ If something fails, stop and report it with the output. Fixing it is a separate 
 
 ## 5. Commit and push
 
-Show the user the versions, the release notes and the file lists, then ask for the go-ahead. After a yes:
+Show the user the version, the release notes and the file lists, then ask for the go-ahead. After a yes:
 
 ```bash
 git add -A
-git commit -m "chore: release @solid-slopkit/<package>@<version>"
+git commit -m "chore: release v<version>"
 ```
 
-Name every released package in the subject, or `chore: release` with the list in the body when there are several. End the commit message with the attribution lines the conversation gives for commits.
+End the commit message with the attribution lines the conversation gives for commits.
 
 Pushing publishes the release, so ask again before:
 
@@ -82,10 +82,10 @@ git push origin main
 ```bash
 gh run list --workflow release.yml --limit 1
 gh run watch <run-id> --exit-status
-gh release view @solid-slopkit/<package>@<version>
+gh release view v<version>
 ```
 
-Then check npm: `npm view @solid-slopkit/<package>@<version> version dist.tarball`. Report each npm version, package page (`https://www.npmjs.com/package/@solid-slopkit/<package>`) and release URL. If the run fails, read the failing step's log (`gh run view <run-id> --log-failed`), explain the cause, and ask the user how to proceed. If it failed before the "Publish to npm" step, nothing is published: land the fix on `main` and the workflow tries again on that push. If it failed after publishing some packages, those versions are on npm for good (npm never accepts the same version twice): rerun the workflow (`gh run rerun <run-id> --failed`), which skips what's published and continues, or release new patch versions if the cause needs a code fix.
+Then check npm for every package: `npm view @solid-slopkit/<package>@<version> version dist.tarball`. Report the version, the package pages (`https://www.npmjs.com/package/@solid-slopkit/<package>`) and the release URL. If the run fails, read the failing step's log (`gh run view <run-id> --log-failed`), explain the cause, and ask the user how to proceed. If it failed before the "Publish to npm" step, nothing is published: land the fix on `main` and the workflow tries again on that push. If it failed after publishing some packages, those versions are on npm for good (npm never accepts the same version twice): rerun the workflow (`gh run rerun <run-id> --failed`), which skips what's published and continues, or release new patch versions if the cause needs a code fix.
 
 ## First publish
 

@@ -5,10 +5,13 @@
   "changelog": "@changesets/cli/changelog",
   "commit": false,
   "ignore": [],
-  "fixed": [],
+  "fixed": [["@solid-slopkit/*"]],
   "linked": [],
   "updateInternalDependencies": "patch",
-  "privatePackages": { "version": false, "tag": false },
+  "privatePackages": {
+    "version": false,
+    "tag": false
+  },
   "___experimentalUnsafeOptions_WILL_CHANGE_IN_PATCH": {
     "onlyUpdatePeerDependentsWhenOutOfRange": true
   }

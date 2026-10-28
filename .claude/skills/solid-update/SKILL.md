@@ -165,7 +165,7 @@ If the change is visible in the browser, check the docs site too. `.claude/launc
 
 ## 7. Changeset and commit (ask first)
 
-Add one changeset that lists every package whose peer floor moved. Raising the peer floor is a `patch`. Breaking changes to our own API take a `minor` while the version is 0.x. Name what users will notice: the new minimum version and any behavior that changed. If an unreleased changeset from an earlier Solid update is still pending, replace it instead of adding a second minimum-version note.
+Add one changeset that lists every package whose peer floor moved. Raising the peer floor is a `patch`. Breaking changes to our own API take a `major`. Name what users will notice: the new minimum version and any behavior that changed. If an unreleased changeset from an earlier Solid update is still pending, replace it instead of adding a second minimum-version note.
 
 Show the user the result and ask before committing. Keep the dependency bump in its own commit (`build: require Solid 2.0.0-rc.N`), separate from any fix it led to. When staging a changeset you moved with `git mv`, use `git add -A <old> <new>`. Write in the commit body what you checked and why nothing else needed to change. End commit messages with the attribution lines the conversation gives.
 

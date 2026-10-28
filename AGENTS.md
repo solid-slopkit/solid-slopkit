@@ -43,7 +43,7 @@ The installed packages ship agent skills that match their exact installed versio
 
 One pnpm workspace (ADR 0028 in `docs/adr`):
 
-- `packages/<package>`: the published packages, each with its own version: `components`, `flow`, `i18n`, `signal-forms`, `threejs`.
+- `packages/<package>`: the published packages, all at one version and released together: `components`, `flow`, `i18n`, `signal-forms`, `threejs`.
 - `apps/docs`: one documentation site with a section per package (`src/routes/<package>`, `src/examples/<package>`, `src/nav/<package>.ts`). In dev and in its tests every package resolves to its source, so edits show up without a build.
 - `docs/using/<package>.md`: setup guides for agents that add a package to an app.
 
@@ -53,7 +53,7 @@ Run every command with Node 24 from `mise.toml` (`eval "$(mise env -s bash)"`, t
 
 ## Releasing
 
-Each package is published to npm by the release workflow when the commit that applies its changesets reaches `main` (ADR 0028). To cut a release, follow `.claude/skills/release/SKILL.md`: it drafts and applies the changesets, runs the checks, and asks before committing or pushing.
+Every package is published to npm at the shared version by the release workflow when the commit that applies the changesets reaches `main` (ADR 0028). To cut a release, follow `.claude/skills/release/SKILL.md`: it drafts and applies the changesets, runs the checks, and asks before committing or pushing.
 
 ## Updating Solid
 

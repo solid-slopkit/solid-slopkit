@@ -1,24 +1,34 @@
-// Creates a GitHub Release, tagged `<name>@<version>` at the current commit, for every package whose version is on npm
-// but has no release yet (ADR 0001). Runs after release-publish.mjs, and is safe to rerun. Needs `gh` and GH_TOKEN.
+// Creates the GitHub Release for the shared version, tagged `v<version>` at the current commit, once every package is
+// on npm at that version (ADR 0028). Runs after release-publish.mjs, and is safe to rerun. Needs `gh` and GH_TOKEN.
 import { execFileSync } from 'node:child_process';
 import { writeFileSync } from 'node:fs';
-import { packages, published } from './packages.mjs';
+import { packages, published, sharedVersion } from './packages.mjs';
 
-function released(tag) {
-  try {
-    execFileSync('gh', ['release', 'view', tag], { stdio: 'ignore' });
-    return true;
-  } catch {
-    return false;
-  }
+const version = sharedVersion();
+const tag = `v${version}`;
+
+const missing = packages().filter(({ name }) => !published(name, version));
+if (missing.length > 0) {
+  console.error(`Not on npm at ${version} yet: ${missing.map(({ name }) => name).join(', ')}`);
+  process.exit(1);
 }
 
-for (const pkg of packages()) {
-  if (!published(pkg) || released(pkg.tag)) continue;
-  const notes = execFileSync('node', ['scripts/release-notes.mjs', pkg.name], { encoding: 'utf8' });
-  writeFileSync('release-notes.md', notes);
-  const target = process.env.GITHUB_SHA ?? 'main';
-  execFileSync('gh', ['release', 'create', pkg.tag, '--target', target, '--title', pkg.tag, '--notes-file', 'release-notes.md'], {
-    stdio: 'inherit',
-  });
+let released = true;
+try {
+  execFileSync('gh', ['release', 'view', tag], { stdio: 'ignore' });
+} catch {
+  released = false;
+}
+
+if (released) {
+  console.log(`The ${tag} release exists, skipping.`);
+} else {
+  writeFileSync('release-notes.md', execFileSync('node', ['scripts/release-notes.mjs'], { encoding: 'utf8' }));
+  execFileSync(
+    'gh',
+    ['release', 'create', tag, '--target', process.env.GITHUB_SHA ?? 'main', '--title', tag, '--notes-file', 'release-notes.md'],
+    {
+      stdio: 'inherit',
+    },
+  );
 }

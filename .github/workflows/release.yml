@@ -1,7 +1,6 @@
-# Publishes to npm every package whose version isn't there yet, and creates a GitHub Release tagged
-# `<name>@<version>` for each, with its changelog section as notes (ADR 0001). A release is the commit on main that
-# applies the changesets (`pnpm changeset version`); pushing it starts this workflow. Pushes that change no version end
-# after the first job.
+# Publishes every package to npm at the version they share, and creates one GitHub Release tagged `v<version>` with each
+# package's changelog section as notes (ADR 0028). A release is the commit on main that applies the changesets
+# (`pnpm changeset version`); pushing it starts this workflow. Pushes that change no version end after the first job.
 name: Release
 
 on:
@@ -46,8 +45,9 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
-      - name: No changesets left unapplied
+      - name: One version for every package, with no changesets left unapplied
         run: |
+          node -e "import('./scripts/packages.mjs').then((m) => console.log(m.sharedVersion()))"
           if ls .changeset/*.md | grep -v README.md; then
             echo "These changesets are not applied yet: run pnpm changeset version and commit the result"
             exit 1
@@ -71,7 +71,7 @@ jobs:
       - name: Publish to npm
         run: node scripts/release-publish.mjs
 
-      - name: Create the GitHub Releases
+      - name: Create the GitHub Release
         env:
           GH_TOKEN: ${{ github.token }}
         run: node scripts/release-github.mjs

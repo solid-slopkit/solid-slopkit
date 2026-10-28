@@ -2,6 +2,6 @@
 // and publishes only then, so an ordinary push to main costs one quick job.
 import { packages, published } from './packages.mjs';
 
-const pending = packages().filter((pkg) => !published(pkg));
-for (const pkg of pending) console.error(`${pkg.tag} is not on npm yet`);
+const pending = packages().filter(({ name, version }) => !published(name, version));
+for (const { name, version } of pending) console.error(`${name}@${version} is not on npm yet`);
 console.log(pending.length > 0);

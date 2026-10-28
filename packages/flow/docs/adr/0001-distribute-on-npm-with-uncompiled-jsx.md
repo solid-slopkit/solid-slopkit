@@ -1,6 +1,6 @@
 # Distribute on npm with uncompiled JSX
 
-> The release mechanics here (a `v<version>` tag, one package per repository) are superseded by [ADR 0028](../../../../docs/adr/0028-one-repository-independent-versions-published-from-main.md): one repository, independent versions, published from `main`. Distributing on npm with uncompiled JSX still holds.
+> The release mechanics here (a `v<version>` tag, one package per repository) are superseded by [ADR 0028](../../../../docs/adr/0028-one-repository-one-version-published-from-main.md): one repository, one version for every package, published from `main`. Distributing on npm with uncompiled JSX still holds.
 
 `@solid-slopkit/flow` is published to the public npm registry under the `@solid-slopkit` scope, and consumers install it by name (`pnpm add @solid-slopkit/flow`). A tag `v<version>` (e.g. `v0.2.0`) starts the release workflow, which builds the package, publishes it to npm from its folder, and creates a GitHub Release whose notes are the changelog section. Changesets sets the version and writes the changelog. The workflow authenticates to npm with trusted publishing (GitHub OIDC), so the repo holds no npm token. The published package contains `.jsx` with JSX preserved, plus `.d.ts` declarations, both emitted by `tsc`. It is exposed through the `solid` export condition, so the consumer's Solid plugin compiles the components for its own targets (server, client, dev). We ship no per-target builds.
 
