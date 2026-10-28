@@ -37,6 +37,13 @@ async function setup(label: string) {
     );
   };
   for (const type of TYPES) document.addEventListener(type, listener, true);
+  // After the Node's own listener: whether the drag was cancelled.
+  const onDragStart = (event: DragEvent) => {
+    log.push(
+      `${Math.round(performance.now() - t0)}ms dragstart cancelled=${event.defaultPrevented} on=${event.target instanceof Element ? event.target.tagName : '#text'}`,
+    );
+  };
+  document.addEventListener('dragstart', onDragStart);
   const editor = renderEditor(state, {
     content,
     flow: { createId: () => 'n', defaultViewport: { x: 40, y: 40, zoom: 1 } },
@@ -45,11 +52,12 @@ async function setup(label: string) {
   const selected = () => editor.state.nodes.filter((record) => record.selected).map((record) => record.id);
   const report = () => {
     for (const type of TYPES) document.removeEventListener(type, listener, true);
+    document.removeEventListener('dragstart', onDragStart);
     all.push(
       [
         `===== ${label} (${navigator.userAgent})`,
         ...log,
-        `selected: ${JSON.stringify(selected())}`,
+        `selected: ${JSON.stringify(selected())}, text selection: ${JSON.stringify(document.getSelection()?.toString())}`,
         `positions: ${JSON.stringify(editor.state.nodes.map((record) => record.position))}`,
         `batches: ${JSON.stringify(editor.batches.map((batch) => batch.changes.map((change) => change.type)))}`,
       ].join('\n'),
