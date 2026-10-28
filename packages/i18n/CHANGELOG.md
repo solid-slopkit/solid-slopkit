@@ -1,5 +1,11 @@
 # @solid-slopkit/i18n
 
+## 1.0.0
+
+### Major Changes
+
+- 1.0.0: every `@solid-slopkit` package now has the same version and is released together, from one repository (https://github.com/solid-slopkit/solid-slopkit) with one docs site (https://solid-slopkit.github.io/solid-slopkit/). Use the same version for every `@solid-slopkit` package in an app. The peer ranges between the packages now start at 1.0.0.
+
 ## 0.1.1
 
 ### Patch Changes

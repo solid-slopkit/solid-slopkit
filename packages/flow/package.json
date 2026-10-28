@@ -1,6 +1,6 @@
 {
   "name": "@solid-slopkit/flow",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "SolidJS 2.x primitives for building node-based editors and interactive diagrams",
   "homepage": "https://solid-slopkit.github.io/solid-slopkit/flow/",
   "license": "MIT",
@@ -61,7 +61,7 @@
     "vitest": "^5.0.0"
   },
   "peerDependencies": {
-    "@solid-slopkit/components": "^0.7.0",
+    "@solid-slopkit/components": "^1.0.0",
     "@solidjs/web": ">=2.0.0-rc.15 <3",
     "elkjs": ">=0.9 <1",
     "solid-js": ">=2.0.0-rc.15 <3"

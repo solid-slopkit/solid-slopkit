@@ -1,6 +1,6 @@
 {
   "name": "@solid-slopkit/components",
-  "version": "0.7.0",
+  "version": "1.0.0",
   "description": "Component library for SolidJS 2.x, styled with plain CSS and CSS variables",
   "homepage": "https://solid-slopkit.github.io/solid-slopkit/components/",
   "license": "MIT",
@@ -84,7 +84,7 @@
     "vitest": "^5.0.0"
   },
   "peerDependencies": {
-    "@solid-slopkit/i18n": ">=0.1.1 <1",
+    "@solid-slopkit/i18n": ">=1.0.0 <2.0.0",
     "@solidjs/web": ">=2.0.0-rc.15 <3",
     "embla-carousel": "^8.6.0",
     "solid-js": ">=2.0.0-rc.15 <3"

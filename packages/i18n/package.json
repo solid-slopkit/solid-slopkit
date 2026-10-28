@@ -1,6 +1,6 @@
 {
   "name": "@solid-slopkit/i18n",
-  "version": "0.1.1",
+  "version": "1.0.0",
   "description": "Co-located, typed translation files for SolidJS 2.x",
   "homepage": "https://solid-slopkit.github.io/solid-slopkit/i18n/",
   "license": "MIT",
