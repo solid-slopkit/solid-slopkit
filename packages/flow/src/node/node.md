@@ -50,6 +50,7 @@ Pressing a Node and moving the pointer more than 3 screen pixels drags it. Each 
 - Never dragged: Nodes with `draggable: false`, every Node in a read-only Flow, presses on `input`, `textarea`, `select`, editable content, Ports (they start a Connection) or anything inside `data-flow-nodrag`, and presses outside the `dragHandle` when one is set.
 - Positions move in Flow coordinates, so the Node follows the pointer at any zoom. Dragging a Node never pans the Flow.
 - A cancelled pointer (`pointercancel`) ends the drag with Changes back to where it started.
+- A press that can drag the Node takes the gesture from the browser: pressing on selected text, a link or an image in the Node and moving drags the Node, not the browser's own drag of that content.
 
 Options on the `<Flow>`:
 
