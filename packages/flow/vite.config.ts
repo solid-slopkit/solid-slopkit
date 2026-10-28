@@ -5,6 +5,10 @@ import { playwright } from '@vitest/browser-playwright';
 // The package ships uncompiled Solid source (see `build:source`); this config only serves the tests.
 export default defineConfig({
   plugins: [solid({ ssr: true })],
+  // @solid-slopkit/components is a workspace link, so Vite serves it as source and only finds its dependencies when a
+  // browser test first imports them. Finding one mid-run re-optimizes and reloads, and the test file being loaded never
+  // becomes ready.
+  optimizeDeps: { include: ['@solid-slopkit/components > @floating-ui/dom'] },
   test: {
     projects: [
       {
