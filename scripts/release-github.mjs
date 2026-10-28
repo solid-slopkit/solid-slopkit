@@ -7,7 +7,13 @@ import { packages, published, sharedVersion } from './packages.mjs';
 const version = sharedVersion();
 const tag = `v${version}`;
 
-const missing = packages().filter(({ name }) => !published(name, version));
+// The registry takes a while to serve a version it just accepted, so wait for every package, up to 10 minutes.
+let missing = packages().filter(({ name }) => !published(name, version));
+for (let attempt = 1; missing.length > 0 && attempt <= 40; attempt++) {
+  console.log(`Waiting for npm to serve ${version} of ${missing.map(({ name }) => name).join(', ')}`);
+  await new Promise((resolve) => setTimeout(resolve, 15_000));
+  missing = missing.filter(({ name }) => !published(name, version));
+}
 if (missing.length > 0) {
   console.error(`Not on npm at ${version} yet: ${missing.map(({ name }) => name).join(', ')}`);
   process.exit(1);
