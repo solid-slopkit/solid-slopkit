@@ -1,0 +1,121 @@
+/*
+ * Drawer. The <dialog> is a transparent frame over the whole viewport that puts the panel against one edge; a press on
+ * the frame, outside the panel, is a press on the backdrop. The panel scrolls inside when its content is taller. The
+ * backdrop fades as the panel slides.
+ *
+ * Everything prefixed `--_drawer-` is internal.
+ */
+@layer slopkit.components {
+  .dialog {
+    --_drawer-padding: calc(var(--slp-spacing) * 5);
+
+    box-sizing: border-box;
+    width: 100%;
+    max-width: none;
+    height: 100%;
+    max-height: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    border: 0;
+    background: transparent;
+    color: var(--slp-color-base-content);
+    font: inherit;
+
+    &[open] {
+      display: flex;
+    }
+
+    &[data-position='right'] {
+      justify-content: flex-end;
+    }
+
+    &:is([data-position='top'], [data-position='bottom']) {
+      flex-direction: column;
+    }
+
+    &[data-position='bottom'] {
+      justify-content: flex-end;
+    }
+
+    &::backdrop {
+      background-color: color-mix(in oklab, black 50%, transparent);
+      transition: opacity var(--_dialog-duration) ease;
+    }
+
+    &:is([data-status='starting'], [data-status='ending'])::backdrop {
+      opacity: 0;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      &::backdrop {
+        transition: none;
+      }
+    }
+  }
+
+  .content {
+    --_drawer-size: 24rem;
+
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    flex: none;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    background-color: var(--slp-color-base-100);
+    box-shadow: var(--slp-shadow-xl);
+    outline: none;
+
+    .dialog:is([data-position='left'], [data-position='right']) > & {
+      width: var(--_drawer-size);
+      max-width: 100%;
+      height: 100%;
+    }
+
+    .dialog:is([data-position='top'], [data-position='bottom']) > & {
+      width: 100%;
+      height: var(--_drawer-size);
+      max-height: 100%;
+    }
+
+    .dialog[data-size='xs'] > & {
+      --_drawer-size: 16rem;
+    }
+    .dialog[data-size='sm'] > & {
+      --_drawer-size: 20rem;
+    }
+    .dialog[data-size='lg'] > & {
+      --_drawer-size: 32rem;
+    }
+    .dialog[data-size='xl'] > & {
+      --_drawer-size: 40rem;
+    }
+  }
+
+  .header {
+    display: flex;
+    align-items: center;
+    gap: calc(var(--_drawer-padding) / 2);
+    padding: var(--_drawer-padding) var(--_drawer-padding) 0;
+  }
+
+  .title {
+    flex: 1;
+    min-width: 0;
+    margin: 0;
+    font-size: var(--slp-font-size-lg);
+    font-weight: 600;
+    line-height: var(--slp-line-height-lg);
+  }
+
+  /* At the end of the header, also when there's no title. */
+  .close {
+    margin-inline-start: auto;
+    margin-block: calc(var(--slp-spacing) * -1);
+  }
+
+  .body {
+    padding: var(--_drawer-padding);
+  }
+}

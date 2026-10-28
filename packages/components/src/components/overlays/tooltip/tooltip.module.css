@@ -1,0 +1,94 @@
+/*
+ * Tooltip.
+ *
+ * Public custom properties (set on the tooltip or any ancestor):
+ *   --slp-tooltip-color         background and arrow, defaults to the `color` prop's theme token
+ *   --slp-tooltip-content       text color on it, defaults to the token's `-content`
+ *
+ * Everything prefixed `--_tooltip-` is internal.
+ */
+@layer slopkit.components {
+  .tooltip {
+    --_tooltip-bg: var(--slp-tooltip-color, var(--_tooltip-theme-color));
+    --_tooltip-fg: var(--slp-tooltip-content, var(--_tooltip-theme-content));
+    --_tooltip-arrow-size: 0.5rem;
+
+    /* The floating position replaces a popover's centering. */
+    inset: auto;
+    margin: 0;
+    box-sizing: border-box;
+    max-width: min(20rem, calc(100vw - 1rem));
+    overflow: visible;
+    padding: calc(var(--slp-spacing) * 1) calc(var(--slp-spacing) * 2);
+    border: 0;
+    border-radius: 0.375rem;
+    background-color: var(--_tooltip-bg);
+    color: var(--_tooltip-fg);
+    font-family: inherit;
+    font-size: var(--slp-font-size-sm);
+    line-height: var(--slp-line-height-sm);
+    overflow-wrap: break-word;
+
+    &[data-color='neutral'] {
+      --_tooltip-theme-color: var(--slp-color-neutral);
+      --_tooltip-theme-content: var(--slp-color-neutral-content);
+    }
+
+    &[data-color='primary'] {
+      --_tooltip-theme-color: var(--slp-color-primary);
+      --_tooltip-theme-content: var(--slp-color-primary-content);
+    }
+
+    &[data-color='secondary'] {
+      --_tooltip-theme-color: var(--slp-color-secondary);
+      --_tooltip-theme-content: var(--slp-color-secondary-content);
+    }
+
+    &[data-color='accent'] {
+      --_tooltip-theme-color: var(--slp-color-accent);
+      --_tooltip-theme-content: var(--slp-color-accent-content);
+    }
+
+    &[data-color='info'] {
+      --_tooltip-theme-color: var(--slp-color-info);
+      --_tooltip-theme-content: var(--slp-color-info-content);
+    }
+
+    &[data-color='success'] {
+      --_tooltip-theme-color: var(--slp-color-success);
+      --_tooltip-theme-content: var(--slp-color-success-content);
+    }
+
+    &[data-color='warning'] {
+      --_tooltip-theme-color: var(--slp-color-warning);
+      --_tooltip-theme-content: var(--slp-color-warning-content);
+    }
+
+    &[data-color='error'] {
+      --_tooltip-theme-color: var(--slp-color-error);
+      --_tooltip-theme-content: var(--slp-color-error-content);
+    }
+  }
+
+  /* A square turned 45°, half outside the edge facing the target. */
+  .arrow {
+    position: absolute;
+    width: var(--_tooltip-arrow-size);
+    height: var(--_tooltip-arrow-size);
+    background-color: inherit;
+    rotate: 45deg;
+
+    [data-placement^='bottom'] > & {
+      top: calc(var(--_tooltip-arrow-size) / -2);
+    }
+    [data-placement^='top'] > & {
+      bottom: calc(var(--_tooltip-arrow-size) / -2);
+    }
+    [data-placement^='right'] > & {
+      left: calc(var(--_tooltip-arrow-size) / -2);
+    }
+    [data-placement^='left'] > & {
+      right: calc(var(--_tooltip-arrow-size) / -2);
+    }
+  }
+}

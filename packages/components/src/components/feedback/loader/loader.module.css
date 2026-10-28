@@ -1,0 +1,161 @@
+/*
+ * Loader. 1em square unless a size is set, in the current text color unless a color role is set.
+ *   spinner: the root's border, with one side clear, turning.
+ *   dots:    three dots that rise and fall in turn.
+ *   bars:    three bars that stretch in turn.
+ * With reduced motion, the spinner turns slowly and dots and bars pulse in place, so it still shows activity.
+ *
+ * Public custom properties (set on the loader or any ancestor):
+ *   --slp-loader-color          defaults to the `color` prop's theme token, or the current text color
+ *
+ * Everything prefixed `--_loader-` is internal.
+ */
+@layer slopkit.components {
+  .loader {
+    --_loader-color: var(--slp-loader-color, var(--_loader-theme-color, currentColor));
+    --_loader-size: 1em;
+
+    position: relative;
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: space-between;
+    box-sizing: border-box;
+    width: var(--_loader-size);
+    height: var(--_loader-size);
+    color: var(--_loader-color);
+    vertical-align: middle;
+
+    &[data-variant='spinner'] {
+      border: calc(var(--_loader-size) / 8) solid currentColor;
+      border-right-color: transparent;
+      border-radius: 50%;
+      animation: slp-loader-spin 0.7s linear infinite;
+    }
+
+    /* Colors */
+    &[data-color='neutral'] {
+      --_loader-theme-color: var(--slp-color-neutral);
+    }
+    &[data-color='primary'] {
+      --_loader-theme-color: var(--slp-color-primary);
+    }
+    &[data-color='secondary'] {
+      --_loader-theme-color: var(--slp-color-secondary);
+    }
+    &[data-color='accent'] {
+      --_loader-theme-color: var(--slp-color-accent);
+    }
+    &[data-color='info'] {
+      --_loader-theme-color: var(--slp-color-info);
+    }
+    &[data-color='success'] {
+      --_loader-theme-color: var(--slp-color-success);
+    }
+    &[data-color='warning'] {
+      --_loader-theme-color: var(--slp-color-warning);
+    }
+    &[data-color='error'] {
+      --_loader-theme-color: var(--slp-color-error);
+    }
+
+    /* Sizes */
+    &[data-size='xs'] {
+      --_loader-size: 1rem;
+    }
+    &[data-size='sm'] {
+      --_loader-size: 1.25rem;
+    }
+    &[data-size='md'] {
+      --_loader-size: 1.75rem;
+    }
+    &[data-size='lg'] {
+      --_loader-size: 2.25rem;
+    }
+    &[data-size='xl'] {
+      --_loader-size: 3rem;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      &[data-variant='spinner'] {
+        animation-duration: 2.5s;
+      }
+    }
+  }
+
+  .part {
+    display: block;
+    border-radius: calc(infinity * 1px);
+    background-color: currentColor;
+
+    [data-variant='dots'] > & {
+      width: 26%;
+      height: 26%;
+      animation: slp-loader-dot 0.9s ease-in-out infinite;
+    }
+
+    [data-variant='bars'] > & {
+      width: 22%;
+      height: 100%;
+      border-radius: calc(var(--_loader-size) / 16);
+      animation: slp-loader-bar 0.9s ease-in-out infinite;
+    }
+
+    /* After the animations above: their shorthand would reset the delay. */
+    &:nth-child(2) {
+      animation-delay: 0.15s;
+    }
+    &:nth-child(3) {
+      animation-delay: 0.3s;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      [data-variant] > & {
+        animation-name: slp-loader-pulse;
+        animation-duration: 1.5s;
+      }
+    }
+  }
+}
+
+@keyframes slp-loader-spin {
+  to {
+    rotate: 1turn;
+  }
+}
+
+@keyframes slp-loader-dot {
+  0%,
+  80%,
+  100% {
+    translate: 0 30%;
+    opacity: 0.5;
+  }
+  40% {
+    translate: 0 -30%;
+    opacity: 1;
+  }
+}
+
+@keyframes slp-loader-bar {
+  0%,
+  80%,
+  100% {
+    scale: 1 0.45;
+    opacity: 0.5;
+  }
+  40% {
+    scale: 1 1;
+    opacity: 1;
+  }
+}
+
+@keyframes slp-loader-pulse {
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 1;
+  }
+}

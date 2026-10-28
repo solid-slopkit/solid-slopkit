@@ -1,0 +1,40 @@
+/*
+ * Affix. A box as big as its content, fixed to a corner of the viewport or the middle of its top or bottom edge. It
+ * undoes a popover's own look: centering, border, padding, background and colors.
+ *
+ * Everything prefixed `--_affix-` is internal.
+ */
+@layer slopkit.components {
+  .affix {
+    position: fixed;
+    inset: auto;
+    width: auto;
+    height: auto;
+    margin: 0;
+    padding: 0;
+    overflow: visible;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+
+    &:is([data-position='top-left'], [data-position='top'], [data-position='top-right']) {
+      top: var(--_affix-offset);
+    }
+    &:is([data-position='bottom-left'], [data-position='bottom'], [data-position='bottom-right']) {
+      bottom: var(--_affix-offset);
+    }
+    &:is([data-position='top-left'], [data-position='bottom-left']) {
+      left: var(--_affix-offset);
+    }
+    &:is([data-position='top-right'], [data-position='bottom-right']) {
+      right: var(--_affix-offset);
+    }
+    &:is([data-position='top'], [data-position='bottom']) {
+      left: 0;
+      right: 0;
+      width: fit-content;
+      margin-inline: auto;
+    }
+  }
+}

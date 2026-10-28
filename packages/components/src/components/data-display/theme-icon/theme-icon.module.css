@@ -1,0 +1,105 @@
+/*
+ * ThemeIcon. A square box in a color role, with its child centered and an SVG child sized to 60% of it. The
+ * corners scale with the box.
+ *
+ * Public custom properties (set on the box or any ancestor):
+ *   --slp-theme-icon-color      accent color, defaults to the `color` prop's theme token
+ *   --slp-theme-icon-content    icon color on a solid accent, defaults to the token's `-content`
+ *
+ * Everything prefixed `--_ti-` is internal.
+ */
+@layer slopkit.components {
+  .themeIcon {
+    --_ti-color: var(--slp-theme-icon-color, var(--_ti-theme-color));
+    --_ti-content: var(--slp-theme-icon-content, var(--_ti-theme-content));
+    --_ti-size: 2rem;
+
+    --_ti-bg: var(--_ti-color, var(--slp-color-base-200));
+    --_ti-fg: var(--_ti-content, var(--slp-color-base-content));
+    --_ti-border: var(--_ti-color, var(--slp-color-base-300));
+
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    width: var(--_ti-size);
+    height: var(--_ti-size);
+    border: 1px solid var(--_ti-border);
+    border-radius: calc(var(--_ti-size) / 4);
+    background-color: var(--_ti-bg);
+    color: var(--_ti-fg);
+    font-size: calc(var(--_ti-size) * 0.45);
+    line-height: 1;
+    vertical-align: middle;
+
+    & > svg {
+      width: 60%;
+      height: 60%;
+    }
+
+    /* Variants. The soft tint mixes with transparent, so it sits on any surface. */
+    &[data-variant='soft'] {
+      --_ti-fg: var(--_ti-color, var(--slp-color-base-content));
+      --_ti-bg: color-mix(in oklab, var(--_ti-color, var(--slp-color-base-content)) 12%, transparent);
+      --_ti-border: transparent;
+    }
+
+    &[data-variant='outline'] {
+      /* A faded text color: half the accent, or a fifth of the base text. Without an accent, --_ti-outline is
+         invalid (it reads an unset --_ti-color), so the base fallback applies. */
+      --_ti-outline: color-mix(in oklab, var(--_ti-color) 50%, transparent);
+      --_ti-fg: var(--_ti-color, var(--slp-color-base-content));
+      --_ti-bg: transparent;
+      --_ti-border: var(--_ti-outline, color-mix(in oklab, var(--slp-color-base-content) 20%, transparent));
+    }
+
+    /* Colors */
+    &[data-color='neutral'] {
+      --_ti-theme-color: var(--slp-color-neutral);
+      --_ti-theme-content: var(--slp-color-neutral-content);
+    }
+    &[data-color='primary'] {
+      --_ti-theme-color: var(--slp-color-primary);
+      --_ti-theme-content: var(--slp-color-primary-content);
+    }
+    &[data-color='secondary'] {
+      --_ti-theme-color: var(--slp-color-secondary);
+      --_ti-theme-content: var(--slp-color-secondary-content);
+    }
+    &[data-color='accent'] {
+      --_ti-theme-color: var(--slp-color-accent);
+      --_ti-theme-content: var(--slp-color-accent-content);
+    }
+    &[data-color='info'] {
+      --_ti-theme-color: var(--slp-color-info);
+      --_ti-theme-content: var(--slp-color-info-content);
+    }
+    &[data-color='success'] {
+      --_ti-theme-color: var(--slp-color-success);
+      --_ti-theme-content: var(--slp-color-success-content);
+    }
+    &[data-color='warning'] {
+      --_ti-theme-color: var(--slp-color-warning);
+      --_ti-theme-content: var(--slp-color-warning-content);
+    }
+    &[data-color='error'] {
+      --_ti-theme-color: var(--slp-color-error);
+      --_ti-theme-content: var(--slp-color-error-content);
+    }
+
+    /* Sizes */
+    &[data-size='xs'] {
+      --_ti-size: 1.25rem;
+    }
+    &[data-size='sm'] {
+      --_ti-size: 1.625rem;
+    }
+    &[data-size='lg'] {
+      --_ti-size: 2.5rem;
+    }
+    &[data-size='xl'] {
+      --_ti-size: 3rem;
+    }
+  }
+}

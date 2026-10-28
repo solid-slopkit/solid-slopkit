@@ -1,0 +1,87 @@
+/*
+ * List. Plain items keep the browser's markers. An item with an icon drops its marker and lays the icon out
+ * beside its content, centered on the first line. A list whose items all have icons drops the indent the
+ * markers needed.
+ */
+@layer slopkit.components {
+  .list {
+    --_list-spacing: 0;
+
+    display: flex;
+    flex-direction: column;
+    gap: var(--_list-spacing);
+    margin: 0;
+    padding-inline-start: 1.5em;
+
+    &:not(:has(> :not([data-with-icon]))) {
+      padding-inline-start: 0;
+    }
+
+    /* Sizes */
+    &[data-size='xs'] {
+      font-size: var(--slp-font-size-xs);
+      line-height: var(--slp-line-height-xs);
+    }
+    &[data-size='sm'] {
+      font-size: var(--slp-font-size-sm);
+      line-height: var(--slp-line-height-sm);
+    }
+    &[data-size='md'] {
+      font-size: var(--slp-font-size-md);
+      line-height: var(--slp-line-height-md);
+    }
+    &[data-size='lg'] {
+      font-size: var(--slp-font-size-lg);
+      line-height: var(--slp-line-height-lg);
+    }
+    &[data-size='xl'] {
+      font-size: var(--slp-font-size-xl);
+      line-height: var(--slp-line-height-xl);
+    }
+
+    /* Spacing between items */
+    &[data-spacing='xs'] {
+      --_list-spacing: calc(var(--slp-spacing) * 1);
+    }
+    &[data-spacing='sm'] {
+      --_list-spacing: calc(var(--slp-spacing) * 2);
+    }
+    &[data-spacing='md'] {
+      --_list-spacing: calc(var(--slp-spacing) * 3);
+    }
+    &[data-spacing='lg'] {
+      --_list-spacing: calc(var(--slp-spacing) * 4);
+    }
+    &[data-spacing='xl'] {
+      --_list-spacing: calc(var(--slp-spacing) * 6);
+    }
+  }
+
+  .item {
+    /* A flex column turns items into blocks; this keeps their markers. */
+    display: list-item;
+
+    &[data-with-icon] {
+      display: flex;
+      gap: 0.5em;
+      list-style-type: none;
+    }
+  }
+
+  .icon {
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    height: 1lh;
+
+    & svg {
+      width: 1em;
+      height: 1em;
+    }
+  }
+
+  .content {
+    flex: 1;
+    min-width: 0;
+  }
+}

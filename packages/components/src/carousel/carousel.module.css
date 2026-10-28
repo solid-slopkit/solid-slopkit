@@ -1,0 +1,154 @@
+/*
+ * Carousel. The viewport clips a flex row (or column) of slides, each `--_carousel-slide-size` long, spaced by
+ * padding at their start so the engine measures them whole. The controls sit over the viewport's ends, the
+ * indicators over its bottom (or end, when vertical).
+ *
+ * Everything prefixed `--_carousel-` is internal: set the slide size and gap with the props, or override
+ * `.slp-carousel-slide`'s `flex-basis` per breakpoint in your CSS.
+ */
+@layer slopkit.components {
+  .carousel {
+    position: relative;
+    box-sizing: border-box;
+    min-width: 0;
+
+    &[data-orientation='vertical'] {
+      display: flex;
+      flex-direction: column;
+    }
+  }
+
+  .viewport {
+    overflow: hidden;
+
+    [data-orientation='vertical'] > & {
+      flex: 1;
+      min-height: 0;
+    }
+  }
+
+  .container {
+    display: flex;
+    margin-inline-start: calc(var(--_carousel-slide-gap) * -1);
+    /* The engine moves the slides on a horizontal drag; the page keeps vertical scrolling and zoom. */
+    touch-action: pan-y pinch-zoom;
+
+    [data-orientation='vertical'] & {
+      flex-direction: column;
+      height: 100%;
+      margin-block-start: calc(var(--_carousel-slide-gap) * -1);
+      margin-inline-start: 0;
+      touch-action: pan-x pinch-zoom;
+    }
+  }
+
+  .slide {
+    position: relative;
+    flex: 0 0 var(--_carousel-slide-size);
+    box-sizing: border-box;
+    min-width: 0;
+    padding-inline-start: var(--_carousel-slide-gap);
+
+    [data-orientation='vertical'] & {
+      min-height: 0;
+      padding-block-start: var(--_carousel-slide-gap);
+      padding-inline-start: 0;
+    }
+  }
+
+  .controls {
+    position: absolute;
+    inset-block-start: 50%;
+    inset-inline: calc(var(--slp-spacing) * 2);
+    display: flex;
+    justify-content: space-between;
+    transform: translateY(-50%);
+    /* The gap between the buttons lets drags through to the slides. */
+    pointer-events: none;
+
+    [data-orientation='vertical'] > & {
+      inset-block: calc(var(--slp-spacing) * 2);
+      inset-inline: auto;
+      inset-inline-start: 50%;
+      flex-direction: column;
+      transform: translateX(-50%);
+    }
+
+    [data-orientation='vertical'] > & svg {
+      rotate: 90deg;
+    }
+  }
+
+  .control {
+    pointer-events: auto;
+
+    &[data-disabled] {
+      opacity: 0;
+      pointer-events: none;
+    }
+  }
+
+  .indicators {
+    position: absolute;
+    inset-block-end: calc(var(--slp-spacing) * 2);
+    inset-inline: 0;
+    display: flex;
+    justify-content: center;
+    gap: calc(var(--slp-spacing) * 1);
+    pointer-events: none;
+
+    [data-orientation='vertical'] > & {
+      inset-block: 0;
+      inset-inline: auto calc(var(--slp-spacing) * 2);
+      flex-direction: column;
+      align-items: center;
+    }
+  }
+
+  /* A 24px target around a small bar, longer for the current step. */
+  .indicator {
+    display: grid;
+    place-items: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    padding: 0;
+    border: 0;
+    border-radius: 999px;
+    background: transparent;
+    cursor: pointer;
+    pointer-events: auto;
+
+    &::before {
+      content: '';
+      width: 0.5rem;
+      height: 0.5rem;
+      border-radius: 999px;
+      background-color: var(--slp-color-base-100);
+      box-shadow: var(--slp-shadow-xs);
+      opacity: 0.6;
+      transition:
+        width 150ms ease,
+        height 150ms ease,
+        opacity 150ms ease;
+    }
+
+    &:hover::before {
+      opacity: 0.85;
+    }
+
+    &[data-active]::before {
+      width: 1.25rem;
+      opacity: 1;
+    }
+
+    [data-orientation='vertical'] &[data-active]::before {
+      width: 0.5rem;
+      height: 1.25rem;
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--slp-color-base-content);
+      outline-offset: -2px;
+    }
+  }
+}

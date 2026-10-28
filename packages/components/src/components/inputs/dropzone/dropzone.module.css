@@ -1,0 +1,86 @@
+/*
+ * Dropzone. A box with a dashed edge on the base surface. While files are dragged over, the edge and a tint of the
+ * background take the role color if it would take them, or the reject color if not.
+ *
+ * Public custom properties (set on the dropzone or any ancestor):
+ *   --slp-dropzone-color          color while it would take the files, and of the focus ring; defaults to the
+ *                                 `color` prop's theme token
+ *   --slp-dropzone-reject-color   color while it would reject them; defaults to the error role
+ *
+ * Everything prefixed `--_dropzone-` is internal.
+ */
+@layer slopkit.components {
+  .dropzone {
+    --_dropzone-color: var(--slp-dropzone-color, var(--_dropzone-theme-color));
+    --_dropzone-reject-color: var(--slp-dropzone-reject-color, var(--slp-color-error));
+    --_dropzone-edge: color-mix(in oklab, var(--slp-color-base-content) 25%, transparent);
+    --_dropzone-bg: var(--slp-color-base-100);
+
+    /* The loading overlay covers it. */
+    position: relative;
+    box-sizing: border-box;
+    padding: calc(var(--slp-spacing) * 5);
+    border: 2px dashed var(--_dropzone-edge);
+    border-radius: 1rem;
+    background-color: var(--_dropzone-bg);
+    color: var(--slp-color-base-content);
+    transition:
+      border-color 150ms ease,
+      background-color 150ms ease;
+
+    &[role='button'] {
+      cursor: pointer;
+    }
+
+    &[role='button']:hover:not([data-disabled], [data-loading]) {
+      --_dropzone-bg: var(--slp-color-base-200);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--_dropzone-color);
+      outline-offset: 2px;
+    }
+
+    &[data-accept] {
+      --_dropzone-edge: var(--_dropzone-color);
+      --_dropzone-bg: color-mix(in oklab, var(--_dropzone-color) 10%, var(--slp-color-base-100));
+    }
+
+    &[data-reject] {
+      --_dropzone-edge: var(--_dropzone-reject-color);
+      --_dropzone-bg: color-mix(in oklab, var(--_dropzone-reject-color) 10%, var(--slp-color-base-100));
+    }
+
+    &[data-disabled] {
+      --_dropzone-bg: color-mix(in oklab, var(--slp-color-base-content) 6%, var(--slp-color-base-100));
+      color: color-mix(in oklab, var(--slp-color-base-content) 50%, transparent);
+      cursor: not-allowed;
+    }
+
+    /* Colors */
+    &[data-color='neutral'] {
+      --_dropzone-theme-color: var(--slp-color-neutral);
+    }
+    &[data-color='primary'] {
+      --_dropzone-theme-color: var(--slp-color-primary);
+    }
+    &[data-color='secondary'] {
+      --_dropzone-theme-color: var(--slp-color-secondary);
+    }
+    &[data-color='accent'] {
+      --_dropzone-theme-color: var(--slp-color-accent);
+    }
+    &[data-color='info'] {
+      --_dropzone-theme-color: var(--slp-color-info);
+    }
+    &[data-color='success'] {
+      --_dropzone-theme-color: var(--slp-color-success);
+    }
+    &[data-color='warning'] {
+      --_dropzone-theme-color: var(--slp-color-warning);
+    }
+    &[data-color='error'] {
+      --_dropzone-theme-color: var(--slp-color-error);
+    }
+  }
+}

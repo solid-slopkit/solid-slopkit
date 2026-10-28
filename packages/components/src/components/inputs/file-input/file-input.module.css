@@ -1,0 +1,26 @@
+/*
+ * FileInput. The control is a button, laid out like a text field's input: text at the start, cut with an ellipsis
+ * when the names don't fit.
+ */
+@layer slopkit.components {
+  .fileInput [data-slot='input-control'] {
+    min-width: 0;
+    text-align: start;
+    cursor: pointer;
+
+    &:disabled {
+      cursor: not-allowed;
+    }
+  }
+
+  .value {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .placeholder {
+    color: color-mix(in oklab, var(--slp-color-base-content) 45%, transparent);
+  }
+}

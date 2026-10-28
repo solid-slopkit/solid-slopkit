@@ -1,0 +1,8 @@
+{
+  "en": { "save": "Save draft", "saved": "Saved {count, plural, one {# change} other {# changes}}." },
+  "de": { "save": "Entwurf speichern", "saved": "{count, plural, one {# Änderung} other {# Änderungen}} gespeichert." },
+  "uk": {
+    "save": "Зберегти чернетку",
+    "saved": "Збережено: {count, plural, one {# зміна} few {# зміни} many {# змін} other {# зміни}}.",
+  },
+}

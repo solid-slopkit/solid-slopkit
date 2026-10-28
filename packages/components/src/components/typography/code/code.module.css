@@ -1,0 +1,37 @@
+/*
+ * Code. Inline, a tinted run of monospace text sized in em, so it follows the text around it. As a block, a
+ * padded surface that keeps line breaks and scrolls sideways instead of wrapping.
+ */
+@layer slopkit.components {
+  .code {
+    padding: 0.125em 0.375em;
+    border-radius: 0.25em;
+    background-color: var(--slp-color-base-200);
+    color: var(--slp-color-base-content);
+    font-family: var(--slp-font-family-monospace);
+    font-size: 0.85em;
+
+    &[data-block] {
+      display: block;
+      box-sizing: border-box;
+      margin: 0;
+      padding: calc(var(--slp-spacing) * 3) calc(var(--slp-spacing) * 4);
+      overflow-x: auto;
+      border-radius: 0.5rem;
+      font-size: var(--slp-font-size-sm);
+      line-height: 1.6;
+      white-space: pre;
+      tab-size: 2;
+
+      &:focus-visible {
+        outline: 2px solid var(--slp-color-base-content);
+        outline-offset: 2px;
+      }
+
+      /* The inner code only carries semantics; the pre draws everything. */
+      & > [data-slot='code-content'] {
+        font: inherit;
+      }
+    }
+  }
+}

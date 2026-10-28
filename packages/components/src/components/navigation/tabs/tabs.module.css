@@ -1,0 +1,244 @@
+/*
+ * Tabs. The list is a row (a column when vertical) of tab buttons; the selected one is marked by the variant:
+ * `underline` draws a bar on the list's edge under it, `outline` lifts it into a bordered tab joined to the content,
+ * `pills` fills it with the color, `soft` tints it with the color. Panels have no look of their own.
+ *
+ * NavTabs shares this look with links: its root is `.tabs` and its links are `.tab`s. A selected tab, or a link the
+ * router marks as current, is `[data-active]`. A disabled tab or link is `[data-disabled]`, since a link can't be
+ * `:disabled`.
+ *
+ * Public custom properties (set on the tabs or any ancestor):
+ *   --slp-tabs-color    the selected tab's color, defaults to the `color` prop's theme token
+ *   --slp-tabs-content  text on the selected pill, defaults to the token's `-content`
+ *
+ * Everything prefixed `--_tabs-` is internal.
+ */
+@layer slopkit.components {
+  .tabs {
+    --_tabs-color: var(--slp-tabs-color, var(--_tabs-theme-color));
+    --_tabs-content: var(--slp-tabs-content, var(--_tabs-theme-content));
+    --_tabs-border: color-mix(in oklab, var(--slp-color-base-content) 15%, transparent);
+    --_tabs-muted: color-mix(in oklab, var(--slp-color-base-content) 70%, transparent);
+    /* Same heights and text as Button, so the two line up. */
+    --_tabs-height: calc(var(--slp-size-field) * 8);
+    --_tabs-px: 1rem;
+    --_tabs-font-size: 0.875rem;
+    --_tabs-radius: 0.5rem;
+
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+
+    &[data-orientation='vertical'] {
+      flex-direction: row;
+    }
+
+    &[data-size='xs'] {
+      --_tabs-height: calc(var(--slp-size-field) * 6);
+      --_tabs-px: 0.5rem;
+      --_tabs-font-size: 0.75rem;
+    }
+    &[data-size='sm'] {
+      --_tabs-height: calc(var(--slp-size-field) * 7);
+      --_tabs-px: 0.75rem;
+      --_tabs-font-size: 0.75rem;
+    }
+    &[data-size='lg'] {
+      --_tabs-height: calc(var(--slp-size-field) * 10);
+      --_tabs-px: 1.25rem;
+      --_tabs-font-size: 1.125rem;
+    }
+    &[data-size='xl'] {
+      --_tabs-height: calc(var(--slp-size-field) * 12);
+      --_tabs-px: 1.5rem;
+      --_tabs-font-size: 1.375rem;
+    }
+
+    &[data-color='neutral'] {
+      --_tabs-theme-color: var(--slp-color-neutral);
+      --_tabs-theme-content: var(--slp-color-neutral-content);
+    }
+    &[data-color='primary'] {
+      --_tabs-theme-color: var(--slp-color-primary);
+      --_tabs-theme-content: var(--slp-color-primary-content);
+    }
+    &[data-color='secondary'] {
+      --_tabs-theme-color: var(--slp-color-secondary);
+      --_tabs-theme-content: var(--slp-color-secondary-content);
+    }
+    &[data-color='accent'] {
+      --_tabs-theme-color: var(--slp-color-accent);
+      --_tabs-theme-content: var(--slp-color-accent-content);
+    }
+    &[data-color='info'] {
+      --_tabs-theme-color: var(--slp-color-info);
+      --_tabs-theme-content: var(--slp-color-info-content);
+    }
+    &[data-color='success'] {
+      --_tabs-theme-color: var(--slp-color-success);
+      --_tabs-theme-content: var(--slp-color-success-content);
+    }
+    &[data-color='warning'] {
+      --_tabs-theme-color: var(--slp-color-warning);
+      --_tabs-theme-content: var(--slp-color-warning-content);
+    }
+    &[data-color='error'] {
+      --_tabs-theme-color: var(--slp-color-error);
+      --_tabs-theme-content: var(--slp-color-error-content);
+    }
+  }
+
+  .list {
+    display: flex;
+    flex-wrap: wrap;
+    box-sizing: border-box;
+
+    .tabs[data-orientation='vertical'] > & {
+      flex-direction: column;
+      flex-wrap: nowrap;
+    }
+
+    &[data-grow] > .tab {
+      flex: 1;
+    }
+  }
+
+  .tab {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: calc(var(--slp-spacing) * 2);
+    box-sizing: border-box;
+    min-height: var(--_tabs-height);
+    margin: 0;
+    padding: 0 var(--_tabs-px);
+    border: 0;
+    background: transparent;
+    color: var(--_tabs-muted);
+    font: inherit;
+    font-size: var(--_tabs-font-size);
+    font-weight: 500;
+    line-height: 1.25;
+    text-decoration: none;
+    white-space: nowrap;
+    cursor: pointer;
+    user-select: none;
+    transition:
+      color 150ms ease,
+      background-color 150ms ease;
+
+    &:hover:not([data-disabled]) {
+      color: var(--slp-color-base-content);
+    }
+    &:focus-visible {
+      z-index: 1;
+      outline: 2px solid var(--_tabs-color);
+      outline-offset: -2px;
+    }
+    &[data-disabled] {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .tabs[data-orientation='vertical'] & {
+      justify-content: flex-start;
+    }
+  }
+
+  .section {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+
+    & > svg {
+      width: 1em;
+      height: 1em;
+    }
+  }
+
+  .panel:focus-visible {
+    outline: 2px solid var(--_tabs-color);
+    outline-offset: 2px;
+  }
+
+  /* Underline: a line along the list, and a thicker one in the color under the selected tab. */
+  .tabs[data-variant='underline'] {
+    & > .list {
+      box-shadow: inset 0 -1px 0 var(--_tabs-border);
+    }
+    &[data-orientation='vertical'] > .list {
+      box-shadow: inset -1px 0 0 var(--_tabs-border);
+    }
+
+    & .tab[data-active] {
+      color: var(--_tabs-color);
+      box-shadow: inset 0 -2px 0 var(--_tabs-color);
+    }
+    &[data-orientation='vertical'] .tab[data-active] {
+      box-shadow: inset -2px 0 0 var(--_tabs-color);
+    }
+  }
+
+  /* Outline: the selected tab is a bordered tab on the base surface, open toward the content and covering the list's
+     line under it. */
+  .tabs[data-variant='outline'] {
+    & > .list {
+      box-shadow: inset 0 -1px 0 var(--_tabs-border);
+    }
+    &[data-orientation='vertical'] > .list {
+      box-shadow: inset -1px 0 0 var(--_tabs-border);
+    }
+
+    & .tab {
+      border: 1px solid transparent;
+      border-radius: var(--_tabs-radius) var(--_tabs-radius) 0 0;
+    }
+    &[data-orientation='vertical'] .tab {
+      border-radius: var(--_tabs-radius) 0 0 var(--_tabs-radius);
+    }
+    & .tab[data-active] {
+      border-color: var(--_tabs-border);
+      border-bottom-color: var(--slp-color-base-100);
+      background-color: var(--slp-color-base-100);
+      color: var(--slp-color-base-content);
+    }
+    &[data-orientation='vertical'] .tab[data-active] {
+      border-bottom-color: var(--_tabs-border);
+      border-right-color: var(--slp-color-base-100);
+    }
+  }
+
+  /* Pills and soft: rounded tabs with a gap; the selected one is filled with the color (pills) or tinted with it
+     (soft). */
+  .tabs:is([data-variant='pills'], [data-variant='soft']) {
+    & > .list {
+      gap: calc(var(--slp-spacing) * 1);
+    }
+
+    & .tab {
+      border-radius: var(--_tabs-radius);
+
+      &:hover:not([data-disabled], [data-active]) {
+        background-color: color-mix(in oklab, var(--slp-color-base-content) 8%, transparent);
+      }
+    }
+    & .tab:focus-visible {
+      outline-offset: 2px;
+    }
+  }
+  .tabs[data-variant='pills'] .tab[data-active] {
+    background-color: var(--_tabs-color);
+    color: var(--_tabs-content);
+  }
+  .tabs[data-variant='soft'] .tab[data-active] {
+    background-color: color-mix(in oklab, var(--_tabs-color) 14%, transparent);
+    color: color-mix(in oklab, var(--_tabs-color) 75%, var(--slp-color-base-content));
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .tab {
+      transition: none;
+    }
+  }
+}

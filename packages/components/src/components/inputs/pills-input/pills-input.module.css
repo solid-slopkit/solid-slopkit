@@ -1,0 +1,83 @@
+/*
+ * PillsInput. The box is an Input's box (`.slp-input`, with its borders, focus ring, variants and sizes); this adds
+ * the content: pills and the field in rows that wrap. Each row is as tall as a pill of the same size, with the
+ * padding that centers one row in an input of that size, so with a single row it's exactly as tall as an Input.
+ *
+ * Everything prefixed `--_pills-input-` is internal.
+ */
+@layer slopkit.components {
+  .box {
+    /* A pill's height at each size, matching Pill's. */
+    --_pills-input-row: calc(var(--slp-size-field) * 5.5);
+
+    &[data-size='xs'] {
+      --_pills-input-row: calc(var(--slp-size-field) * 4);
+    }
+    &[data-size='sm'] {
+      --_pills-input-row: calc(var(--slp-size-field) * 4.5);
+    }
+    &[data-size='lg'] {
+      --_pills-input-row: calc(var(--slp-size-field) * 7);
+    }
+    &[data-size='xl'] {
+      --_pills-input-row: calc(var(--slp-size-field) * 8.5);
+    }
+
+    /* Sections stay on the first row. */
+    & > [data-slot='input-left-section'],
+    & > [data-slot='input-right-section'] {
+      align-self: flex-start;
+      height: calc(var(--_input-height) - 2px);
+    }
+  }
+
+  .content {
+    display: flex;
+    flex: 1;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: calc(var(--slp-spacing) * 1.5);
+    box-sizing: border-box;
+    min-width: 0;
+    padding: calc((var(--_input-height) - 2px - var(--_pills-input-row)) / 2) var(--_input-px);
+
+    [data-with-left-section] > & {
+      padding-inline-start: 0;
+    }
+    [data-with-right-section] > & {
+      padding-inline-end: 0;
+    }
+  }
+
+  /* Fills the rest of the row, and takes a row of its own when less than 4rem is left. */
+  .field {
+    flex: 1 1 4rem;
+    box-sizing: border-box;
+    min-width: 4rem;
+    height: var(--_pills-input-row);
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    line-height: 1.5;
+    /* The box draws the focus ring. */
+    outline: none;
+
+    &::placeholder {
+      color: color-mix(in oklab, var(--slp-color-base-content) 45%, transparent);
+      opacity: 1;
+    }
+    &:disabled {
+      cursor: not-allowed;
+    }
+  }
+
+  /* Touch screens get at least 16px text in the field, so phones don't zoom in on focus. */
+  @media (pointer: coarse) {
+    .field {
+      font-size: max(1rem, 1em);
+    }
+  }
+}

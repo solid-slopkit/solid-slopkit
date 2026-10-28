@@ -1,0 +1,549 @@
+/*
+ * AppShell. A row: the sidebar, then the main area. On a wide screen the sidebar is a column as tall as the shell's
+ * height that sticks to the top as the page scrolls; it animates its width as it collapses. Collapsed `offcanvas`, its
+ * width goes to 0 while its panel, which keeps its full width, slides out with it, then it's `visibility: hidden`, out
+ * of the tab order and the accessibility tree. Collapsed to `icon`, it's as wide as one row's icon, and everything but
+ * the rows' icons hides. Below 48em the sidebar leaves the layout: it's a manual popover, shown in the top layer as a
+ * drawer that slides in from its edge over a backdrop.
+ *
+ * The sidebar always has the `popover` attribute; the browser hides a closed popover with `display: none`, which
+ * these rules override on a wide screen. Its default popover styles (centered, bordered, scrolling) are reset.
+ *
+ * Public custom properties (set on the shell or any ancestor):
+ *   --slp-app-shell-height              the shell's height and the sidebar's, defaults to 100svh
+ *   --slp-app-shell-sidebar-width       the expanded sidebar's width, defaults to 16rem
+ *   --slp-app-shell-sidebar-width-icon  its width collapsed to icons, defaults to 3rem
+ *   --slp-app-shell-drawer-width        the drawer's width on a narrow screen, defaults to 18rem
+ *
+ * Everything prefixed `--_app-shell-` is internal.
+ */
+@layer slopkit.components {
+  .appShell {
+    display: flex;
+    box-sizing: border-box;
+    width: 100%;
+    min-height: var(--slp-app-shell-height, 100svh);
+    color: var(--slp-color-base-content);
+
+    /* The inset sidebar is part of the background, which the main area sits on. */
+    &:has(> .sidebar[data-variant='inset']) {
+      background-color: var(--slp-color-base-200);
+    }
+  }
+
+  .sidebar {
+    --_app-shell-width: var(--slp-app-shell-sidebar-width, 16rem);
+    --_app-shell-icon-width: var(--slp-app-shell-sidebar-width-icon, 3rem);
+    --_app-shell-gap: 0rem;
+    --_app-shell-duration: 200ms;
+
+    /* The popover's defaults, reset. */
+    inset: auto;
+    margin: 0;
+    padding: var(--_app-shell-gap);
+    border: 0;
+    overflow: visible;
+    background: transparent;
+    color: inherit;
+
+    display: flex;
+    position: sticky;
+    top: 0;
+    align-self: flex-start;
+    flex: none;
+    box-sizing: border-box;
+    width: var(--_app-shell-width);
+    height: var(--slp-app-shell-height, 100svh);
+    max-height: none;
+    transition:
+      width var(--_app-shell-duration) ease,
+      visibility var(--_app-shell-duration);
+
+    &[data-position='right'] {
+      order: 1;
+    }
+
+    &:is([data-variant='floating'], [data-variant='inset']) {
+      --_app-shell-gap: calc(var(--slp-spacing) * 2);
+    }
+
+    &[data-state='collapsed'][data-collapsible='offcanvas'] {
+      --_app-shell-width: 0px;
+      padding-inline: 0;
+      visibility: hidden;
+    }
+
+    &[data-state='collapsed'][data-collapsible='icon'] {
+      --_app-shell-width: calc(var(--_app-shell-icon-width) + var(--_app-shell-gap) * 2);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      --_app-shell-duration: 0ms;
+    }
+  }
+
+  .panel {
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    width: 100%;
+    min-width: 0;
+    height: 100%;
+    overflow: hidden;
+    background-color: var(--slp-color-base-200);
+    transition: translate var(--_app-shell-duration) ease;
+
+    .sidebar[data-variant='sidebar'][data-position='left'] > & {
+      border-inline-end: 1px solid var(--slp-color-base-300);
+    }
+    .sidebar[data-variant='sidebar'][data-position='right'] > & {
+      border-inline-start: 1px solid var(--slp-color-base-300);
+    }
+    .sidebar[data-variant='floating'] > & {
+      border: 1px solid var(--slp-color-base-300);
+      border-radius: 0.75rem;
+      box-shadow: var(--slp-shadow-sm);
+    }
+
+    /* Keeps its full width, so its content doesn't squeeze, and slides out as the column narrows. */
+    .sidebar[data-collapsible='offcanvas'] > & {
+      flex: none;
+      width: calc(var(--slp-app-shell-sidebar-width, 16rem) - var(--_app-shell-gap) * 2);
+    }
+    .sidebar[data-state='collapsed'][data-collapsible='offcanvas'][data-position='left'] > & {
+      translate: -100% 0;
+    }
+    .sidebar[data-state='collapsed'][data-collapsible='offcanvas'][data-position='right'] > & {
+      translate: 100% 0;
+    }
+  }
+
+  .header,
+  .footer {
+    display: flex;
+    flex-direction: column;
+    gap: calc(var(--slp-spacing) * 2);
+    padding: calc(var(--slp-spacing) * 2);
+  }
+
+  .content {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    min-height: 0;
+    overflow: auto;
+    overscroll-behavior: contain;
+
+    .sidebar[data-state='collapsed'][data-collapsible='icon'] & {
+      overflow: hidden;
+    }
+  }
+
+  /* --- Groups --- */
+
+  .group {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    padding: calc(var(--slp-spacing) * 2);
+  }
+
+  .groupLabel {
+    display: flex;
+    flex: none;
+    align-items: center;
+    height: 2rem;
+    padding-inline: calc(var(--slp-spacing) * 2);
+    overflow: hidden;
+    border-radius: 0.375rem;
+    color: color-mix(in oklab, var(--slp-color-base-content) 70%, transparent);
+    font-size: var(--slp-font-size-xs);
+    font-weight: 500;
+    line-height: var(--slp-line-height-xs);
+    white-space: nowrap;
+    transition:
+      margin var(--_app-shell-duration) ease,
+      opacity var(--_app-shell-duration) ease;
+  }
+
+  /* The small square buttons at the end of a group's label and of a row. */
+  .action {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    width: 1.25rem;
+    height: 1.25rem;
+    padding: 0;
+    border: 0;
+    border-radius: 0.375rem;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+    transition:
+      background-color 150ms ease,
+      opacity 150ms ease;
+
+    &:hover {
+      background-color: color-mix(in oklab, var(--slp-color-base-content) 8%, transparent);
+    }
+    &:focus-visible {
+      outline: 2px solid var(--slp-color-primary);
+      outline-offset: -2px;
+    }
+
+    & > svg {
+      width: 1rem;
+      height: 1rem;
+    }
+  }
+
+  .groupAction {
+    top: calc(var(--slp-spacing) * 3.5);
+    inset-inline-end: calc(var(--slp-spacing) * 3);
+  }
+
+  /* --- Menus --- */
+
+  .menu,
+  .menuSub {
+    display: flex;
+    flex-direction: column;
+    gap: calc(var(--slp-spacing) * 1);
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .menuItem,
+  .menuSubItem {
+    position: relative;
+  }
+
+  .row {
+    display: flex;
+    align-items: center;
+    gap: calc(var(--slp-spacing) * 2);
+    box-sizing: border-box;
+    width: 100%;
+    min-width: 0;
+    height: 2rem;
+    margin: 0;
+    padding: calc(var(--slp-spacing) * 2);
+    overflow: hidden;
+    border: 0;
+    border-radius: 0.375rem;
+    background: transparent;
+    color: var(--slp-color-base-content);
+    font: inherit;
+    font-size: var(--slp-font-size-sm);
+    line-height: var(--slp-line-height-sm);
+    text-align: start;
+    text-decoration: none;
+    cursor: pointer;
+    user-select: none;
+    transition:
+      width var(--_app-shell-duration) ease,
+      height var(--_app-shell-duration) ease,
+      padding var(--_app-shell-duration) ease,
+      background-color 150ms ease;
+
+    &:hover:not([data-disabled]) {
+      background-color: color-mix(in oklab, var(--slp-color-base-content) 8%, transparent);
+    }
+    &:focus-visible {
+      outline: 2px solid var(--slp-color-primary);
+      outline-offset: -2px;
+    }
+    &[data-active] {
+      background-color: color-mix(in oklab, var(--slp-color-base-content) 10%, transparent);
+      font-weight: 500;
+    }
+    &[data-disabled] {
+      cursor: not-allowed;
+      opacity: 0.45;
+    }
+  }
+
+  .menuButton {
+    &[data-size='sm'] {
+      height: 1.75rem;
+      font-size: var(--slp-font-size-xs);
+      line-height: var(--slp-line-height-xs);
+    }
+    &[data-size='lg'] {
+      height: 3rem;
+    }
+
+    /* Room for the action or the badge at the end of the row. */
+    .menuItem:has(> .menuAction, > .menuBadge) > & {
+      padding-inline-end: calc(var(--slp-spacing) * 8);
+    }
+  }
+
+  .menuSubButton {
+    height: 1.75rem;
+    padding-inline: calc(var(--slp-spacing) * 2);
+
+    &[data-size='sm'] {
+      height: 1.5rem;
+      font-size: var(--slp-font-size-xs);
+      line-height: var(--slp-line-height-xs);
+    }
+  }
+
+  .rowIcon {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+
+    & > svg {
+      width: 1rem;
+      height: 1rem;
+    }
+  }
+
+  .rowLabel {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    gap: calc(var(--slp-spacing) * 2);
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .menuAction {
+    top: calc(var(--slp-spacing) * 1.5);
+    inset-inline-end: calc(var(--slp-spacing) * 1);
+
+    .menuItem:has(> .menuButton[data-size='sm']) > & {
+      top: calc(var(--slp-spacing) * 1);
+    }
+    .menuItem:has(> .menuButton[data-size='lg']) > & {
+      top: calc(var(--slp-spacing) * 3.5);
+    }
+
+    /* Shown on hover only where there is hover; a touch screen always shows it. */
+    @media (hover: hover) {
+      &[data-show-on-hover]:not(:focus-visible, [aria-expanded='true']) {
+        opacity: 0;
+      }
+      .menuItem:is(:hover, :focus-within) > &[data-show-on-hover] {
+        opacity: 1;
+      }
+    }
+  }
+
+  .menuBadge {
+    position: absolute;
+    top: calc(var(--slp-spacing) * 1.5);
+    inset-inline-end: calc(var(--slp-spacing) * 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    min-width: 1.25rem;
+    height: 1.25rem;
+    padding-inline: calc(var(--slp-spacing) * 1);
+    border-radius: 0.375rem;
+    font-size: var(--slp-font-size-xs);
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .menuSub {
+    margin-inline-start: calc(var(--slp-spacing) * 3.5);
+    padding: calc(var(--slp-spacing) * 0.5) 0 calc(var(--slp-spacing) * 0.5) calc(var(--slp-spacing) * 2.5);
+    border-inline-start: 1px solid var(--slp-color-base-300);
+  }
+
+  /* --- Collapsed to icons, on a wide screen --- */
+
+  @media (width >= 48em) {
+    .sidebar[data-state='collapsed'][data-collapsible='icon'] {
+      .groupLabel {
+        margin-block-start: -2rem;
+        opacity: 0;
+      }
+
+      .groupAction,
+      .menuAction,
+      .menuBadge,
+      .menuSub {
+        display: none;
+      }
+
+      /* A square around the icon. The label is hidden from sight only: it's still the row's accessible name. */
+      .menuButton {
+        justify-content: center;
+        width: 2rem;
+        height: 2rem;
+        padding: 0;
+      }
+      .menuButton > .rowLabel {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip-path: inset(50%);
+        white-space: nowrap;
+      }
+    }
+  }
+
+  /* --- Rail and main --- */
+
+  .rail {
+    position: absolute;
+    inset-block: 0;
+    width: 1rem;
+    cursor: w-resize;
+
+    /* A line on the sidebar's edge while hovered. */
+    &::after {
+      content: '';
+      position: absolute;
+      inset-block: 0;
+      inset-inline-start: 50%;
+      width: 2px;
+      transition: background-color 150ms ease;
+    }
+    &:hover::after {
+      background-color: var(--slp-color-base-300);
+    }
+
+    .sidebar[data-position='left'] > .panel > & {
+      inset-inline-end: -0.5rem;
+    }
+    .sidebar[data-position='right'] > .panel > & {
+      inset-inline-start: -0.5rem;
+      cursor: e-resize;
+    }
+    .sidebar[data-state='collapsed'][data-position='left'] > .panel > & {
+      cursor: e-resize;
+    }
+    .sidebar[data-state='collapsed'][data-position='right'] > .panel > & {
+      cursor: w-resize;
+    }
+    /* Collapsed off the canvas, the rail stays at the shell's edge, where the sidebar comes back from. */
+    .sidebar[data-state='collapsed'][data-collapsible='offcanvas'] > .panel > & {
+      visibility: visible;
+    }
+    .sidebar[data-state='collapsed'][data-collapsible='offcanvas'][data-position='left'] > .panel > & {
+      inset-inline-end: -1rem;
+    }
+    .sidebar[data-state='collapsed'][data-collapsible='offcanvas'][data-position='right'] > .panel > & {
+      inset-inline-start: -1rem;
+    }
+  }
+
+  .panel:has(> .rail) {
+    position: relative;
+    overflow: visible;
+  }
+
+  .main {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    box-sizing: border-box;
+    min-width: 0;
+    background-color: var(--slp-color-base-100);
+  }
+
+  @media (width >= 48em) {
+    .appShell:has(> .sidebar[data-variant='inset']) > .main {
+      margin: calc(var(--slp-spacing) * 2);
+      border-radius: 0.75rem;
+      box-shadow: var(--slp-shadow-sm);
+    }
+    .appShell:has(> .sidebar[data-variant='inset'][data-state='expanded'][data-position='left']) > .main {
+      margin-inline-start: 0;
+    }
+    .appShell:has(> .sidebar[data-variant='inset'][data-state='expanded'][data-position='right']) > .main {
+      margin-inline-end: 0;
+    }
+  }
+
+  /* --- The drawer, on a narrow screen --- */
+
+  @media (width < 48em) {
+    .sidebar {
+      --_app-shell-gap: 0rem;
+
+      &:not(:popover-open) {
+        display: none;
+      }
+
+      &:popover-open {
+        position: fixed;
+        inset-block: 0;
+        width: min(var(--slp-app-shell-drawer-width, 18rem), calc(100% - 3rem));
+        height: 100%;
+        padding: 0;
+        visibility: visible;
+        outline: none;
+        transition:
+          translate var(--_app-shell-duration) ease,
+          overlay var(--_app-shell-duration) allow-discrete,
+          display var(--_app-shell-duration) allow-discrete;
+      }
+
+      &[data-position='left']:popover-open {
+        inset-inline-start: 0;
+      }
+      &[data-position='right']:popover-open {
+        inset-inline-end: 0;
+      }
+      &[data-position='left']:is([data-status='starting'], [data-status='ending']) {
+        translate: -100% 0;
+      }
+      &[data-position='right']:is([data-status='starting'], [data-status='ending']) {
+        translate: 100% 0;
+      }
+
+      &::backdrop {
+        background-color: color-mix(in oklab, black 50%, transparent);
+        transition: opacity var(--_app-shell-duration) ease;
+      }
+      &:is([data-status='starting'], [data-status='ending'])::backdrop {
+        opacity: 0;
+      }
+    }
+
+    .panel {
+      border: 0;
+      box-shadow: var(--slp-shadow-xl);
+
+      .sidebar[data-collapsible] > & {
+        width: 100%;
+        translate: none;
+        border: 0;
+        border-radius: 0;
+      }
+    }
+
+    .rail {
+      display: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .panel,
+    .row,
+    .groupLabel,
+    .sidebar::backdrop {
+      transition: none;
+    }
+  }
+}

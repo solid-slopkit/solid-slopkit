@@ -1,0 +1,24 @@
+/*
+ * Image. A block that never overflows its container. `fit` decides how the picture fills the box when a width and
+ * a height give it another aspect ratio; with only one of them, the picture keeps its own.
+ */
+@layer slopkit.components {
+  .image {
+    display: block;
+    max-width: 100%;
+    object-fit: cover;
+
+    &[data-fit='contain'] {
+      object-fit: contain;
+    }
+    &[data-fit='fill'] {
+      object-fit: fill;
+    }
+    &[data-fit='none'] {
+      object-fit: none;
+    }
+    &[data-fit='scale-down'] {
+      object-fit: scale-down;
+    }
+  }
+}

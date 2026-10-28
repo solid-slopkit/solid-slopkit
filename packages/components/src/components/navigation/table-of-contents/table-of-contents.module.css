@@ -1,0 +1,120 @@
+/*
+ * TableOfContents. A list of links, each indented by how much deeper its heading is than the shallowest one. The
+ * active link is drawn in its color: over a line that runs beside the list (`line`), or tinted (`soft`).
+ *
+ * Public custom property (set on the table of contents or any ancestor):
+ *   --slp-table-of-contents-color    the active link's color, defaults to the `color` prop's theme token
+ *
+ * Everything prefixed `--_toc-` is internal.
+ */
+@layer slopkit.components {
+  .tableOfContents {
+    --_toc-color: var(--slp-table-of-contents-color, var(--_toc-theme-color));
+    --_toc-border: color-mix(in oklab, var(--slp-color-base-content) 15%, transparent);
+
+    display: block;
+    min-width: 0;
+    font-size: var(--slp-font-size-sm);
+    line-height: var(--slp-line-height-sm);
+
+    &[hidden] {
+      display: none;
+    }
+
+    &[data-color='neutral'] {
+      --_toc-theme-color: var(--slp-color-neutral);
+    }
+    &[data-color='primary'] {
+      --_toc-theme-color: var(--slp-color-primary);
+    }
+    &[data-color='secondary'] {
+      --_toc-theme-color: var(--slp-color-secondary);
+    }
+    &[data-color='accent'] {
+      --_toc-theme-color: var(--slp-color-accent);
+    }
+    &[data-color='info'] {
+      --_toc-theme-color: var(--slp-color-info);
+    }
+    &[data-color='success'] {
+      --_toc-theme-color: var(--slp-color-success);
+    }
+    &[data-color='warning'] {
+      --_toc-theme-color: var(--slp-color-warning);
+    }
+    &[data-color='error'] {
+      --_toc-theme-color: var(--slp-color-error);
+    }
+  }
+
+  .list {
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+
+    .tableOfContents[data-variant='line'] > & {
+      gap: 0;
+      border-inline-start: 1px solid var(--_toc-border);
+    }
+    .tableOfContents[data-variant='soft'] > & {
+      gap: 2px;
+    }
+  }
+
+  .item {
+    display: flex;
+    min-width: 0;
+  }
+
+  .link {
+    display: block;
+    flex: 1;
+    min-width: 0;
+    padding-block: calc(var(--slp-spacing) * 1);
+    padding-inline: calc(var(--_toc-indent) * 0.875rem + var(--slp-spacing) * 3) calc(var(--slp-spacing) * 2);
+    color: color-mix(in oklab, var(--slp-color-base-content) 70%, transparent);
+    text-decoration: none;
+    overflow-wrap: anywhere;
+    transition:
+      color 150ms ease,
+      background-color 150ms ease,
+      border-color 150ms ease;
+
+    &:hover {
+      color: var(--slp-color-base-content);
+    }
+    &:focus-visible {
+      outline: 2px solid var(--_toc-color);
+      outline-offset: -2px;
+    }
+    &[data-current] {
+      color: color-mix(in oklab, var(--_toc-color) 75%, var(--slp-color-base-content));
+      font-weight: 500;
+    }
+
+    /* Line: each link sits over the list's line, which the active one colors. */
+    .tableOfContents[data-variant='line'] & {
+      margin-inline-start: -1px;
+      border-inline-start: 2px solid transparent;
+    }
+    .tableOfContents[data-variant='line'] &[data-current] {
+      border-inline-start-color: var(--_toc-color);
+    }
+
+    /* Soft: the active link is tinted. */
+    .tableOfContents[data-variant='soft'] & {
+      border-radius: 0.375rem;
+    }
+    .tableOfContents[data-variant='soft'] &[data-current] {
+      background-color: color-mix(in oklab, var(--_toc-color) 14%, transparent);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .link {
+      transition: none;
+    }
+  }
+}

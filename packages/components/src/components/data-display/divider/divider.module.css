@@ -1,0 +1,65 @@
+/*
+ * Divider. One border draws the line: the top one when horizontal, the start one when vertical.
+ *
+ * Everything prefixed `--_divider-` is internal.
+ */
+@layer slopkit.components {
+  .divider {
+    --_divider-color: color-mix(in oklab, var(--slp-color-base-content) 12%, transparent);
+    --_divider-style: solid;
+
+    box-sizing: border-box;
+    /* An hr has no width of its own: in a flex column that centers its items, it would shrink to nothing. In a
+       row, it shrinks to share the space with its siblings. */
+    width: 100%;
+    margin: 0;
+    border: 0;
+    border-top: 1px var(--_divider-style) var(--_divider-color);
+
+    /* As tall as its row in a flex container; 1em tall next to inline content. */
+    &[data-orientation='vertical'] {
+      display: inline-block;
+      flex-shrink: 0;
+      align-self: stretch;
+      width: auto;
+      min-height: 1em;
+      vertical-align: middle;
+      border-top: 0;
+      border-inline-start: 1px var(--_divider-style) var(--_divider-color);
+    }
+
+    /* Variants */
+    &[data-variant='dashed'] {
+      --_divider-style: dashed;
+    }
+    &[data-variant='dotted'] {
+      --_divider-style: dotted;
+    }
+
+    /* Colors */
+    &[data-color='neutral'] {
+      --_divider-color: var(--slp-color-neutral);
+    }
+    &[data-color='primary'] {
+      --_divider-color: var(--slp-color-primary);
+    }
+    &[data-color='secondary'] {
+      --_divider-color: var(--slp-color-secondary);
+    }
+    &[data-color='accent'] {
+      --_divider-color: var(--slp-color-accent);
+    }
+    &[data-color='info'] {
+      --_divider-color: var(--slp-color-info);
+    }
+    &[data-color='success'] {
+      --_divider-color: var(--slp-color-success);
+    }
+    &[data-color='warning'] {
+      --_divider-color: var(--slp-color-warning);
+    }
+    &[data-color='error'] {
+      --_divider-color: var(--slp-color-error);
+    }
+  }
+}

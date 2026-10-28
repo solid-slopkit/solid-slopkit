@@ -1,0 +1,139 @@
+/*
+ * Timeline. Each item is a row: a bullet on the line, and the content beside it. The line is each item's ::before,
+ * from its bullet down to the next item's; the last item has none. Active bullets are filled with the role, and the
+ * line between two active items takes the role too.
+ *
+ * Public custom properties (set on the timeline or any ancestor):
+ *   --slp-timeline-color        active color, defaults to the `color` prop's theme token
+ *   --slp-timeline-content      icon color in an active bullet, defaults to the token's `-content`
+ *
+ * Everything prefixed `--_timeline-` is internal.
+ */
+@layer slopkit.components {
+  .timeline {
+    --_timeline-color: var(--slp-timeline-color, var(--_timeline-theme-color));
+    --_timeline-content: var(--slp-timeline-content, var(--_timeline-theme-content));
+    --_timeline-bullet: 1.5rem;
+    --_timeline-line: 2px;
+    --_timeline-muted: color-mix(in oklab, var(--slp-color-base-content) 18%, transparent);
+
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+
+    /* Colors */
+    &[data-color='neutral'] {
+      --_timeline-theme-color: var(--slp-color-neutral);
+      --_timeline-theme-content: var(--slp-color-neutral-content);
+    }
+    &[data-color='primary'] {
+      --_timeline-theme-color: var(--slp-color-primary);
+      --_timeline-theme-content: var(--slp-color-primary-content);
+    }
+    &[data-color='secondary'] {
+      --_timeline-theme-color: var(--slp-color-secondary);
+      --_timeline-theme-content: var(--slp-color-secondary-content);
+    }
+    &[data-color='accent'] {
+      --_timeline-theme-color: var(--slp-color-accent);
+      --_timeline-theme-content: var(--slp-color-accent-content);
+    }
+    &[data-color='info'] {
+      --_timeline-theme-color: var(--slp-color-info);
+      --_timeline-theme-content: var(--slp-color-info-content);
+    }
+    &[data-color='success'] {
+      --_timeline-theme-color: var(--slp-color-success);
+      --_timeline-theme-content: var(--slp-color-success-content);
+    }
+    &[data-color='warning'] {
+      --_timeline-theme-color: var(--slp-color-warning);
+      --_timeline-theme-content: var(--slp-color-warning-content);
+    }
+    &[data-color='error'] {
+      --_timeline-theme-color: var(--slp-color-error);
+      --_timeline-theme-content: var(--slp-color-error-content);
+    }
+  }
+
+  .item {
+    position: relative;
+    display: flex;
+    gap: calc(var(--slp-spacing) * 3);
+    padding-bottom: calc(var(--slp-spacing) * 6);
+
+    &:last-child {
+      padding-bottom: 0;
+    }
+
+    /* The line to the next item: from below this bullet to the bottom of the item, where the next bullet starts. */
+    &:not(:last-child)::before {
+      content: '';
+      position: absolute;
+      top: var(--_timeline-bullet);
+      bottom: 0;
+      left: calc((var(--_timeline-bullet) - var(--_timeline-line)) / 2);
+      width: var(--_timeline-line);
+      background-color: var(--_timeline-muted);
+    }
+
+    &[data-active]:has(+ [data-active])::before {
+      background-color: var(--_timeline-color);
+    }
+  }
+
+  .bullet {
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    width: var(--_timeline-bullet);
+    height: var(--_timeline-bullet);
+    border: var(--_timeline-line) solid var(--_timeline-muted);
+    border-radius: 50%;
+    background-color: var(--slp-color-base-100);
+    color: color-mix(in oklab, var(--slp-color-base-content) 70%, transparent);
+    font-size: 0.75rem;
+    font-weight: 600;
+    line-height: 1;
+
+    & > svg {
+      width: 0.875rem;
+      height: 0.875rem;
+    }
+
+    [data-active] > & {
+      border-color: var(--_timeline-color);
+      background-color: var(--_timeline-color);
+      color: var(--_timeline-content);
+    }
+  }
+
+  .content {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: calc(var(--slp-spacing) * 0.5);
+    min-width: 0;
+    /* The first line of text sits level with the bullet. */
+    padding-top: calc((var(--_timeline-bullet) - var(--slp-line-height-md)) / 2);
+  }
+
+  .title {
+    font-weight: 600;
+    line-height: var(--slp-line-height-md);
+  }
+
+  .body {
+    color: color-mix(in oklab, var(--slp-color-base-content) 75%, transparent);
+    font-size: var(--slp-font-size-sm);
+    line-height: var(--slp-line-height-sm);
+
+    &:empty {
+      display: none;
+    }
+  }
+}

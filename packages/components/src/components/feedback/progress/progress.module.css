@@ -1,0 +1,130 @@
+/*
+ * Progress. A rounded track in a muted tint of the role, with the bar filled to --_progress-value (set inline by the
+ * component). Indeterminate, a band slides across the track; with reduced motion, the whole bar pulses instead.
+ *
+ * Public custom properties (set on the progress or any ancestor):
+ *   --slp-progress-color        bar color, defaults to the `color` prop's theme token
+ *
+ * Everything prefixed `--_progress-` is internal.
+ */
+@layer slopkit.components {
+  .progress {
+    --_progress-color: var(--slp-progress-color, var(--_progress-theme-color));
+    --_progress-height: 0.5rem;
+    --_progress-value: 0%;
+
+    position: relative;
+    box-sizing: border-box;
+    width: 100%;
+    height: var(--_progress-height);
+    overflow: hidden;
+    border-radius: calc(infinity * 1px);
+    background-color: color-mix(in oklab, var(--slp-color-base-content) 10%, transparent);
+
+    /* Colors */
+    &[data-color='neutral'] {
+      --_progress-theme-color: var(--slp-color-neutral);
+    }
+    &[data-color='primary'] {
+      --_progress-theme-color: var(--slp-color-primary);
+    }
+    &[data-color='secondary'] {
+      --_progress-theme-color: var(--slp-color-secondary);
+    }
+    &[data-color='accent'] {
+      --_progress-theme-color: var(--slp-color-accent);
+    }
+    &[data-color='info'] {
+      --_progress-theme-color: var(--slp-color-info);
+    }
+    &[data-color='success'] {
+      --_progress-theme-color: var(--slp-color-success);
+    }
+    &[data-color='warning'] {
+      --_progress-theme-color: var(--slp-color-warning);
+    }
+    &[data-color='error'] {
+      --_progress-theme-color: var(--slp-color-error);
+    }
+
+    /* Sizes */
+    &[data-size='xs'] {
+      --_progress-height: 0.25rem;
+    }
+    &[data-size='sm'] {
+      --_progress-height: 0.375rem;
+    }
+    &[data-size='lg'] {
+      --_progress-height: 0.75rem;
+    }
+    &[data-size='xl'] {
+      --_progress-height: 1rem;
+    }
+  }
+
+  .bar {
+    width: var(--_progress-value);
+    height: 100%;
+    border-radius: inherit;
+    background-color: var(--_progress-color);
+    transition: width 0.25s ease;
+
+    [data-striped] > & {
+      background-image: linear-gradient(
+        45deg,
+        color-mix(in oklab, white 22%, transparent) 25%,
+        transparent 25% 50%,
+        color-mix(in oklab, white 22%, transparent) 50% 75%,
+        transparent 75%
+      );
+      background-size: 1rem 1rem;
+    }
+
+    [data-animated] > & {
+      animation: slp-progress-stripes 1s linear infinite;
+    }
+
+    [data-indeterminate] > & {
+      width: 40%;
+      animation: slp-progress-slide 1.4s ease-in-out infinite;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      transition: none;
+
+      [data-animated] > & {
+        animation: none;
+      }
+
+      [data-indeterminate] > & {
+        width: 100%;
+        animation: slp-progress-pulse 2s ease-in-out infinite;
+      }
+    }
+  }
+}
+
+@keyframes slp-progress-stripes {
+  to {
+    background-position: 1rem 0;
+  }
+}
+
+@keyframes slp-progress-slide {
+  from {
+    translate: -100% 0;
+  }
+  to {
+    translate: 250% 0;
+  }
+}
+
+@keyframes slp-progress-pulse {
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 1;
+  }
+}

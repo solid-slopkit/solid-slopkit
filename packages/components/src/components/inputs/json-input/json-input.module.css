@@ -1,0 +1,11 @@
+/* JsonInput. A Textarea in the monospace font, with tabs as two spaces wide. */
+@layer slopkit.components {
+  .jsonInput [data-slot='input-control'] {
+    font-family: var(--slp-font-family-monospace);
+    font-size: 0.9em;
+    tab-size: 2;
+    white-space: pre;
+    overflow-wrap: normal;
+    overflow-x: auto;
+  }
+}

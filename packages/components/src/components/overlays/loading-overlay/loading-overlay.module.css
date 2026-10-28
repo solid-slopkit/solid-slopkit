@@ -1,0 +1,9 @@
+/*
+ * LoadingOverlay. An Overlay in the base surface color, so the covered content shows through faintly in both color
+ * schemes; `--slp-overlay-color` still overrides it.
+ */
+@layer slopkit.components {
+  .overlay {
+    --_overlay-theme-color: var(--slp-color-base-100);
+  }
+}

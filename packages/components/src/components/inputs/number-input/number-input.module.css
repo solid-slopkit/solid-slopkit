@@ -1,0 +1,63 @@
+/*
+ * NumberInput. The controls are two stacked buttons that fill the right section's height, split by a line, with a
+ * line between them and the field.
+ */
+@layer slopkit.components {
+  .numberInput [data-slot='input-right-section']:has(> .controls) {
+    align-self: stretch;
+    min-width: 0;
+  }
+
+  .controls {
+    display: flex;
+    flex-direction: column;
+    align-self: stretch;
+    width: 1.75em;
+    border-inline-start: 1px solid color-mix(in oklab, var(--slp-color-base-content) 15%, transparent);
+  }
+
+  .control {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    justify-content: center;
+    min-height: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    touch-action: manipulation;
+
+    & + & {
+      border-top: 1px solid color-mix(in oklab, var(--slp-color-base-content) 15%, transparent);
+    }
+
+    &:hover:not(:disabled) {
+      background-color: color-mix(in oklab, var(--slp-color-base-content) 8%, transparent);
+    }
+
+    &:active:not(:disabled) {
+      background-color: color-mix(in oklab, var(--slp-color-base-content) 14%, transparent);
+    }
+
+    &:disabled {
+      color: color-mix(in oklab, var(--slp-color-base-content) 25%, transparent);
+      cursor: not-allowed;
+    }
+
+    /* The right corners follow the box's. */
+    &:first-child {
+      border-start-end-radius: 9px;
+    }
+    &:last-child {
+      border-end-end-radius: 9px;
+    }
+
+    & > svg {
+      width: 0.85em;
+      height: 0.85em;
+    }
+  }
+}

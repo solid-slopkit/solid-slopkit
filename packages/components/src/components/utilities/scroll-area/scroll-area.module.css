@@ -1,0 +1,154 @@
+/*
+ * ScrollArea. The viewport is a native scroller with its own scrollbars hidden; the drawn scrollbars sit over its
+ * edges. The script writes two unitless fractions per scrollbar, `--_scroll-area-ratio` (visible / total length) and
+ * `--_scroll-area-progress` (offset / range), and the thumb's length and position are computed here from them.
+ *
+ * `--slp-scroll-area-thumb-color` is public: the thumb's idle, hover and pressed tints mix from it. Everything
+ * prefixed `--_scroll-area-` is internal.
+ */
+@layer slopkit.components {
+  .root {
+    --_scroll-area-thumb: var(--slp-scroll-area-thumb-color, var(--slp-color-base-content));
+    /* The thumb's inset from the track's edges, drawn as a transparent border. */
+    --_scroll-area-inset: 2px;
+
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  /* It fills the root, or grows with its content up to the root's max-height. */
+  .viewport {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--slp-color-base-content);
+      outline-offset: -2px;
+    }
+
+    .root[data-scrollbars='x'] > & {
+      overflow-y: hidden;
+    }
+    .root[data-scrollbars='y'] > & {
+      overflow-x: hidden;
+    }
+    .root[data-offset-scrollbars][data-overflow-y] > & {
+      padding-inline-end: var(--_scroll-area-size);
+    }
+    .root[data-offset-scrollbars][data-overflow-x] > & {
+      padding-block-end: var(--_scroll-area-size);
+    }
+  }
+
+  /* As wide as the viewport, and wider when something in it can't wrap, so that something scrolls across. */
+  .content {
+    width: fit-content;
+    min-width: 100%;
+  }
+
+  .scrollbar {
+    position: absolute;
+    box-sizing: border-box;
+    display: none;
+    touch-action: none;
+    user-select: none;
+    visibility: hidden;
+    opacity: 0;
+    /*
+     * Hiding waits for the delay, then fades and turns hidden at the end. Showing (the rules below) waits for
+     * nothing, and turns visible at once, so the pointer can grab a thumb that's still fading in.
+     */
+    transition:
+      opacity 150ms ease var(--_scroll-area-hide-delay),
+      visibility 0s linear calc(var(--_scroll-area-hide-delay) + 150ms);
+
+    &[data-orientation='vertical'] {
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: var(--_scroll-area-size);
+    }
+    &[data-orientation='horizontal'] {
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: var(--_scroll-area-size);
+    }
+
+    /* Shown only along a direction that overflows; with both, they leave the corner to each other. */
+    .root:not([data-type='never'])[data-overflow-y] > &[data-orientation='vertical'],
+    .root:not([data-type='never'])[data-overflow-x] > &[data-orientation='horizontal'] {
+      display: block;
+    }
+    .root[data-overflow-x][data-overflow-y] > &[data-orientation='vertical'] {
+      bottom: var(--_scroll-area-size);
+    }
+    .root[data-overflow-x][data-overflow-y] > &[data-orientation='horizontal'] {
+      right: var(--_scroll-area-size);
+    }
+
+    .root[data-type='always'] > &,
+    .root:is([data-type='hover'], [data-type='scroll'])[data-scrolling] > &,
+    .root:is([data-type='hover'], [data-type='scroll']) > &:is(:hover, [data-dragging]) {
+      visibility: visible;
+      opacity: 1;
+      transition-delay: 0s;
+    }
+    @media (hover: hover) {
+      .root[data-type='hover']:hover > & {
+        visibility: visible;
+        opacity: 1;
+        transition-delay: 0s;
+      }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      transition-duration: 0s;
+    }
+  }
+
+  /*
+   * Its length is the visible share of the track, at least 20px (the inset included), and it travels the rest of the
+   * track by the scroll progress. Percentages here are of the track's length along the scrollbar.
+   */
+  .thumb {
+    --_scroll-area-length: max(20px, 100% * var(--_scroll-area-ratio, 1));
+    --_scroll-area-offset: calc((100% - var(--_scroll-area-length)) * var(--_scroll-area-progress, 0));
+
+    position: absolute;
+    box-sizing: border-box;
+    border: var(--_scroll-area-inset) solid transparent;
+    border-radius: calc(var(--_scroll-area-size) / 2);
+    background-color: color-mix(in oklab, var(--_scroll-area-thumb) 35%, transparent);
+    background-clip: padding-box;
+    transition: background-color 150ms ease;
+
+    .scrollbar:hover > & {
+      background-color: color-mix(in oklab, var(--_scroll-area-thumb) 50%, transparent);
+    }
+    .scrollbar[data-dragging] > & {
+      background-color: color-mix(in oklab, var(--_scroll-area-thumb) 60%, transparent);
+    }
+
+    .scrollbar[data-orientation='vertical'] > & {
+      left: 0;
+      right: 0;
+      top: var(--_scroll-area-offset);
+      height: var(--_scroll-area-length);
+    }
+    .scrollbar[data-orientation='horizontal'] > & {
+      top: 0;
+      bottom: 0;
+      left: var(--_scroll-area-offset);
+      width: var(--_scroll-area-length);
+    }
+  }
+}

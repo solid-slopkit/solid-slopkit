@@ -1,0 +1,137 @@
+/* Page two, columns 1 to 3. */
+
+.create-two-a-display {
+  font-size: 1.5rem;
+  line-height: 2rem;
+}
+
+.create-two-a-swatch {
+  min-width: 0;
+
+  & span {
+    aspect-ratio: 1;
+    border: 1px solid color-mix(in oklab, var(--slp-color-base-content) 12%, transparent);
+    border-radius: 0.5rem;
+  }
+
+  & code {
+    overflow: hidden;
+    font-family: var(--slp-font-family-monospace);
+    color: color-mix(in oklab, var(--slp-color-base-content) 60%, transparent);
+    font-size: 0.5625rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+/* Fills the card footer's row, so its content starts at the start edge. */
+.create-two-a-fill {
+  flex: 1;
+}
+
+.create-two-a-empty-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  color: color-mix(in oklab, var(--slp-color-base-content) 60%, transparent);
+}
+
+.create-two-a-invoice {
+  min-width: 26rem;
+
+  & td:not(:first-child),
+  & th:not(:first-child) {
+    text-align: end;
+  }
+}
+
+.create-two-a-summary > th {
+  font-weight: 400;
+  text-align: end;
+}
+
+.create-two-a-summary:is(tfoot *) > th {
+  font-weight: 600;
+}
+
+.create-two-a-bordered {
+  padding: 0.625rem 0.75rem;
+  border: 1px solid color-mix(in oklab, var(--slp-color-base-content) 12%, transparent);
+  border-radius: 0.625rem;
+}
+
+/* Keeps the label for screen readers only. */
+.create-two-a-unlabelled [data-slot='input-wrapper-label'] {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* Two buttons drawn as one control with a shared border. */
+.create-two-a-joined {
+  & > .slp-button:first-child {
+    border-start-end-radius: 0;
+    border-end-end-radius: 0;
+  }
+
+  & > .slp-button:last-child {
+    margin-inline-start: -1px;
+    border-start-start-radius: 0;
+    border-end-start-radius: 0;
+  }
+}
+
+.create-two-a-art {
+  height: 12rem;
+  background:
+    radial-gradient(circle at 25% 30%, color-mix(in oklab, var(--slp-color-base-content) 35%, transparent), transparent 45%),
+    radial-gradient(circle at 75% 65%, color-mix(in oklab, var(--slp-color-base-content) 25%, transparent), transparent 50%),
+    linear-gradient(
+      135deg,
+      var(--slp-color-base-300),
+      color-mix(in oklab, var(--slp-color-base-content) 20%, var(--slp-color-base-200))
+    );
+}
+
+.create-two-a-variable {
+  padding: 0.5rem 0.75rem;
+  font-family: var(--slp-font-family-monospace);
+  font-size: 0.6875rem;
+}
+
+.create-two-a-dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+}
+
+.create-two-a-stats {
+  text-align: center;
+
+  & > div + div {
+    border-inline-start: 1px solid color-mix(in oklab, var(--slp-color-base-content) 12%, transparent);
+  }
+}
+
+.create-two-a-checks {
+  & svg {
+    flex: none;
+    width: 1.125rem;
+    height: 1.125rem;
+    margin-top: 0.0625rem;
+    fill: var(--slp-color-base-content);
+    stroke: var(--slp-color-base-100);
+  }
+
+  & strong {
+    font-weight: 600;
+  }
+}
+
+.create-two-a-note {
+  padding: 0.75rem;
+  border: 1px solid color-mix(in oklab, var(--slp-color-base-content) 12%, transparent);
+  border-radius: 0.625rem;
+}

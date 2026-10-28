@@ -1,0 +1,234 @@
+/*
+ * Stepper. The steps are an ordered list: each a circle (the number, a check mark once completed, or an icon), a
+ * label and a description, then a line to the next step that takes the color once the step is completed. The current
+ * step's circle is outlined in the color, a completed one filled with it. The current step's content goes under the
+ * list.
+ *
+ * Public custom properties (set on the stepper, a step, or any ancestor):
+ *   --slp-stepper-color      the current and completed steps' color, defaults to the `color` prop's theme token
+ *   --slp-stepper-content    the check mark's color on a completed step, defaults to the token's `-content`
+ *
+ * Everything prefixed `--_stepper-` is internal.
+ */
+@layer slopkit.components {
+  .stepper {
+    --_stepper-icon: 2.25rem;
+    --_stepper-font-size: 0.875rem;
+    --_stepper-gap: calc(var(--slp-spacing) * 3);
+    --_stepper-line: color-mix(in oklab, var(--slp-color-base-content) 15%, transparent);
+
+    display: flex;
+    flex-direction: column;
+    gap: calc(var(--slp-spacing) * 6);
+    box-sizing: border-box;
+    /* Spans its container even in a flex parent that would shrink it to its content. */
+    width: 100%;
+    min-width: 0;
+    font-size: var(--_stepper-font-size);
+
+    &[data-size='xs'] {
+      --_stepper-icon: 1.5rem;
+      --_stepper-font-size: 0.75rem;
+      --_stepper-gap: calc(var(--slp-spacing) * 2);
+    }
+    &[data-size='sm'] {
+      --_stepper-icon: 1.875rem;
+      --_stepper-font-size: 0.8125rem;
+      --_stepper-gap: calc(var(--slp-spacing) * 2.5);
+    }
+    &[data-size='lg'] {
+      --_stepper-icon: 2.75rem;
+      --_stepper-font-size: 1rem;
+    }
+    &[data-size='xl'] {
+      --_stepper-icon: 3.25rem;
+      --_stepper-font-size: 1.125rem;
+      --_stepper-gap: calc(var(--slp-spacing) * 4);
+    }
+  }
+
+  /* The color comes from the stepper's role, or a step's own. */
+  .stepper,
+  .step {
+    --_stepper-color: var(--slp-stepper-color, var(--_stepper-theme-color));
+    --_stepper-content: var(--slp-stepper-content, var(--_stepper-theme-content));
+
+    &[data-color='neutral'] {
+      --_stepper-theme-color: var(--slp-color-neutral);
+      --_stepper-theme-content: var(--slp-color-neutral-content);
+    }
+    &[data-color='primary'] {
+      --_stepper-theme-color: var(--slp-color-primary);
+      --_stepper-theme-content: var(--slp-color-primary-content);
+    }
+    &[data-color='secondary'] {
+      --_stepper-theme-color: var(--slp-color-secondary);
+      --_stepper-theme-content: var(--slp-color-secondary-content);
+    }
+    &[data-color='accent'] {
+      --_stepper-theme-color: var(--slp-color-accent);
+      --_stepper-theme-content: var(--slp-color-accent-content);
+    }
+    &[data-color='info'] {
+      --_stepper-theme-color: var(--slp-color-info);
+      --_stepper-theme-content: var(--slp-color-info-content);
+    }
+    &[data-color='success'] {
+      --_stepper-theme-color: var(--slp-color-success);
+      --_stepper-theme-content: var(--slp-color-success-content);
+    }
+    &[data-color='warning'] {
+      --_stepper-theme-color: var(--slp-color-warning);
+      --_stepper-theme-content: var(--slp-color-warning-content);
+    }
+    &[data-color='error'] {
+      --_stepper-theme-color: var(--slp-color-error);
+      --_stepper-theme-content: var(--slp-color-error-content);
+    }
+  }
+
+  .steps {
+    display: flex;
+    align-items: center;
+    gap: var(--_stepper-gap);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+
+    .stepper[data-orientation='vertical'] > & {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0;
+    }
+  }
+
+  /* A step grows to hold the line to the next one; the last holds no line. */
+  .step {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    gap: var(--_stepper-gap);
+    min-width: 0;
+
+    &[data-last] {
+      flex: none;
+    }
+
+    .stepper[data-orientation='vertical'] & {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0;
+    }
+  }
+
+  .control {
+    display: flex;
+    flex: none;
+    align-items: center;
+    gap: var(--_stepper-gap);
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: calc(var(--_stepper-icon) / 2);
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    text-align: start;
+
+    &:is(button) {
+      cursor: pointer;
+    }
+    &:focus-visible {
+      outline: 2px solid var(--_stepper-color);
+      outline-offset: 2px;
+    }
+  }
+
+  .icon {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    width: var(--_stepper-icon);
+    height: var(--_stepper-icon);
+    border: 2px solid var(--_stepper-line);
+    border-radius: 50%;
+    background-color: var(--slp-color-base-200);
+    color: var(--slp-color-base-content);
+    font-weight: 600;
+    transition:
+      background-color 150ms ease,
+      border-color 150ms ease,
+      color 150ms ease;
+
+    & > svg {
+      width: 45%;
+      height: 45%;
+    }
+
+    .step[data-state='current'] & {
+      border-color: var(--_stepper-color);
+      background-color: var(--slp-color-base-100);
+      color: var(--_stepper-color);
+    }
+    .step[data-state='completed'] & {
+      border-color: var(--_stepper-color);
+      background-color: var(--_stepper-color);
+      color: var(--_stepper-content);
+    }
+  }
+
+  .body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+    min-width: 0;
+  }
+
+  .label {
+    font-weight: 600;
+    line-height: 1.3;
+  }
+
+  .description {
+    color: color-mix(in oklab, var(--slp-color-base-content) 65%, transparent);
+    font-size: 0.875em;
+    line-height: 1.3;
+  }
+
+  .control:is(button):hover .label {
+    text-decoration: underline;
+  }
+
+  .separator {
+    flex: 1;
+    min-width: calc(var(--slp-spacing) * 4);
+    height: 2px;
+    border-radius: 1px;
+    background-color: var(--_stepper-line);
+    transition: background-color 150ms ease;
+
+    .step[data-state='completed'] > & {
+      background-color: var(--_stepper-color);
+    }
+
+    /* Down from the circle's middle to the next step. */
+    .stepper[data-orientation='vertical'] & {
+      flex: none;
+      width: 2px;
+      min-width: 0;
+      height: auto;
+      min-height: calc(var(--slp-spacing) * 6);
+      margin-block: calc(var(--slp-spacing) * 1);
+      margin-inline-start: calc(var(--_stepper-icon) / 2 - 1px);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .icon,
+    .separator {
+      transition: none;
+    }
+  }
+}

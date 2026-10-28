@@ -1,0 +1,126 @@
+/*
+ * Command. A surface with the search field, a rule, then the list, which scrolls past 24rem. Items are rows that take
+ * a tint while active (`data-active`, which the script sets as the keyboard or the pointer moves). The search hides
+ * items with `hidden`, a group with no item shown hides with them, and so does the list when it has nothing to show.
+ * In a CommandDialog, the modal is the surface.
+ */
+@layer slopkit.components {
+  .root {
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    min-width: 0;
+    overflow: hidden;
+    border: 1px solid color-mix(in oklab, var(--slp-color-base-content) 12%, transparent);
+    border-radius: 0.75rem;
+    background-color: var(--slp-color-base-100);
+    color: var(--slp-color-base-content);
+  }
+
+  .dialog > [data-slot='modal-content'] > [data-slot='modal-body'] {
+    padding: 0;
+
+    & > .root {
+      border: none;
+      border-radius: 0;
+      background-color: transparent;
+    }
+  }
+
+  .input {
+    padding: calc(var(--slp-spacing) * 2);
+    border-bottom: 1px solid color-mix(in oklab, var(--slp-color-base-content) 12%, transparent);
+
+    /* The command is the field's box: no ring of its own while it has focus, which it has the whole time. */
+    & > [data-variant]:focus-within {
+      border-color: transparent;
+      box-shadow: none;
+    }
+  }
+
+  .list {
+    max-height: min(24rem, 60vh);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: calc(var(--slp-spacing) * 2);
+    scroll-padding-block: calc(var(--slp-spacing) * 2);
+    outline: none;
+
+    &:not(:has([data-slot='command-item']:not([hidden]), [data-slot='command-empty']:not([hidden]))) {
+      display: none;
+    }
+  }
+
+  .item {
+    display: flex;
+    align-items: center;
+    gap: calc(var(--slp-spacing) * 3);
+    box-sizing: border-box;
+    padding: calc(var(--slp-spacing) * 2) calc(var(--slp-spacing) * 3);
+    border-radius: 0.5rem;
+    font-size: var(--slp-font-size-sm);
+    line-height: var(--slp-line-height-sm);
+    cursor: pointer;
+    user-select: none;
+
+    &[hidden] {
+      display: none;
+    }
+    &[data-active] {
+      background-color: color-mix(in oklab, var(--slp-color-base-content) 10%, transparent);
+    }
+    &[data-disabled] {
+      cursor: not-allowed;
+      opacity: 0.5;
+    }
+
+    & > svg {
+      flex: none;
+      width: 1.25rem;
+      height: 1.25rem;
+      color: color-mix(in oklab, var(--slp-color-base-content) 70%, transparent);
+    }
+  }
+
+  .group:not(:has([data-slot='command-item']:not([hidden]))) {
+    display: none;
+  }
+
+  .groupHeading {
+    padding: calc(var(--slp-spacing) * 2) calc(var(--slp-spacing) * 3) calc(var(--slp-spacing) * 1);
+    color: color-mix(in oklab, var(--slp-color-base-content) 70%, transparent);
+    font-size: var(--slp-font-size-xs);
+    font-weight: 500;
+    cursor: default;
+    user-select: none;
+  }
+
+  .separator {
+    height: 1px;
+    margin: calc(var(--slp-spacing) * 1) calc(var(--slp-spacing) * -2);
+    background-color: color-mix(in oklab, var(--slp-color-base-content) 12%, transparent);
+
+    &[hidden] {
+      display: none;
+    }
+  }
+
+  .empty {
+    padding: calc(var(--slp-spacing) * 6) calc(var(--slp-spacing) * 3);
+    color: color-mix(in oklab, var(--slp-color-base-content) 70%, transparent);
+    font-size: var(--slp-font-size-sm);
+    line-height: var(--slp-line-height-sm);
+    text-align: center;
+
+    &[hidden] {
+      display: none;
+    }
+  }
+
+  .shortcut {
+    margin-inline-start: auto;
+    color: color-mix(in oklab, var(--slp-color-base-content) 60%, transparent);
+    font-size: var(--slp-font-size-xs);
+    letter-spacing: 0.1em;
+  }
+}

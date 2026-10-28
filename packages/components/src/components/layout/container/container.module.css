@@ -1,0 +1,18 @@
+/*
+ * Container. The generated class sets `max-width`; `:where()` keeps these rules at zero specificity, so a
+ * user class still wins over them.
+ *
+ * Public custom properties (set on the container or any ancestor):
+ *   --slp-container-padding   inline padding, defaults to 4 spacing units
+ *   --slp-container-size-*    the widths of the `size` presets, set on :root in slopkit.css
+ */
+@layer slopkit.components {
+  :where(.container) {
+    /* `size` is the outer width, padding included. */
+    box-sizing: border-box;
+    /* Fills the parent up to the max width in a flex parent too, where auto margins would shrink it to its content. */
+    width: 100%;
+    margin-inline: auto;
+    padding-inline: var(--slp-container-padding);
+  }
+}

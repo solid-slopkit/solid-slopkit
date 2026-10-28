@@ -1,0 +1,125 @@
+/*
+ * Alert. A box with the icon on the start side and the title over the message. In the soft and outline variants
+ * the role color is in the icon and the edge, and the text keeps the base color, so it stays readable whatever the
+ * role; solid fills the box with the role and uses its content color.
+ *
+ * Public custom properties (set on the alert or any ancestor):
+ *   --slp-alert-color           accent color, defaults to the `color` prop's theme token
+ *   --slp-alert-content         text color on a solid alert, defaults to the token's `-content`
+ *
+ * Everything prefixed `--_alert-` is internal.
+ */
+@layer slopkit.components {
+  .alert {
+    --_alert-color: var(--slp-alert-color, var(--_alert-theme-color));
+    --_alert-content: var(--slp-alert-content, var(--_alert-theme-content));
+
+    /* Soft, the default. */
+    --_alert-bg: color-mix(in oklab, var(--_alert-color) 12%, transparent);
+    --_alert-border: color-mix(in oklab, var(--_alert-color) 30%, transparent);
+    --_alert-fg: var(--slp-color-base-content);
+    --_alert-icon: var(--_alert-color);
+
+    display: flex;
+    gap: calc(var(--slp-spacing) * 3);
+    box-sizing: border-box;
+    padding: calc(var(--slp-spacing) * 3) calc(var(--slp-spacing) * 4);
+    border: 1px solid var(--_alert-border);
+    border-radius: 0.75rem;
+    background-color: var(--_alert-bg);
+    color: var(--_alert-fg);
+    font-size: var(--slp-font-size-sm);
+    line-height: var(--slp-line-height-sm);
+
+    &[data-variant='solid'] {
+      --_alert-bg: var(--_alert-color);
+      --_alert-border: var(--_alert-color);
+      --_alert-fg: var(--_alert-content);
+      --_alert-icon: var(--_alert-content);
+    }
+
+    /* The border is half the color, like the other outline variants. */
+    &[data-variant='outline'] {
+      --_alert-bg: transparent;
+      --_alert-border: color-mix(in oklab, var(--_alert-color) 50%, transparent);
+    }
+
+    /* Colors */
+    &[data-color='neutral'] {
+      --_alert-theme-color: var(--slp-color-neutral);
+      --_alert-theme-content: var(--slp-color-neutral-content);
+    }
+    &[data-color='primary'] {
+      --_alert-theme-color: var(--slp-color-primary);
+      --_alert-theme-content: var(--slp-color-primary-content);
+    }
+    &[data-color='secondary'] {
+      --_alert-theme-color: var(--slp-color-secondary);
+      --_alert-theme-content: var(--slp-color-secondary-content);
+    }
+    &[data-color='accent'] {
+      --_alert-theme-color: var(--slp-color-accent);
+      --_alert-theme-content: var(--slp-color-accent-content);
+    }
+    &[data-color='info'] {
+      --_alert-theme-color: var(--slp-color-info);
+      --_alert-theme-content: var(--slp-color-info-content);
+    }
+    &[data-color='success'] {
+      --_alert-theme-color: var(--slp-color-success);
+      --_alert-theme-content: var(--slp-color-success-content);
+    }
+    &[data-color='warning'] {
+      --_alert-theme-color: var(--slp-color-warning);
+      --_alert-theme-content: var(--slp-color-warning-content);
+    }
+    &[data-color='error'] {
+      --_alert-theme-color: var(--slp-color-error);
+      --_alert-theme-content: var(--slp-color-error-content);
+    }
+  }
+
+  /* The icon is centered on the first line of text: the title's if there is one, else the message's. */
+  .icon {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    height: var(--slp-line-height-sm);
+    color: var(--_alert-icon);
+
+    & > svg {
+      width: 1.25rem;
+      height: 1.25rem;
+    }
+  }
+
+  .content {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: calc(var(--slp-spacing) * 1);
+    min-width: 0;
+  }
+
+  .title {
+    font-weight: 600;
+  }
+
+  /* Centered on the first line of text, like the icon (a `sm` Button is `--slp-size-field` × 7 tall), and pulled
+     toward the end edge so the X lines up with the padding rather than the button's box. */
+  .closeButton {
+    align-self: flex-start;
+    margin-block: calc((var(--slp-line-height-sm) - var(--slp-size-field) * 7) / 2);
+    margin-inline-end: calc(var(--slp-spacing) * -2);
+  }
+
+  /* Paragraphs inside the message space themselves; its edges stay flush with the box. */
+  .message {
+    & > :first-child {
+      margin-top: 0;
+    }
+    & > :last-child {
+      margin-bottom: 0;
+    }
+  }
+}

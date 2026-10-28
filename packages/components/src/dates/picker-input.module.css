@@ -1,0 +1,42 @@
+/*
+ * DatePickerInput. The control is a button laid out like a text field's input: the value at the start, cut with an
+ * ellipsis when it doesn't fit. The dropdown is the surface of the other overlays, sized to the calendar in it.
+ */
+@layer slopkit.components {
+  .field [data-slot='input-control'] {
+    min-width: 0;
+    text-align: start;
+    cursor: pointer;
+
+    &:disabled {
+      cursor: not-allowed;
+    }
+  }
+
+  .value {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    &[data-placeholder] {
+      color: color-mix(in oklab, var(--slp-color-base-content) 45%, transparent);
+    }
+  }
+
+  .dropdown {
+    /* The floating position replaces a popover's centering. */
+    inset: auto;
+    margin: 0;
+    box-sizing: border-box;
+    max-width: calc(100vw - 1rem);
+    overflow: visible;
+    padding: calc(var(--slp-spacing) * 2);
+    border: 1px solid color-mix(in oklab, var(--slp-color-base-content) 12%, transparent);
+    border-radius: 0.75rem;
+    background-color: var(--slp-color-base-100);
+    color: var(--slp-color-base-content);
+    box-shadow: var(--slp-shadow-md);
+    font: inherit;
+  }
+}

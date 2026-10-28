@@ -1,0 +1,69 @@
+{
+  "name": "@solid-slopkit/i18n",
+  "version": "0.1.1",
+  "description": "Co-located, typed translation files for SolidJS 2.x",
+  "homepage": "https://solid-slopkit.github.io/solid-slopkit/i18n/",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/solid-slopkit/solid-slopkit.git",
+    "directory": "packages/i18n"
+  },
+  "bin": {
+    "slopkit-i18n": "./dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "skills"
+  ],
+  "type": "module",
+  "sideEffects": false,
+  "types": "./dist/types/runtime/index.d.ts",
+  "exports": {
+    ".": {
+      "@solid-slopkit/source": "./src/runtime/index.ts",
+      "types": "./dist/types/runtime/index.d.ts",
+      "solid": "./dist/source/runtime/index.js",
+      "default": "./dist/source/runtime/index.js"
+    },
+    "./vite": {
+      "@solid-slopkit/source": "./src/vite.ts",
+      "types": "./dist/types/vite.d.ts",
+      "default": "./dist/vite.js"
+    }
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "pnpm build:clean && pnpm build:source && pnpm build:assets && pnpm build:plugin-types && pnpm build:plugin",
+    "build:clean": "node -e \"require('fs').rmSync('dist',{recursive:true,force:true})\"",
+    "build:source": "tsc -p tsconfig.build.json",
+    "build:assets": "node -e \"require('fs').cpSync('src','dist/source',{recursive:true,filter:s=>!require('path').extname(s)||/\\.md$/.test(s)})\"",
+    "build:plugin-types": "tsc -p tsconfig.plugin.json",
+    "build:plugin": "vite build -c vite.plugin.config.ts",
+    "typecheck": "tsc -p tsconfig.json",
+    "test": "vitest run --configLoader runner"
+  },
+  "devDependencies": {
+    "@solidjs/diagnostics": "^2.0.0-rc.15",
+    "@solidjs/testing-library": "^1.0.0-beta.3",
+    "@solidjs/vite-plugin": "^3.0.0-next.50",
+    "@testing-library/jest-dom": "^7.0.0",
+    "@types/node": "^24.0.0",
+    "jsdom": "^30.1.2",
+    "typescript": "^7.0.2",
+    "vite": "^8.1.5",
+    "vitest": "^5.0.0"
+  },
+  "peerDependencies": {
+    "@solidjs/web": ">=2.0.0-rc.15 <3",
+    "solid-js": ">=2.0.0-rc.15 <3",
+    "vite": ">=7"
+  },
+  "peerDependenciesMeta": {
+    "vite": {
+      "optional": true
+    }
+  }
+}

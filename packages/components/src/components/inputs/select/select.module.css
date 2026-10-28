@@ -1,0 +1,60 @@
+/*
+ * Select. The field is an Input's box (`.slp-input`); these rules add the button's look, the value's truncation, and
+ * the chevron laid over the end of the control so a press on it lands on the control. The options get a check mark
+ * at the end, shown on the selected one, so the selection doesn't rely on color alone.
+ */
+@layer slopkit.components {
+  .box {
+    /* The chevron lets presses through to the control, which reaches under it. */
+    & > [data-slot='input-right-section'] {
+      margin-inline-start: calc((var(--_input-height) - 2px) * -1);
+      pointer-events: none;
+    }
+    & > [data-slot='input-control'] {
+      padding-inline-end: calc(var(--_input-height) - 2px);
+    }
+
+    & > button[data-slot='input-control'] {
+      display: flex;
+      align-items: center;
+      overflow: hidden;
+      text-align: start;
+      cursor: pointer;
+
+      &:disabled {
+        cursor: not-allowed;
+      }
+    }
+    &[data-disabled] {
+      cursor: not-allowed;
+    }
+  }
+
+  .value {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    &[data-placeholder] {
+      color: color-mix(in oklab, var(--slp-color-base-content) 45%, transparent);
+    }
+  }
+
+  .option {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: calc(var(--slp-spacing) * 2);
+  }
+
+  .check {
+    flex: none;
+    width: 0.875rem;
+    height: 0.875rem;
+    visibility: hidden;
+
+    [data-selected] > & {
+      visibility: visible;
+    }
+  }
+}

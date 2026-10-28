@@ -1,0 +1,48 @@
+/*
+ * Mark. A translucent tint of the color role behind the text, which keeps its own color, so it stays readable on
+ * any surface and in both color schemes. A mark that wraps onto several lines gets its padding and corners on
+ * every line.
+ *
+ * Public custom properties (set on the mark or any ancestor):
+ *   --slp-mark-color            highlight color, defaults to the `color` prop's theme token
+ *
+ * Everything prefixed `--_mark-` is internal.
+ */
+@layer slopkit.components {
+  .mark {
+    --_mark-color: var(--slp-mark-color, var(--_mark-theme-color));
+
+    padding-inline: 0.15em;
+    border-radius: 0.2em;
+    background-color: color-mix(in oklab, var(--_mark-color) 30%, transparent);
+    color: inherit;
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
+
+    /* Colors */
+    &[data-color='neutral'] {
+      --_mark-theme-color: var(--slp-color-neutral);
+    }
+    &[data-color='primary'] {
+      --_mark-theme-color: var(--slp-color-primary);
+    }
+    &[data-color='secondary'] {
+      --_mark-theme-color: var(--slp-color-secondary);
+    }
+    &[data-color='accent'] {
+      --_mark-theme-color: var(--slp-color-accent);
+    }
+    &[data-color='info'] {
+      --_mark-theme-color: var(--slp-color-info);
+    }
+    &[data-color='success'] {
+      --_mark-theme-color: var(--slp-color-success);
+    }
+    &[data-color='warning'] {
+      --_mark-theme-color: var(--slp-color-warning);
+    }
+    &[data-color='error'] {
+      --_mark-theme-color: var(--slp-color-error);
+    }
+  }
+}

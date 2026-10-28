@@ -1,0 +1,97 @@
+/*
+ * InputWrapper. A column: label, description, the field, error. A label section shares the label's row, at its end,
+ * on the label's baseline. The texts are sized from the type scale, a step
+ * below the field's own text size.
+ *
+ * Everything prefixed `--_iw-` is internal.
+ */
+@layer slopkit.components {
+  .wrapper {
+    --_iw-label-size: var(--slp-font-size-sm);
+    --_iw-label-line-height: var(--slp-line-height-sm);
+    --_iw-text-size: var(--slp-font-size-xs);
+    --_iw-text-line-height: var(--slp-line-height-xs);
+    /* The error role, pulled toward the text color: darker on a light surface, lighter on a dark one. Small text
+       in the plain role can fall short of contrast on the base surface. */
+    --_iw-error-text: color-mix(in oklab, var(--slp-color-error) 60%, var(--slp-color-base-content));
+
+    display: flex;
+    flex-direction: column;
+    gap: calc(var(--slp-spacing) * 1);
+    min-width: 0;
+
+    &[data-size='xs'] {
+      --_iw-label-size: var(--slp-font-size-xs);
+      --_iw-label-line-height: var(--slp-line-height-xs);
+    }
+    &[data-size='lg'] {
+      --_iw-label-size: var(--slp-font-size-md);
+      --_iw-label-line-height: var(--slp-line-height-md);
+      --_iw-text-size: var(--slp-font-size-sm);
+      --_iw-text-line-height: var(--slp-line-height-sm);
+    }
+    &[data-size='xl'] {
+      --_iw-label-size: var(--slp-font-size-lg);
+      --_iw-label-line-height: var(--slp-line-height-lg);
+      --_iw-text-size: var(--slp-font-size-md);
+      --_iw-text-line-height: var(--slp-line-height-md);
+    }
+  }
+
+  .label {
+    align-self: flex-start;
+    color: var(--slp-color-base-content);
+    font-size: var(--_iw-label-size);
+    font-weight: 500;
+    line-height: var(--_iw-label-line-height);
+    overflow-wrap: anywhere;
+
+    /* In the row, it keeps to the shared baseline. */
+    .labelRow > & {
+      align-self: auto;
+    }
+  }
+
+  .labelRow {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: calc(var(--slp-spacing) * 4);
+    min-width: 0;
+  }
+
+  .labelSection {
+    flex-shrink: 0;
+    /* Plain text matches the label; a Text inside sets its own size, e.g. a large value readout. */
+    font-size: var(--_iw-label-size);
+    line-height: var(--_iw-label-line-height);
+    /* Alone in the row, it still sits at the end. */
+    margin-inline-start: auto;
+  }
+
+  .required {
+    margin-inline-start: 0.25em;
+    color: var(--_iw-error-text);
+  }
+
+  .description,
+  .error {
+    font-size: var(--_iw-text-size);
+    line-height: var(--_iw-text-line-height);
+    overflow-wrap: anywhere;
+  }
+
+  .description {
+    color: color-mix(in oklab, var(--slp-color-base-content) 65%, transparent);
+  }
+
+  /* The description sits under the label, so it pulls up a little to read as part of it. */
+  .label + .description,
+  .labelRow + .description {
+    margin-top: calc(var(--slp-spacing) * -0.5);
+  }
+
+  .error {
+    color: var(--_iw-error-text);
+  }
+}

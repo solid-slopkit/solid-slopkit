@@ -1,0 +1,19 @@
+{
+  // One file holds every locale of this component. The first locale in the plugin options is the default
+  // and defines the keys; the others may lag behind and fall back to it.
+  "en": {
+    "title": "Users",
+    "empty": "Nobody has joined yet.",
+    "add": "Invite someone",
+  },
+  "de": {
+    "title": "Benutzer",
+    "empty": "Noch ist niemand beigetreten.",
+    "add": "Jemanden einladen",
+  },
+  "uk": {
+    "title": "Користувачі",
+    "empty": "Ще ніхто не приєднався.",
+    "add": "Запросити когось",
+  },
+}

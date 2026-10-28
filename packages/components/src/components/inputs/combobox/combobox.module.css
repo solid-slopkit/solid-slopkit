@@ -1,0 +1,81 @@
+/*
+ * Combobox. The dropdown is the surface of the other overlays, with a menu's padding; options are rows that take a
+ * tint while active (`data-active`, which the script sets as the keyboard or the pointer moves). The listbox scrolls
+ * past 15rem.
+ */
+@layer slopkit.components {
+  .dropdown {
+    /* The floating position replaces a popover's centering. */
+    inset: auto;
+    margin: 0;
+    box-sizing: border-box;
+    max-width: calc(100vw - 1rem);
+    overflow: visible;
+    padding: calc(var(--slp-spacing) * 1);
+    border: 1px solid color-mix(in oklab, var(--slp-color-base-content) 12%, transparent);
+    border-radius: 0.75rem;
+    background-color: var(--slp-color-base-100);
+    color: var(--slp-color-base-content);
+    box-shadow: var(--slp-shadow-md);
+    font: inherit;
+  }
+
+  /* The search field: a ghost Input over a rule that runs the dropdown's full width. */
+  .search {
+    margin: calc(var(--slp-spacing) * -1) calc(var(--slp-spacing) * -1) calc(var(--slp-spacing) * 1);
+    padding: calc(var(--slp-spacing) * 1);
+    border-bottom: 1px solid color-mix(in oklab, var(--slp-color-base-content) 12%, transparent);
+
+    /* The dropdown is the field's box: no ring of its own while it has focus, which it has the whole time. */
+    & > [data-variant]:focus-within {
+      border-color: transparent;
+      box-shadow: none;
+    }
+  }
+
+  .options {
+    max-height: 15rem;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scroll-padding-block: calc(var(--slp-spacing) * 1);
+  }
+
+  .option {
+    box-sizing: border-box;
+    padding: calc(var(--slp-spacing) * 1.5) calc(var(--slp-spacing) * 2.5);
+    border-radius: 0.5rem;
+    font-size: var(--slp-font-size-sm);
+    line-height: var(--slp-line-height-sm);
+    cursor: pointer;
+    user-select: none;
+
+    &[data-active] {
+      background-color: color-mix(in oklab, var(--slp-color-base-content) 10%, transparent);
+    }
+    &[data-selected] {
+      color: var(--slp-color-primary);
+      font-weight: 500;
+    }
+    &[data-disabled] {
+      cursor: not-allowed;
+      opacity: 0.5;
+    }
+  }
+
+  .groupLabel {
+    padding: calc(var(--slp-spacing) * 1.5) calc(var(--slp-spacing) * 2.5) calc(var(--slp-spacing) * 1);
+    color: color-mix(in oklab, var(--slp-color-base-content) 70%, transparent);
+    font-size: var(--slp-font-size-xs);
+    font-weight: 500;
+    cursor: default;
+    user-select: none;
+  }
+
+  .empty {
+    padding: calc(var(--slp-spacing) * 1.5) calc(var(--slp-spacing) * 2.5);
+    color: color-mix(in oklab, var(--slp-color-base-content) 70%, transparent);
+    font-size: var(--slp-font-size-sm);
+    line-height: var(--slp-line-height-sm);
+    text-align: center;
+  }
+}

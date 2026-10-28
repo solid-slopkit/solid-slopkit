@@ -1,0 +1,116 @@
+/*
+ * Table. The rules style the table's own elements (thead, th, td, ...), so a table built from plain elements looks the
+ * same as one built from the Table parts. Rows are separated by a line; header text is bold and starts each column.
+ *
+ * Everything prefixed `--_table-` is internal.
+ */
+@layer slopkit.components {
+  .table {
+    --_table-line: color-mix(in oklab, var(--slp-color-base-content) 12%, transparent);
+    --_table-px: calc(var(--slp-spacing) * 3);
+    --_table-py: calc(var(--slp-spacing) * 2);
+
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    color: var(--slp-color-base-content);
+    font-size: var(--slp-font-size-sm);
+    line-height: var(--slp-line-height-sm);
+    font-variant-numeric: tabular-nums;
+
+    & :is(th, td) {
+      padding: var(--_table-py) var(--_table-px);
+      border-bottom: 1px solid var(--_table-line);
+      text-align: start;
+      vertical-align: top;
+    }
+
+    & th {
+      font-weight: 600;
+    }
+
+    & thead th {
+      vertical-align: bottom;
+    }
+
+    /* The last body row has no line under it, unless a footer follows. */
+    & tbody:last-child tr:last-child > :is(th, td) {
+      border-bottom: 0;
+    }
+
+    & tfoot :is(th, td) {
+      border-top: 1px solid var(--_table-line);
+      border-bottom: 0;
+      font-weight: 600;
+    }
+
+    & caption {
+      padding: var(--_table-py) var(--_table-px);
+      caption-side: bottom;
+      color: color-mix(in oklab, var(--slp-color-base-content) 65%, transparent);
+      text-align: start;
+    }
+
+    &[data-striped] tbody tr:nth-child(odd) > :is(th, td) {
+      background-color: color-mix(in oklab, var(--slp-color-base-content) 4%, transparent);
+    }
+
+    &[data-hover] tbody tr:hover > :is(th, td) {
+      background-color: color-mix(in oklab, var(--slp-color-base-content) 7%, transparent);
+    }
+
+    /* An outer border and lines between columns. Separate borders, so the rounded corners hold. */
+    &[data-bordered] {
+      border: 1px solid var(--_table-line);
+      border-radius: 0.5rem;
+
+      & :is(th, td) + :is(th, td) {
+        border-inline-start: 1px solid var(--_table-line);
+      }
+    }
+
+    /* The header cells stay at the top of the nearest scroller, on the surface color so rows don't show through. */
+    &[data-sticky-header] thead th {
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      background-color: var(--slp-color-base-100);
+    }
+
+    /* Sizes */
+    &[data-size='xs'] {
+      --_table-px: calc(var(--slp-spacing) * 2);
+      --_table-py: calc(var(--slp-spacing) * 1);
+      font-size: var(--slp-font-size-xs);
+      line-height: var(--slp-line-height-xs);
+    }
+    &[data-size='sm'] {
+      --_table-px: calc(var(--slp-spacing) * 2.5);
+      --_table-py: calc(var(--slp-spacing) * 1.5);
+      font-size: var(--slp-font-size-xs);
+      line-height: var(--slp-line-height-xs);
+    }
+    &[data-size='lg'] {
+      --_table-px: calc(var(--slp-spacing) * 4);
+      --_table-py: calc(var(--slp-spacing) * 3);
+      font-size: var(--slp-font-size-md);
+      line-height: var(--slp-line-height-md);
+    }
+    &[data-size='xl'] {
+      --_table-px: calc(var(--slp-spacing) * 5);
+      --_table-py: calc(var(--slp-spacing) * 4);
+      font-size: var(--slp-font-size-md);
+      line-height: var(--slp-line-height-md);
+    }
+  }
+
+  .scroll {
+    max-width: 100%;
+    overflow-x: auto;
+
+    &:focus-visible {
+      outline: 2px solid var(--slp-color-base-content);
+      outline-offset: 2px;
+    }
+  }
+}

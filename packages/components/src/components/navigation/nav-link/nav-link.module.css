@@ -1,0 +1,191 @@
+/*
+ * NavLink. A full-width row: sections on either side of a label with a muted description under it. A link the router
+ * marks as current (`[data-active]`) is tinted with its color (`soft`) or filled with it (`solid`). A parent's children
+ * sit under it, indented, in a one-row grid that goes from 0fr to 1fr, which CSS can animate where it can't animate a
+ * height to or from auto. Closed, they are also `visibility: hidden`, out of the tab order and the accessibility tree
+ * without leaving the DOM.
+ *
+ * Public custom properties (set on the nav link or any ancestor):
+ *   --slp-nav-link-color          the active link's color, defaults to the `color` prop's theme token
+ *   --slp-nav-link-content        the text on a `solid` active link, defaults to the token's `-content`
+ *
+ * Everything prefixed `--_nav-link-` is internal.
+ */
+@layer slopkit.components {
+  .navLink {
+    --_nav-link-color: var(--slp-nav-link-color, var(--_nav-link-theme-color));
+    --_nav-link-content: var(--slp-nav-link-content, var(--_nav-link-theme-content));
+
+    display: flex;
+    align-items: center;
+    gap: calc(var(--slp-spacing) * 3);
+    box-sizing: border-box;
+    width: 100%;
+    min-width: 0;
+    margin: 0;
+    padding: calc(var(--slp-spacing) * 2) calc(var(--slp-spacing) * 3);
+    border: 0;
+    border-radius: 0.5rem;
+    background: transparent;
+    color: var(--slp-color-base-content);
+    font: inherit;
+    font-size: var(--slp-font-size-sm);
+    line-height: var(--slp-line-height-sm);
+    text-align: start;
+    text-decoration: none;
+    cursor: pointer;
+    user-select: none;
+    transition:
+      background-color 150ms ease,
+      color 150ms ease;
+
+    &:hover:not([data-disabled], [data-active]) {
+      background-color: color-mix(in oklab, var(--slp-color-base-content) 6%, transparent);
+    }
+    &:focus-visible {
+      outline: 2px solid var(--_nav-link-color);
+      outline-offset: -2px;
+    }
+    &[data-active][data-variant='soft'] {
+      background-color: color-mix(in oklab, var(--_nav-link-color) 14%, transparent);
+      color: color-mix(in oklab, var(--_nav-link-color) 75%, var(--slp-color-base-content));
+      font-weight: 500;
+    }
+    &[data-active][data-variant='solid'] {
+      background-color: var(--_nav-link-color);
+      color: var(--_nav-link-content);
+      font-weight: 500;
+    }
+    &[data-disabled] {
+      cursor: not-allowed;
+      opacity: 0.45;
+    }
+
+    &[data-color='neutral'] {
+      --_nav-link-theme-color: var(--slp-color-neutral);
+      --_nav-link-theme-content: var(--slp-color-neutral-content);
+    }
+    &[data-color='primary'] {
+      --_nav-link-theme-color: var(--slp-color-primary);
+      --_nav-link-theme-content: var(--slp-color-primary-content);
+    }
+    &[data-color='secondary'] {
+      --_nav-link-theme-color: var(--slp-color-secondary);
+      --_nav-link-theme-content: var(--slp-color-secondary-content);
+    }
+    &[data-color='accent'] {
+      --_nav-link-theme-color: var(--slp-color-accent);
+      --_nav-link-theme-content: var(--slp-color-accent-content);
+    }
+    &[data-color='info'] {
+      --_nav-link-theme-color: var(--slp-color-info);
+      --_nav-link-theme-content: var(--slp-color-info-content);
+    }
+    &[data-color='success'] {
+      --_nav-link-theme-color: var(--slp-color-success);
+      --_nav-link-theme-content: var(--slp-color-success-content);
+    }
+    &[data-color='warning'] {
+      --_nav-link-theme-color: var(--slp-color-warning);
+      --_nav-link-theme-content: var(--slp-color-warning-content);
+    }
+    &[data-color='error'] {
+      --_nav-link-theme-color: var(--slp-color-error);
+      --_nav-link-theme-content: var(--slp-color-error-content);
+    }
+  }
+
+  .section {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+
+    & > svg {
+      width: 1.15em;
+      height: 1.15em;
+    }
+  }
+
+  .body {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  .label,
+  .description {
+    overflow-wrap: anywhere;
+
+    .navLink[data-no-wrap] & {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+
+  .description {
+    color: color-mix(in oklab, currentColor 65%, transparent);
+    font-size: var(--slp-font-size-xs);
+    line-height: var(--slp-line-height-xs);
+    font-weight: 400;
+  }
+
+  .chevron {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: 1rem;
+    height: 1rem;
+    transition: transform 200ms ease;
+
+    .navLink[data-rotate][data-opened] > & {
+      transform: rotate(90deg);
+    }
+
+    & > svg {
+      width: 1rem;
+      height: 1rem;
+    }
+  }
+
+  /* A chevron pointing to the end, drawn from two borders, which turns to point down. */
+  .defaultChevron {
+    width: 0.45rem;
+    height: 0.45rem;
+    box-sizing: border-box;
+    border-right: 2px solid currentColor;
+    border-bottom: 2px solid currentColor;
+    transform: translateX(-25%) rotate(-45deg);
+  }
+
+  .children {
+    display: grid;
+    grid-template-rows: 0fr;
+    visibility: hidden;
+    transition-property: grid-template-rows, visibility;
+    transition-duration: 200ms;
+    transition-timing-function: ease;
+
+    &[data-opened] {
+      grid-template-rows: 1fr;
+      visibility: visible;
+    }
+  }
+
+  .childrenBody {
+    /* Lets the row shrink below the content, which it clips. */
+    min-height: 0;
+    overflow: hidden;
+    padding-inline-start: 1rem;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .navLink,
+    .chevron,
+    .children {
+      transition: none;
+    }
+  }
+}

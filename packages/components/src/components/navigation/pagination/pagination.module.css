@@ -1,0 +1,161 @@
+/*
+ * Pagination. A row of square items as tall as a Button of the same size: pages and controls are outlined on the base
+ * surface, the current page is filled with the color, and the gap is plain text.
+ *
+ * Public custom properties (set on the pagination or any ancestor):
+ *   --slp-pagination-color      the current page's color, defaults to the `color` prop's theme token
+ *   --slp-pagination-content    the current page's text, defaults to the token's `-content`
+ *   --slp-pagination-radius     the items' corners, defaults to 0.5rem
+ *
+ * Everything prefixed `--_pagination-` is internal.
+ */
+@layer slopkit.components {
+  .pagination {
+    --_pagination-color: var(--slp-pagination-color, var(--_pagination-theme-color));
+    --_pagination-content: var(--slp-pagination-content, var(--_pagination-theme-content));
+    --_pagination-radius: var(--slp-pagination-radius, 0.5rem);
+    --_pagination-size: calc(var(--slp-size-field) * 8);
+    --_pagination-font-size: 0.875rem;
+    --_pagination-gap: calc(var(--slp-spacing) * 2);
+    --_pagination-border: color-mix(in oklab, var(--slp-color-base-content) 15%, transparent);
+
+    display: block;
+
+    &[data-size='xs'] {
+      --_pagination-size: calc(var(--slp-size-field) * 6);
+      --_pagination-font-size: 0.75rem;
+      --_pagination-gap: calc(var(--slp-spacing) * 1);
+    }
+    &[data-size='sm'] {
+      --_pagination-size: calc(var(--slp-size-field) * 7);
+      --_pagination-font-size: 0.8125rem;
+      --_pagination-gap: calc(var(--slp-spacing) * 1.5);
+    }
+    &[data-size='lg'] {
+      --_pagination-size: calc(var(--slp-size-field) * 10);
+      --_pagination-font-size: 1rem;
+    }
+    &[data-size='xl'] {
+      --_pagination-size: calc(var(--slp-size-field) * 12);
+      --_pagination-font-size: 1.125rem;
+      --_pagination-gap: calc(var(--slp-spacing) * 2.5);
+    }
+
+    &[data-color='neutral'] {
+      --_pagination-theme-color: var(--slp-color-neutral);
+      --_pagination-theme-content: var(--slp-color-neutral-content);
+    }
+    &[data-color='primary'] {
+      --_pagination-theme-color: var(--slp-color-primary);
+      --_pagination-theme-content: var(--slp-color-primary-content);
+    }
+    &[data-color='secondary'] {
+      --_pagination-theme-color: var(--slp-color-secondary);
+      --_pagination-theme-content: var(--slp-color-secondary-content);
+    }
+    &[data-color='accent'] {
+      --_pagination-theme-color: var(--slp-color-accent);
+      --_pagination-theme-content: var(--slp-color-accent-content);
+    }
+    &[data-color='info'] {
+      --_pagination-theme-color: var(--slp-color-info);
+      --_pagination-theme-content: var(--slp-color-info-content);
+    }
+    &[data-color='success'] {
+      --_pagination-theme-color: var(--slp-color-success);
+      --_pagination-theme-content: var(--slp-color-success-content);
+    }
+    &[data-color='warning'] {
+      --_pagination-theme-color: var(--slp-color-warning);
+      --_pagination-theme-content: var(--slp-color-warning-content);
+    }
+    &[data-color='error'] {
+      --_pagination-theme-color: var(--slp-color-error);
+      --_pagination-theme-content: var(--slp-color-error-content);
+    }
+  }
+
+  .list {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--_pagination-gap);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .entry {
+    display: flex;
+  }
+
+  .item {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    min-width: var(--_pagination-size);
+    height: var(--_pagination-size);
+    margin: 0;
+    padding: 0 calc(var(--slp-spacing) * 2);
+    border: 1px solid var(--_pagination-border);
+    border-radius: var(--_pagination-radius);
+    background-color: var(--slp-color-base-100);
+    color: var(--slp-color-base-content);
+    font: inherit;
+    font-size: var(--_pagination-font-size);
+    font-variant-numeric: tabular-nums;
+    font-weight: 500;
+    line-height: 1;
+    text-decoration: none;
+    cursor: pointer;
+    user-select: none;
+    transition:
+      background-color 150ms ease,
+      border-color 150ms ease,
+      color 150ms ease;
+
+    &:hover:not([data-disabled], [data-current]) {
+      background-color: var(--slp-color-base-200);
+    }
+    &:focus-visible {
+      outline: 2px solid var(--_pagination-color);
+      outline-offset: 2px;
+    }
+    &[data-current] {
+      border-color: var(--_pagination-color);
+      background-color: var(--_pagination-color);
+      color: var(--_pagination-content);
+    }
+    &[data-disabled] {
+      cursor: not-allowed;
+      opacity: 0.45;
+    }
+
+    & > svg {
+      width: 1.1em;
+      height: 1.1em;
+    }
+  }
+
+  /* A disabled pagination dims its current page too. */
+  .pagination[data-disabled] .item[data-current] {
+    opacity: 0.45;
+  }
+
+  .dots {
+    align-items: center;
+    justify-content: center;
+    min-width: var(--_pagination-size);
+    height: var(--_pagination-size);
+    color: color-mix(in oklab, var(--slp-color-base-content) 60%, transparent);
+    font-size: var(--_pagination-font-size);
+    user-select: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .item {
+      transition: none;
+    }
+  }
+}

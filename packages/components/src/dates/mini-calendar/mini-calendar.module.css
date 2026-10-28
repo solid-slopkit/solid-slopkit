@@ -1,0 +1,172 @@
+/*
+ * MiniCalendar. A row: previous, the days (each its weekday over its number), next. Days are plain until hovered;
+ * today is outlined and the chosen day is filled with the color.
+ *
+ * Public custom properties (set on the mini calendar or any ancestor):
+ *   --slp-mini-calendar-color      the chosen day, defaults to the `color` prop's theme token
+ *   --slp-mini-calendar-content    text on the chosen day, defaults to the token's `-content`
+ *   --slp-mini-calendar-radius     the days' corners, defaults to 0.5rem
+ *
+ * Everything prefixed `--_mini-calendar-` is internal.
+ */
+@layer slopkit.components {
+  .miniCalendar {
+    --_mini-calendar-color: var(--slp-mini-calendar-color, var(--_mini-calendar-theme-color));
+    --_mini-calendar-content: var(--slp-mini-calendar-content, var(--_mini-calendar-theme-content));
+    --_mini-calendar-radius: var(--slp-mini-calendar-radius, 0.5rem);
+    --_mini-calendar-width: calc(var(--slp-size-field) * 11);
+    --_mini-calendar-height: calc(var(--slp-size-field) * 14);
+    --_mini-calendar-font-size: 0.875rem;
+
+    display: inline-flex;
+    align-items: center;
+    gap: calc(var(--slp-spacing) * 1);
+    color: var(--slp-color-base-content);
+    font-size: var(--_mini-calendar-font-size);
+
+    &[data-size='xs'] {
+      --_mini-calendar-width: calc(var(--slp-size-field) * 8);
+      --_mini-calendar-height: calc(var(--slp-size-field) * 10);
+      --_mini-calendar-font-size: 0.75rem;
+    }
+    &[data-size='sm'] {
+      --_mini-calendar-width: calc(var(--slp-size-field) * 9.5);
+      --_mini-calendar-height: calc(var(--slp-size-field) * 12);
+      --_mini-calendar-font-size: 0.8125rem;
+    }
+    &[data-size='lg'] {
+      --_mini-calendar-width: calc(var(--slp-size-field) * 13);
+      --_mini-calendar-height: calc(var(--slp-size-field) * 16);
+      --_mini-calendar-font-size: 1rem;
+    }
+    &[data-size='xl'] {
+      --_mini-calendar-width: calc(var(--slp-size-field) * 15);
+      --_mini-calendar-height: calc(var(--slp-size-field) * 18);
+      --_mini-calendar-font-size: 1.125rem;
+    }
+
+    &[data-color='neutral'] {
+      --_mini-calendar-theme-color: var(--slp-color-neutral);
+      --_mini-calendar-theme-content: var(--slp-color-neutral-content);
+    }
+    &[data-color='primary'] {
+      --_mini-calendar-theme-color: var(--slp-color-primary);
+      --_mini-calendar-theme-content: var(--slp-color-primary-content);
+    }
+    &[data-color='secondary'] {
+      --_mini-calendar-theme-color: var(--slp-color-secondary);
+      --_mini-calendar-theme-content: var(--slp-color-secondary-content);
+    }
+    &[data-color='accent'] {
+      --_mini-calendar-theme-color: var(--slp-color-accent);
+      --_mini-calendar-theme-content: var(--slp-color-accent-content);
+    }
+    &[data-color='info'] {
+      --_mini-calendar-theme-color: var(--slp-color-info);
+      --_mini-calendar-theme-content: var(--slp-color-info-content);
+    }
+    &[data-color='success'] {
+      --_mini-calendar-theme-color: var(--slp-color-success);
+      --_mini-calendar-theme-content: var(--slp-color-success-content);
+    }
+    &[data-color='warning'] {
+      --_mini-calendar-theme-color: var(--slp-color-warning);
+      --_mini-calendar-theme-content: var(--slp-color-warning-content);
+    }
+    &[data-color='error'] {
+      --_mini-calendar-theme-color: var(--slp-color-error);
+      --_mini-calendar-theme-content: var(--slp-color-error-content);
+    }
+  }
+
+  .days {
+    display: flex;
+    gap: calc(var(--slp-spacing) * 1);
+  }
+
+  .control,
+  .day {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: var(--_mini-calendar-radius);
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    line-height: 1;
+    cursor: pointer;
+    user-select: none;
+    transition:
+      background-color 150ms ease,
+      color 150ms ease;
+
+    &:hover:not([data-disabled], [data-selected]) {
+      background-color: var(--slp-color-base-200);
+    }
+    &:focus-visible {
+      outline: 2px solid var(--_mini-calendar-color);
+      outline-offset: 2px;
+    }
+    &[data-disabled] {
+      cursor: not-allowed;
+      opacity: 0.4;
+    }
+  }
+
+  .control {
+    width: calc(var(--_mini-calendar-width) * 0.75);
+    height: var(--_mini-calendar-height);
+
+    & > svg {
+      width: 1.15em;
+      height: 1.15em;
+    }
+  }
+
+  .day {
+    flex-direction: column;
+    gap: calc(var(--slp-spacing) * 1.5);
+    width: var(--_mini-calendar-width);
+    height: var(--_mini-calendar-height);
+    font-variant-numeric: tabular-nums;
+
+    &[data-today]:not([data-selected]) {
+      box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--slp-color-base-content) 35%, transparent);
+    }
+    &[data-selected] {
+      background-color: var(--_mini-calendar-color);
+      color: var(--_mini-calendar-content);
+    }
+  }
+
+  .weekday {
+    font-size: 0.8em;
+    opacity: 0.7;
+  }
+
+  .number {
+    font-size: 1.15em;
+    font-weight: 600;
+  }
+
+  /* Read by screen readers only. */
+  .range {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .control,
+    .day {
+      transition: none;
+    }
+  }
+}

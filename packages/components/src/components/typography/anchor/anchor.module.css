@@ -1,0 +1,22 @@
+/*
+ * Anchor. Text's rules set the size and color; these add the link look.
+ */
+@layer slopkit.components {
+  .anchor {
+    text-decoration-line: none;
+    text-decoration-thickness: from-font;
+    text-underline-offset: 0.15em;
+    cursor: pointer;
+
+    &[data-underline='always'],
+    &[data-underline='hover']:hover {
+      text-decoration-line: underline;
+    }
+
+    &:focus-visible {
+      border-radius: 2px;
+      outline: 2px solid currentColor;
+      outline-offset: 2px;
+    }
+  }
+}

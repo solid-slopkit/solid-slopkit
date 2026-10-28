@@ -1,0 +1,114 @@
+/*
+ * Modal. The <dialog> is a transparent frame over the whole viewport that lays out the content box and scrolls when
+ * it's taller than the viewport; a press on the frame, outside the box, is a press on the backdrop. The backdrop
+ * fades with the content.
+ *
+ * Everything prefixed `--_modal-` is internal.
+ */
+@layer slopkit.components {
+  .dialog {
+    --_modal-padding: calc(var(--slp-spacing) * 5);
+
+    box-sizing: border-box;
+    width: 100%;
+    max-width: none;
+    height: 100%;
+    max-height: none;
+    margin: 0;
+    padding: 8vh calc(var(--slp-spacing) * 4);
+    overflow-y: auto;
+    border: 0;
+    background: transparent;
+    color: var(--slp-color-base-content);
+    font: inherit;
+    overscroll-behavior: contain;
+
+    &[open] {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    &::backdrop {
+      background-color: color-mix(in oklab, black 50%, transparent);
+      transition: opacity var(--_dialog-duration) ease;
+    }
+
+    &:is([data-status='starting'], [data-status='ending'])::backdrop {
+      opacity: 0;
+    }
+
+    &[data-centered] {
+      justify-content: center;
+    }
+
+    &[data-full-screen] {
+      padding: 0;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      &::backdrop {
+        transition: none;
+      }
+    }
+  }
+
+  .content {
+    --_modal-width: 28rem;
+
+    box-sizing: border-box;
+    width: 100%;
+    max-width: var(--_modal-width);
+    flex: none;
+    border-radius: 1rem;
+    background-color: var(--slp-color-base-100);
+    box-shadow: var(--slp-shadow-xl);
+    outline: none;
+
+    .dialog[data-size='xs'] > & {
+      --_modal-width: 20rem;
+    }
+    .dialog[data-size='sm'] > & {
+      --_modal-width: 24rem;
+    }
+    .dialog[data-size='lg'] > & {
+      --_modal-width: 38rem;
+    }
+    .dialog[data-size='xl'] > & {
+      --_modal-width: 48rem;
+    }
+
+    .dialog[data-full-screen] > & {
+      max-width: none;
+      min-height: 100%;
+      border-radius: 0;
+      box-shadow: none;
+    }
+  }
+
+  .header {
+    display: flex;
+    align-items: center;
+    gap: calc(var(--_modal-padding) / 2);
+    padding: var(--_modal-padding) var(--_modal-padding) 0;
+  }
+
+  .title {
+    flex: 1;
+    min-width: 0;
+    margin: 0;
+    font-size: var(--slp-font-size-lg);
+    font-weight: 600;
+    line-height: var(--slp-line-height-lg);
+  }
+
+  /* At the end of the header, also when there's no title. */
+  .close {
+    margin-inline-start: auto;
+    margin-block: calc(var(--slp-spacing) * -1);
+  }
+
+  .body {
+    padding: var(--_modal-padding);
+  }
+}

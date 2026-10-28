@@ -1,0 +1,127 @@
+/*
+ * Rating. Each star is an empty outline with a filled copy over it, clipped to the star's fill (whole, part or
+ * none). Choosing, each star has one hidden radio per part over it, in a label that takes the pointer.
+ *
+ * Public custom properties (set on the rating or any ancestor):
+ *   --slp-rating-color   filled star color, defaults to the `color` prop's theme token
+ *
+ * Everything prefixed `--_rating-` is internal.
+ */
+@layer slopkit.components {
+  .rating {
+    --_rating-color: var(--slp-rating-color, var(--_rating-theme-color));
+    --_rating-size: 1.5rem;
+
+    &[data-size='xs'] {
+      --_rating-size: 1rem;
+    }
+    &[data-size='sm'] {
+      --_rating-size: 1.25rem;
+    }
+    &[data-size='lg'] {
+      --_rating-size: 2rem;
+    }
+    &[data-size='xl'] {
+      --_rating-size: 2.5rem;
+    }
+
+    /* Colors */
+    &[data-color='neutral'] {
+      --_rating-theme-color: var(--slp-color-neutral);
+    }
+    &[data-color='primary'] {
+      --_rating-theme-color: var(--slp-color-primary);
+    }
+    &[data-color='secondary'] {
+      --_rating-theme-color: var(--slp-color-secondary);
+    }
+    &[data-color='accent'] {
+      --_rating-theme-color: var(--slp-color-accent);
+    }
+    &[data-color='info'] {
+      --_rating-theme-color: var(--slp-color-info);
+    }
+    &[data-color='success'] {
+      --_rating-theme-color: var(--slp-color-success);
+    }
+    &[data-color='warning'] {
+      --_rating-theme-color: var(--slp-color-warning);
+    }
+    &[data-color='error'] {
+      --_rating-theme-color: var(--slp-color-error);
+    }
+  }
+
+  .stars {
+    display: inline-flex;
+    align-self: flex-start;
+    gap: calc(var(--_rating-size) / 8);
+  }
+
+  .item {
+    position: relative;
+    display: inline-flex;
+    border-radius: 4px;
+
+    &:has(.input:focus-visible) {
+      outline: 2px solid var(--_rating-color);
+      outline-offset: 2px;
+    }
+
+    [data-disabled] & {
+      opacity: 0.5;
+    }
+  }
+
+  .star {
+    position: relative;
+    display: block;
+    width: var(--_rating-size);
+    height: var(--_rating-size);
+
+    & > svg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      stroke-width: 1.5;
+      stroke-linejoin: round;
+    }
+  }
+
+  .empty {
+    fill: color-mix(in oklab, var(--slp-color-base-content) 15%, transparent);
+    stroke: color-mix(in oklab, var(--slp-color-base-content) 15%, transparent);
+  }
+
+  .full {
+    fill: var(--_rating-color);
+    stroke: var(--_rating-color);
+    clip-path: inset(0 calc(100% - var(--_rating-fill)) 0 0);
+  }
+
+  .part {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    z-index: 1;
+    cursor: pointer;
+
+    [data-disabled] & {
+      cursor: not-allowed;
+    }
+  }
+
+  /* Hidden like VisuallyHidden: still focusable and in the accessibility tree. */
+  .input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    border: 0;
+    white-space: nowrap;
+  }
+}

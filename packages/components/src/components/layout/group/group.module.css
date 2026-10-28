@@ -1,0 +1,16 @@
+/*
+ * Group's children. `:where()` keeps these at zero specificity, so a child's own classes (such as Box's
+ * `miw`) still win.
+ */
+@layer slopkit.components {
+  :where(.group[data-grow]) > * {
+    flex-grow: 1;
+  }
+
+  /* Equal shares that content cannot push past: each child gets the same width, without counting
+     children. */
+  :where(.group[data-grow][data-prevent-grow-overflow]) > * {
+    flex-basis: 0;
+    min-width: 0;
+  }
+}

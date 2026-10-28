@@ -1,0 +1,13 @@
+/*
+ * BackgroundImage. The image covers the box and stays centered, whatever the box's size; the content sits on top.
+ * The URL arrives in --_background-image, set inline by the component.
+ */
+@layer slopkit.components {
+  .backgroundImage {
+    box-sizing: border-box;
+    background-image: var(--_background-image);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+  }
+}

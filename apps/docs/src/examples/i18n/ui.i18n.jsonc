@@ -1,0 +1,7 @@
+{
+  // The built-in text of slopkit components is a prop on each component, filled from a translation file
+  // like any other text.
+  "en": { "close": "Close", "heading": "Notifications", "body": "You have new messages." },
+  "de": { "close": "Schließen", "heading": "Benachrichtigungen", "body": "Sie haben neue Nachrichten." },
+  "uk": { "close": "Закрити", "heading": "Сповіщення", "body": "У вас нові повідомлення." },
+}

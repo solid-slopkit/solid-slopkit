@@ -1,0 +1,160 @@
+/*
+ * Indicator. The root hugs its child and anchors the mark, which is centered on the chosen corner or edge and ringed
+ * in the surface color so it stands apart from the child. A dot without a label; a pill with one.
+ *
+ * Public custom properties (set on the indicator or any ancestor):
+ *   --slp-indicator-color       mark color, defaults to the `color` prop's theme token
+ *   --slp-indicator-content     label color on the mark, defaults to the token's `-content`
+ *
+ * Everything prefixed `--_indicator-` is internal.
+ */
+@layer slopkit.components {
+  .indicator {
+    --_indicator-offset: 0px;
+
+    position: relative;
+    display: inline-flex;
+    vertical-align: middle;
+  }
+
+  .mark {
+    --_indicator-color: var(--slp-indicator-color, var(--_indicator-theme-color));
+    --_indicator-content: var(--slp-indicator-content, var(--_indicator-theme-content));
+    --_indicator-dot: 0.625rem;
+    --_indicator-height: 1.125rem;
+    --_indicator-font-size: 0.6875rem;
+    --_indicator-x: 50%;
+    --_indicator-y: -50%;
+
+    position: absolute;
+    z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    width: var(--_indicator-dot);
+    height: var(--_indicator-dot);
+    border-radius: calc(infinity * 1px);
+    background-color: var(--_indicator-color);
+    box-shadow: 0 0 0 2px var(--slp-color-base-100);
+    color: var(--_indicator-content);
+    font-size: var(--_indicator-font-size);
+    font-weight: 600;
+    line-height: 1;
+    white-space: nowrap;
+    translate: var(--_indicator-x) var(--_indicator-y);
+    pointer-events: none;
+
+    &[data-with-label] {
+      width: auto;
+      min-width: var(--_indicator-height);
+      height: var(--_indicator-height);
+      padding-inline: calc(var(--_indicator-height) / 4);
+    }
+
+    /* Positions: the mark's center sits on the point, moved inward by the offset. */
+    &[data-position^='top'] {
+      top: var(--_indicator-offset);
+    }
+    &[data-position^='bottom'] {
+      bottom: var(--_indicator-offset);
+      --_indicator-y: 50%;
+    }
+    &[data-position^='middle'] {
+      top: 50%;
+    }
+    &[data-position$='end'] {
+      right: var(--_indicator-offset);
+    }
+    &[data-position$='start'] {
+      left: var(--_indicator-offset);
+      --_indicator-x: -50%;
+    }
+    &[data-position$='center'] {
+      left: 50%;
+      --_indicator-x: -50%;
+    }
+
+    /* Processing: a ring that grows and fades from the mark. */
+    &[data-processing]::after {
+      content: '';
+      position: absolute;
+      /* Above the mark's background, below its label: the mark's z-index makes it a stacking context. */
+      z-index: -1;
+      inset: 0;
+      border-radius: inherit;
+      background-color: var(--_indicator-color);
+      animation: slp-indicator-ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      &[data-processing]::after {
+        animation: none;
+      }
+    }
+
+    /* Colors */
+    &[data-color='neutral'] {
+      --_indicator-theme-color: var(--slp-color-neutral);
+      --_indicator-theme-content: var(--slp-color-neutral-content);
+    }
+    &[data-color='primary'] {
+      --_indicator-theme-color: var(--slp-color-primary);
+      --_indicator-theme-content: var(--slp-color-primary-content);
+    }
+    &[data-color='secondary'] {
+      --_indicator-theme-color: var(--slp-color-secondary);
+      --_indicator-theme-content: var(--slp-color-secondary-content);
+    }
+    &[data-color='accent'] {
+      --_indicator-theme-color: var(--slp-color-accent);
+      --_indicator-theme-content: var(--slp-color-accent-content);
+    }
+    &[data-color='info'] {
+      --_indicator-theme-color: var(--slp-color-info);
+      --_indicator-theme-content: var(--slp-color-info-content);
+    }
+    &[data-color='success'] {
+      --_indicator-theme-color: var(--slp-color-success);
+      --_indicator-theme-content: var(--slp-color-success-content);
+    }
+    &[data-color='warning'] {
+      --_indicator-theme-color: var(--slp-color-warning);
+      --_indicator-theme-content: var(--slp-color-warning-content);
+    }
+    &[data-color='error'] {
+      --_indicator-theme-color: var(--slp-color-error);
+      --_indicator-theme-content: var(--slp-color-error-content);
+    }
+
+    /* Sizes */
+    &[data-size='xs'] {
+      --_indicator-dot: 0.375rem;
+      --_indicator-height: 0.875rem;
+      --_indicator-font-size: 0.5625rem;
+    }
+    &[data-size='sm'] {
+      --_indicator-dot: 0.5rem;
+      --_indicator-height: 1rem;
+      --_indicator-font-size: 0.625rem;
+    }
+    &[data-size='lg'] {
+      --_indicator-dot: 0.75rem;
+      --_indicator-height: 1.25rem;
+      --_indicator-font-size: 0.75rem;
+    }
+    &[data-size='xl'] {
+      --_indicator-dot: 0.875rem;
+      --_indicator-height: 1.375rem;
+      --_indicator-font-size: 0.8125rem;
+    }
+  }
+}
+
+@keyframes slp-indicator-ping {
+  75%,
+  100% {
+    opacity: 0;
+    transform: scale(2);
+  }
+}

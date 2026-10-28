@@ -1,0 +1,6 @@
+{
+  // Shared strings are an ordinary translation file that several components import.
+  "en": { "save": "Save", "cancel": "Cancel" },
+  "de": { "save": "Speichern", "cancel": "Abbrechen" },
+  "uk": { "save": "Зберегти", "cancel": "Скасувати" },
+}

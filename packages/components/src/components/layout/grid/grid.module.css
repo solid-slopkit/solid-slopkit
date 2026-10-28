@@ -1,0 +1,23 @@
+/*
+ * Grid's static layout. The generated classes set the variables (`--_grid-gutter`, `--_grid-columns`) and the
+ * column sizes; `:where()` keeps these rules at zero specificity, so a generated class always wins over them.
+ *
+ * The gutter is a `gap`, not padding on the columns with a negative margin on the grid, so Grid needs no
+ * inner wrapper and never overflows its parent. A column's width accounts for the gaps it spans.
+ */
+@layer slopkit.components {
+  :where(.grid) {
+    --_grid-grow: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--_grid-gutter);
+  }
+
+  :where(.grid[data-grow]) {
+    --_grid-grow: 1;
+  }
+
+  :where(.col) {
+    flex-shrink: 0;
+  }
+}

@@ -1,0 +1,66 @@
+/*
+ * Overlay.
+ *
+ * Public custom properties (set on the overlay or any ancestor):
+ *   --slp-overlay-color         the layer's color, before its opacity; defaults to the `color` prop's token, or black
+ *
+ * Everything prefixed `--_overlay-` is internal.
+ */
+@layer slopkit.components {
+  .overlay {
+    --_overlay-color: var(--slp-overlay-color, var(--_overlay-theme-color, black));
+
+    position: absolute;
+    inset: 0;
+    box-sizing: border-box;
+    border-radius: inherit;
+    background-color: color-mix(in oklab, var(--_overlay-color) var(--_overlay-opacity), transparent);
+
+    &[data-fixed] {
+      position: fixed;
+    }
+
+    &[data-center] {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Only when asked for: a backdrop filter costs a repaint of what's behind it. */
+    &[data-blur] {
+      backdrop-filter: blur(var(--_overlay-blur));
+    }
+
+    &[data-color='neutral'] {
+      --_overlay-theme-color: var(--slp-color-neutral);
+    }
+
+    &[data-color='primary'] {
+      --_overlay-theme-color: var(--slp-color-primary);
+    }
+
+    &[data-color='secondary'] {
+      --_overlay-theme-color: var(--slp-color-secondary);
+    }
+
+    &[data-color='accent'] {
+      --_overlay-theme-color: var(--slp-color-accent);
+    }
+
+    &[data-color='info'] {
+      --_overlay-theme-color: var(--slp-color-info);
+    }
+
+    &[data-color='success'] {
+      --_overlay-theme-color: var(--slp-color-success);
+    }
+
+    &[data-color='warning'] {
+      --_overlay-theme-color: var(--slp-color-warning);
+    }
+
+    &[data-color='error'] {
+      --_overlay-theme-color: var(--slp-color-error);
+    }
+  }
+}

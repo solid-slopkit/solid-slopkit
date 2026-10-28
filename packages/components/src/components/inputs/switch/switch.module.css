@@ -1,0 +1,125 @@
+/*
+ * Switch. The track is the native input with `appearance: none`; the thumb is a span over it that lets clicks
+ * through and slides to the end when on. The track is as tall as the choice size and 1.8 times as wide.
+ *
+ * Public custom properties (set on the switch or any ancestor):
+ *   --slp-switch-color     track color when on, defaults to the `color` prop's theme token
+ *   --slp-switch-content   thumb color when on, defaults to the token's `-content`
+ *
+ * Everything prefixed `--_sw-` is internal.
+ */
+@layer slopkit.components {
+  .switch {
+    --_sw-color: var(--slp-switch-color, var(--_sw-theme-color));
+    --_sw-content: var(--slp-switch-content, var(--_sw-theme-content));
+    --_sw-width: calc(var(--_choice-size) * 1.8);
+    --_sw-inset: max(2px, calc(var(--_choice-size) * 0.12));
+    --_sw-thumb: calc(var(--_choice-size) - var(--_sw-inset) * 2);
+
+    &[data-invalid] .track {
+      border-color: var(--slp-color-error);
+    }
+
+    /* Colors */
+    &[data-color='neutral'] {
+      --_sw-theme-color: var(--slp-color-neutral);
+      --_sw-theme-content: var(--slp-color-neutral-content);
+    }
+    &[data-color='primary'] {
+      --_sw-theme-color: var(--slp-color-primary);
+      --_sw-theme-content: var(--slp-color-primary-content);
+    }
+    &[data-color='secondary'] {
+      --_sw-theme-color: var(--slp-color-secondary);
+      --_sw-theme-content: var(--slp-color-secondary-content);
+    }
+    &[data-color='accent'] {
+      --_sw-theme-color: var(--slp-color-accent);
+      --_sw-theme-content: var(--slp-color-accent-content);
+    }
+    &[data-color='info'] {
+      --_sw-theme-color: var(--slp-color-info);
+      --_sw-theme-content: var(--slp-color-info-content);
+    }
+    &[data-color='success'] {
+      --_sw-theme-color: var(--slp-color-success);
+      --_sw-theme-content: var(--slp-color-success-content);
+    }
+    &[data-color='warning'] {
+      --_sw-theme-color: var(--slp-color-warning);
+      --_sw-theme-content: var(--slp-color-warning-content);
+    }
+    &[data-color='error'] {
+      --_sw-theme-color: var(--slp-color-error);
+      --_sw-theme-content: var(--slp-color-error-content);
+    }
+  }
+
+  .control {
+    position: relative;
+    display: flex;
+    width: var(--_sw-width);
+    height: var(--_choice-size);
+  }
+
+  .track {
+    box-sizing: border-box;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    border: 1px solid color-mix(in oklab, var(--slp-color-base-content) 20%, transparent);
+    border-radius: calc(infinity * 1px);
+    background-color: color-mix(in oklab, var(--slp-color-base-content) 18%, var(--slp-color-base-100));
+    appearance: none;
+    cursor: pointer;
+    transition:
+      background-color 0.15s,
+      border-color 0.15s;
+
+    [data-checked] > * > & {
+      border-color: var(--_sw-color);
+      background-color: var(--_sw-color);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--_sw-color);
+      outline-offset: 2px;
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+      opacity: 0.5;
+    }
+  }
+
+  .thumb {
+    position: absolute;
+    top: var(--_sw-inset);
+    left: var(--_sw-inset);
+    width: var(--_sw-thumb);
+    height: var(--_sw-thumb);
+    border-radius: 50%;
+    background-color: var(--slp-color-base-100);
+    box-shadow: 0 1px 2px oklch(0% 0 0 / 0.25);
+    pointer-events: none;
+    transition:
+      translate 0.15s ease,
+      background-color 0.15s;
+
+    [data-checked] > * > & {
+      translate: calc(var(--_sw-width) - var(--_choice-size)) 0;
+      background-color: var(--_sw-content);
+    }
+
+    [data-disabled] > * > & {
+      opacity: 0.6;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .track,
+    .thumb {
+      transition: none;
+    }
+  }
+}

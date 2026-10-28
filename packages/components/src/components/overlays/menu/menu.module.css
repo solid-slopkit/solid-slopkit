@@ -1,0 +1,160 @@
+/*
+ * Menu. The dropdown is the same surface as a popover's, with less padding; items are full-width rows that take a tint
+ * while focused, which the pointer and the keyboard both move.
+ *
+ * Everything prefixed `--_menu-` is internal.
+ */
+@layer slopkit.components {
+  .dropdown {
+    --_menu-arrow-size: 0.625rem;
+
+    /* The floating position replaces a popover's centering. */
+    inset: auto;
+    margin: 0;
+    box-sizing: border-box;
+    min-width: 12rem;
+    max-width: calc(100vw - 1rem);
+    overflow: visible;
+    padding: calc(var(--slp-spacing) * 1);
+    border: 1px solid color-mix(in oklab, var(--slp-color-base-content) 12%, transparent);
+    border-radius: 0.75rem;
+    background-color: var(--slp-color-base-100);
+    color: var(--slp-color-base-content);
+    box-shadow: var(--slp-shadow-md);
+    font: inherit;
+
+    /* Focus lands on the menu itself when it's opened with a pointer; it isn't a control. */
+    &:focus-visible {
+      outline: none;
+    }
+  }
+
+  .item {
+    --_menu-item-color: var(--_menu-item-theme-color, var(--slp-color-base-content));
+
+    display: flex;
+    align-items: center;
+    gap: calc(var(--slp-spacing) * 2.5);
+    box-sizing: border-box;
+    width: 100%;
+    margin: 0;
+    padding: calc(var(--slp-spacing) * 1.5) calc(var(--slp-spacing) * 2.5);
+    border: 0;
+    border-radius: 0.5rem;
+    background: transparent;
+    color: var(--_menu-item-color);
+    font: inherit;
+    font-size: var(--slp-font-size-sm);
+    line-height: var(--slp-line-height-sm);
+    text-align: start;
+    text-decoration: none;
+    cursor: pointer;
+    outline: none;
+
+    &:focus {
+      background-color: color-mix(in oklab, var(--_menu-item-color) 10%, transparent);
+    }
+
+    &[data-disabled] {
+      cursor: not-allowed;
+      opacity: 0.5;
+    }
+
+    &[data-color='neutral'] {
+      --_menu-item-theme-color: var(--slp-color-neutral);
+    }
+
+    &[data-color='primary'] {
+      --_menu-item-theme-color: var(--slp-color-primary);
+    }
+
+    &[data-color='secondary'] {
+      --_menu-item-theme-color: var(--slp-color-secondary);
+    }
+
+    &[data-color='accent'] {
+      --_menu-item-theme-color: var(--slp-color-accent);
+    }
+
+    &[data-color='info'] {
+      --_menu-item-theme-color: var(--slp-color-info);
+    }
+
+    &[data-color='success'] {
+      --_menu-item-theme-color: var(--slp-color-success);
+    }
+
+    &[data-color='warning'] {
+      --_menu-item-theme-color: var(--slp-color-warning);
+    }
+
+    &[data-color='error'] {
+      --_menu-item-theme-color: var(--slp-color-error);
+    }
+  }
+
+  .label {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .section {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+
+    & svg {
+      width: 1rem;
+      height: 1rem;
+    }
+
+    &[data-position='right'] {
+      opacity: 0.6;
+      font-size: var(--slp-font-size-xs);
+    }
+  }
+
+  .menuLabel {
+    padding: calc(var(--slp-spacing) * 1.5) calc(var(--slp-spacing) * 2.5) calc(var(--slp-spacing) * 1);
+    color: color-mix(in oklab, var(--slp-color-base-content) 70%, transparent);
+    font-size: var(--slp-font-size-xs);
+    font-weight: 500;
+  }
+
+  .divider {
+    margin: calc(var(--slp-spacing) * 1) calc(var(--slp-spacing) * -1);
+    border-top: 1px solid color-mix(in oklab, var(--slp-color-base-content) 12%, transparent);
+  }
+  /* A square turned 45°, half outside the edge facing the target, with the border on its two outer sides. */
+  .arrow {
+    position: absolute;
+    width: var(--_menu-arrow-size);
+    height: var(--_menu-arrow-size);
+    box-sizing: border-box;
+    background-color: inherit;
+    border: inherit;
+    border-radius: 0;
+    rotate: 45deg;
+
+    [data-placement^='bottom'] > & {
+      top: calc(var(--_menu-arrow-size) / -2);
+      border-right-color: transparent;
+      border-bottom-color: transparent;
+    }
+    [data-placement^='top'] > & {
+      bottom: calc(var(--_menu-arrow-size) / -2);
+      border-left-color: transparent;
+      border-top-color: transparent;
+    }
+    [data-placement^='right'] > & {
+      left: calc(var(--_menu-arrow-size) / -2);
+      border-right-color: transparent;
+      border-top-color: transparent;
+    }
+    [data-placement^='left'] > & {
+      right: calc(var(--_menu-arrow-size) / -2);
+      border-left-color: transparent;
+      border-bottom-color: transparent;
+    }
+  }
+}

@@ -1,0 +1,10 @@
+/*
+ * Space. The generated class sets `width` / `height`. `:where()` keeps this rule at zero specificity, so a
+ * user class still wins.
+ */
+@layer slopkit.components {
+  /* In a flex row or column, a full row would otherwise shrink the space away. */
+  :where(.space) {
+    flex-shrink: 0;
+  }
+}

@@ -1,0 +1,14 @@
+{
+  // The Vite plugin: declarations only, the JavaScript is bundled by `vite build -c vite.plugin.config.ts`.
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "rootDir": "src",
+    "emitDeclarationOnly": true,
+    "declaration": true,
+    "outDir": "dist/types",
+    "types": ["node"]
+  },
+  "include": [],
+  "files": ["src/vite.ts"]
+}

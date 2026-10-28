@@ -1,0 +1,15 @@
+{
+  // Compiled by the plugin in vitest.config.ts: the end-to-end test imports this like an app would.
+  "en": {
+    "title": "Users",
+    "greeting": "Hello {name}",
+    "items": "{n, plural, one {# user} other {# users}}",
+    "form": { "submit": "Save" },
+  },
+  "de": {
+    "title": "Benutzer",
+    "greeting": "Hallo {name}",
+    "items": "{n, plural, one {# Benutzer} other {# Benutzer}}",
+    "form": { "submit": "Speichern" },
+  },
+}

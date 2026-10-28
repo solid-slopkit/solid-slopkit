@@ -1,0 +1,64 @@
+/*
+ * Burger. An ActionIcon whose icon is three lines drawn in CSS: the middle one is the slot itself, the outer two its
+ * ::before and ::after. Opened, the middle line fades and the outer two meet in the middle and turn into an X. Sized
+ * in em, so the lines follow the button's font size and with it its `size`.
+ *
+ * Everything prefixed `--_burger-` is internal.
+ */
+@layer slopkit.components {
+  .burger {
+    --_burger-width: 1.15em;
+    --_burger-thickness: max(2px, 0.125em);
+    --_burger-gap: 0.33em;
+    --_burger-duration: 0.2s;
+
+    @media (prefers-reduced-motion: reduce) {
+      --_burger-duration: 0s;
+    }
+  }
+
+  .lines {
+    position: relative;
+    display: block;
+    width: var(--_burger-width);
+    height: var(--_burger-thickness);
+    border-radius: calc(infinity * 1px);
+    background-color: currentColor;
+    transition: background-color var(--_burger-duration) ease;
+
+    &::before,
+    &::after {
+      content: '';
+      position: absolute;
+      inset-inline: 0;
+      height: var(--_burger-thickness);
+      border-radius: inherit;
+      background-color: currentColor;
+      transition:
+        translate var(--_burger-duration) ease,
+        rotate var(--_burger-duration) ease;
+    }
+
+    &::before {
+      translate: 0 calc((var(--_burger-gap) + var(--_burger-thickness)) * -1);
+    }
+
+    &::after {
+      translate: 0 calc(var(--_burger-gap) + var(--_burger-thickness));
+    }
+
+    [data-opened] > & {
+      background-color: transparent;
+
+      &::before {
+        translate: 0 0;
+        rotate: 45deg;
+      }
+
+      &::after {
+        translate: 0 0;
+        rotate: -45deg;
+      }
+    }
+  }
+}

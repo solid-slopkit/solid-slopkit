@@ -1,0 +1,160 @@
+/*
+ * Card. The root sets the surface and one spacing value, --_card-spacing: the gap between the parts, the padding
+ * above the first and below the last, and each part's inline padding. Vertical cards lay the parts out in DOM order;
+ * horizontal ones put the image in a column on the start side, with the other parts stacked beside it (one of each
+ * part).
+ *
+ * --slp-card-spacing overrides that value for both sizes. Everything prefixed `--_card-` is internal.
+ */
+@layer slopkit.components {
+  .card {
+    --_card-spacing: var(--slp-card-spacing, calc(var(--slp-spacing) * 4));
+    --_card-divider: color-mix(in oklab, var(--slp-color-base-content) 10%, transparent);
+
+    display: flex;
+    flex-direction: column;
+    gap: var(--_card-spacing);
+    box-sizing: border-box;
+    min-width: 0;
+    padding-block: var(--_card-spacing);
+    /* Clips a flush image and the footer's surface to the rounded corners. */
+    overflow: hidden;
+    border: 1px solid var(--_card-divider);
+    border-radius: 0.75rem;
+    background-color: var(--slp-color-base-100);
+    color: var(--slp-color-base-content);
+    font-size: var(--slp-font-size-sm);
+    line-height: var(--slp-line-height-sm);
+
+    &[data-size='sm'] {
+      --_card-spacing: var(--slp-card-spacing, calc(var(--slp-spacing) * 3));
+    }
+
+    /* A flush image or footer at an edge replaces the padding there. */
+    &[data-orientation='vertical']:has(> .image:first-child) {
+      padding-top: 0;
+    }
+    &[data-orientation='vertical']:has(> .image:last-child),
+    &:has(> .footer:last-child) {
+      padding-bottom: 0;
+    }
+
+    /* Variants */
+    &[data-variant='soft'] {
+      border-color: transparent;
+      background-color: var(--slp-color-base-200);
+    }
+
+    &[data-variant='elevated'] {
+      border-color: transparent;
+      box-shadow: var(--slp-shadow-md);
+    }
+
+    /*
+     * Horizontal: no gap or block padding on the root, so the image is flush top and bottom. The header and body
+     * pad their own tops instead, and the last of them its bottom when there's no footer.
+     */
+    &[data-orientation='horizontal'] {
+      display: grid;
+      grid-template-areas:
+        'image header'
+        'image body'
+        'image footer';
+      grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+      grid-template-rows: auto 1fr auto;
+      gap: 0;
+      padding-block: 0;
+
+      & > .header,
+      & > .body {
+        padding-top: var(--_card-spacing);
+      }
+
+      &:not(:has(> .footer)) > :is(.header, .body):last-child {
+        padding-bottom: var(--_card-spacing);
+      }
+    }
+  }
+
+  .header,
+  .body,
+  .footer {
+    box-sizing: border-box;
+    min-width: 0;
+    padding-inline: var(--_card-spacing);
+  }
+
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: calc(var(--_card-spacing) / 2);
+
+    .card[data-orientation='horizontal'] > & {
+      grid-area: header;
+    }
+
+    /* With a title or description: the two stack in the first column, each other child takes a column at the end. */
+    &:has(> .title, > .description) {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      grid-auto-columns: auto;
+      align-items: start;
+      row-gap: 0;
+
+      & > :not(.title, .description) {
+        grid-row: 1 / span 2;
+      }
+    }
+  }
+
+  /* Placed explicitly, so the header's other children, locked to the rows, can't take the first column. */
+  .title {
+    grid-area: 1 / 1;
+  }
+
+  .description {
+    grid-area: 2 / 1;
+
+    .title + & {
+      margin-top: var(--slp-spacing);
+    }
+  }
+
+  .body {
+    flex-grow: 1;
+
+    .card[data-orientation='horizontal'] > & {
+      grid-area: body;
+    }
+  }
+
+  /* A muted strip below a divider, flush with the card's sides and bottom. */
+  .footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: calc(var(--_card-spacing) / 2);
+    padding-block: var(--_card-spacing);
+    border-top: 1px solid var(--_card-divider);
+    background-color: color-mix(in oklab, var(--slp-color-muted) 50%, transparent);
+
+    .card[data-orientation='horizontal'] > & {
+      grid-area: footer;
+    }
+  }
+
+  .image {
+    display: block;
+    width: 100%;
+    max-width: none;
+    object-fit: cover;
+
+    /* Contributes no height of its own, so the other parts set the card's height and the image fills it. */
+    .card[data-orientation='horizontal'] > & {
+      grid-area: image;
+      height: 0;
+      min-height: 100%;
+    }
+  }
+}

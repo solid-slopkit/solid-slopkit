@@ -1,0 +1,173 @@
+/*
+ * Chip. A pill: a label with a hidden input inside. Off, it's an outlined pill in the base colors; on, it shows a
+ * check and takes the color, as a tint (soft), a border (outline) or a fill (filled). Soft and outline keep the text
+ * in the base color, so it stays readable whatever the role; the check takes the role. Heights match Button's.
+ *
+ * Public custom properties (set on the chip or any ancestor):
+ *   --slp-chip-color     color when on, defaults to the `color` prop's theme token
+ *   --slp-chip-content   text color on a filled chip, defaults to the token's `-content`
+ *
+ * Everything prefixed `--_chip-` is internal.
+ */
+@layer slopkit.components {
+  .chip {
+    --_chip-color: var(--slp-chip-color, var(--_chip-theme-color));
+    --_chip-content: var(--slp-chip-content, var(--_chip-theme-content));
+    --_chip-height: calc(var(--slp-size-field) * 8);
+    --_chip-px: 0.875rem;
+    --_chip-font-size: 0.875rem;
+    --_chip-border: color-mix(in oklab, var(--slp-color-base-content) 20%, transparent);
+    --_chip-bg: var(--slp-color-base-100);
+    --_chip-fg: var(--slp-color-base-content);
+
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375em;
+    box-sizing: border-box;
+    height: var(--_chip-height);
+    padding-inline: var(--_chip-px);
+    border: 1px solid var(--_chip-border);
+    border-radius: calc(infinity * 1px);
+    background-color: var(--_chip-bg);
+    color: var(--_chip-fg);
+    font-size: var(--_chip-font-size);
+    font-weight: 500;
+    line-height: 1;
+    white-space: nowrap;
+    cursor: pointer;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    transition-property: background-color, border-color, color;
+    transition-duration: 0.12s;
+
+    &:hover:not([data-disabled], [data-checked]) {
+      --_chip-bg: color-mix(in oklab, var(--slp-color-base-content) 5%, var(--slp-color-base-100));
+    }
+
+    &:has(> .input:focus-visible) {
+      outline: 2px solid var(--_chip-color);
+      outline-offset: 2px;
+    }
+
+    /* On */
+    &[data-checked] {
+      &[data-variant='soft'] {
+        --_chip-border: transparent;
+        --_chip-bg: color-mix(in oklab, var(--_chip-color) 15%, var(--slp-color-base-100));
+        --_chip-icon: var(--_chip-color);
+      }
+      /* Half the color, like the other outline variants; the check keeps the full color. */
+      &[data-variant='outline'] {
+        --_chip-border: color-mix(in oklab, var(--_chip-color) 50%, transparent);
+        --_chip-icon: var(--_chip-color);
+      }
+      &[data-variant='filled'] {
+        --_chip-border: var(--_chip-color);
+        --_chip-bg: var(--_chip-color);
+        --_chip-fg: var(--_chip-content);
+      }
+    }
+
+    &[data-disabled] {
+      --_chip-border: color-mix(in oklab, var(--slp-color-base-content) 10%, transparent);
+      --_chip-bg: color-mix(in oklab, var(--slp-color-base-content) 6%, var(--slp-color-base-100));
+      --_chip-fg: color-mix(in oklab, var(--slp-color-base-content) 45%, transparent);
+      cursor: not-allowed;
+    }
+
+    /* Sizes */
+    &[data-size='xs'] {
+      --_chip-height: calc(var(--slp-size-field) * 6);
+      --_chip-px: 0.625rem;
+      --_chip-font-size: 0.75rem;
+    }
+    &[data-size='sm'] {
+      --_chip-height: calc(var(--slp-size-field) * 7);
+      --_chip-px: 0.75rem;
+      --_chip-font-size: 0.8125rem;
+    }
+    &[data-size='lg'] {
+      --_chip-height: calc(var(--slp-size-field) * 10);
+      --_chip-px: 1.125rem;
+      --_chip-font-size: 1rem;
+    }
+    &[data-size='xl'] {
+      --_chip-height: calc(var(--slp-size-field) * 12);
+      --_chip-px: 1.375rem;
+      --_chip-font-size: 1.125rem;
+    }
+
+    /* Colors */
+    &[data-color='neutral'] {
+      --_chip-theme-color: var(--slp-color-neutral);
+      --_chip-theme-content: var(--slp-color-neutral-content);
+    }
+    &[data-color='primary'] {
+      --_chip-theme-color: var(--slp-color-primary);
+      --_chip-theme-content: var(--slp-color-primary-content);
+    }
+    &[data-color='secondary'] {
+      --_chip-theme-color: var(--slp-color-secondary);
+      --_chip-theme-content: var(--slp-color-secondary-content);
+    }
+    &[data-color='accent'] {
+      --_chip-theme-color: var(--slp-color-accent);
+      --_chip-theme-content: var(--slp-color-accent-content);
+    }
+    &[data-color='info'] {
+      --_chip-theme-color: var(--slp-color-info);
+      --_chip-theme-content: var(--slp-color-info-content);
+    }
+    &[data-color='success'] {
+      --_chip-theme-color: var(--slp-color-success);
+      --_chip-theme-content: var(--slp-color-success-content);
+    }
+    &[data-color='warning'] {
+      --_chip-theme-color: var(--slp-color-warning);
+      --_chip-theme-content: var(--slp-color-warning-content);
+    }
+    &[data-color='error'] {
+      --_chip-theme-color: var(--slp-color-error);
+      --_chip-theme-content: var(--slp-color-error-content);
+    }
+  }
+
+  /* Hidden like VisuallyHidden: still focusable and in the accessibility tree. */
+  .input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    border: 0;
+    white-space: nowrap;
+  }
+
+  .icon {
+    display: none;
+    flex-shrink: 0;
+    width: 1em;
+    height: 1em;
+    /* Pulls the padding in, so the pill grows less when the check appears. */
+    margin-inline-start: -0.25em;
+    color: var(--_chip-icon, currentColor);
+
+    [data-checked] > & {
+      display: block;
+    }
+  }
+
+  .label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: calc(var(--slp-spacing) * 2);
+  }
+}

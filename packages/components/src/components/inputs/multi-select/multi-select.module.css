@@ -1,0 +1,27 @@
+/*
+ * MultiSelect. The field is a PillsInput's box; these rules let presses on the chevron through to the box, which
+ * opens the dropdown, and give the options a check mark in front, shown on the selected ones, so the selection doesn't
+ * rely on color alone.
+ */
+@layer slopkit.components {
+  [data-slot='input-right-section']:has(> .chevron) {
+    pointer-events: none;
+  }
+
+  .option {
+    display: flex;
+    align-items: center;
+    gap: calc(var(--slp-spacing) * 2);
+  }
+
+  .check {
+    flex: none;
+    width: 0.875rem;
+    height: 0.875rem;
+    visibility: hidden;
+
+    [data-selected] > & {
+      visibility: visible;
+    }
+  }
+}

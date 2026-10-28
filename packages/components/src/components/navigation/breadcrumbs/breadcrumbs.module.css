@@ -1,0 +1,45 @@
+/*
+ * Breadcrumbs. The items in a row that wraps, each after a muted separator.
+ *
+ * Public custom property (set on the breadcrumbs or any ancestor):
+ *   --slp-breadcrumbs-gap    the space on each side of a separator, defaults to 0.5rem
+ *
+ * Everything prefixed `--_breadcrumbs-` is internal.
+ */
+@layer slopkit.components {
+  .breadcrumbs {
+    --_breadcrumbs-gap: var(--slp-breadcrumbs-gap, 0.5rem);
+
+    display: block;
+    min-width: 0;
+  }
+
+  .list {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    row-gap: 0.25rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .item {
+    display: inline-flex;
+    align-items: center;
+    min-width: 0;
+  }
+
+  .separator {
+    display: inline-flex;
+    align-items: center;
+    margin-inline: var(--_breadcrumbs-gap);
+    color: color-mix(in oklab, var(--slp-color-base-content) 45%, transparent);
+    user-select: none;
+
+    & > svg {
+      width: 1em;
+      height: 1em;
+    }
+  }
+}

@@ -1,0 +1,146 @@
+/*
+ * Badge.
+ *
+ * Public custom properties (set on the badge or any ancestor):
+ *   --slp-badge-color           accent color, defaults to the `color` prop's theme token
+ *   --slp-badge-content         text color on a solid accent, defaults to the token's `-content`
+ *
+ * Everything prefixed `--_badge-` is internal.
+ */
+@layer slopkit.components {
+  .badge {
+    /* Resolved accent: the public override wins over the `data-color` theme token. Both may be unset, in which
+       case every use below falls back to the base (uncolored) badge. */
+    --_badge-color: var(--slp-badge-color, var(--_badge-theme-color));
+    --_badge-content: var(--slp-badge-content, var(--_badge-theme-content));
+
+    --_badge-size: calc(var(--slp-size-selector) * 5);
+    --_badge-px: 0.5rem;
+    --_badge-font-size: 0.75rem;
+    --_badge-icon-size: 0.75rem;
+
+    --_badge-bg: var(--_badge-color, var(--slp-color-base-200));
+    --_badge-fg: var(--_badge-content, var(--slp-color-base-content));
+    --_badge-border: var(--_badge-color, var(--slp-color-base-300));
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.25rem;
+    box-sizing: border-box;
+    /* Shrinks in a crowded row, and the label truncates. */
+    min-width: 0;
+    max-width: 100%;
+    height: var(--_badge-size);
+    padding-inline: var(--_badge-px);
+    border: 1px solid var(--_badge-border);
+    border-radius: calc(infinity * 1px);
+    background-color: var(--_badge-bg);
+    color: var(--_badge-fg);
+    font-size: var(--_badge-font-size);
+    font-weight: 500;
+    line-height: 1.25;
+    white-space: nowrap;
+    vertical-align: middle;
+
+    & svg {
+      width: var(--_badge-icon-size);
+      height: var(--_badge-icon-size);
+      flex-shrink: 0;
+    }
+
+    /* Colors */
+    &[data-color='neutral'] {
+      --_badge-theme-color: var(--slp-color-neutral);
+      --_badge-theme-content: var(--slp-color-neutral-content);
+    }
+    &[data-color='primary'] {
+      --_badge-theme-color: var(--slp-color-primary);
+      --_badge-theme-content: var(--slp-color-primary-content);
+    }
+    &[data-color='secondary'] {
+      --_badge-theme-color: var(--slp-color-secondary);
+      --_badge-theme-content: var(--slp-color-secondary-content);
+    }
+    &[data-color='accent'] {
+      --_badge-theme-color: var(--slp-color-accent);
+      --_badge-theme-content: var(--slp-color-accent-content);
+    }
+    &[data-color='info'] {
+      --_badge-theme-color: var(--slp-color-info);
+      --_badge-theme-content: var(--slp-color-info-content);
+    }
+    &[data-color='success'] {
+      --_badge-theme-color: var(--slp-color-success);
+      --_badge-theme-content: var(--slp-color-success-content);
+    }
+    &[data-color='warning'] {
+      --_badge-theme-color: var(--slp-color-warning);
+      --_badge-theme-content: var(--slp-color-warning-content);
+    }
+    &[data-color='error'] {
+      --_badge-theme-color: var(--slp-color-error);
+      --_badge-theme-content: var(--slp-color-error-content);
+    }
+
+    /* Variants. The soft tint mixes with transparent, so it sits on any surface. */
+    &[data-variant='soft'] {
+      --_badge-fg: var(--_badge-color, var(--slp-color-base-content));
+      --_badge-bg: color-mix(in oklab, var(--_badge-color, var(--slp-color-base-content)) 12%, transparent);
+      --_badge-border: transparent;
+    }
+
+    &:is([data-variant='outline'], [data-variant='dash']) {
+      /* A faded text color: half the accent, or a fifth of the base text. Without an accent, --_badge-outline is
+         invalid (it reads an unset --_badge-color), so the base fallback applies. */
+      --_badge-outline: color-mix(in oklab, var(--_badge-color) 50%, transparent);
+      --_badge-fg: var(--_badge-color, var(--slp-color-base-content));
+      --_badge-bg: transparent;
+      --_badge-border: var(--_badge-outline, color-mix(in oklab, var(--slp-color-base-content) 20%, transparent));
+    }
+
+    &[data-variant='dash'] {
+      border-style: dashed;
+    }
+
+    /* Sizes. Heights are multiples of --slp-size-selector. */
+    &[data-size='xs'] {
+      --_badge-size: calc(var(--slp-size-selector) * 4);
+      --_badge-px: 0.375rem;
+      --_badge-font-size: 0.625rem;
+      --_badge-icon-size: 0.625rem;
+    }
+    &[data-size='sm'] {
+      --_badge-size: calc(var(--slp-size-selector) * 4.5);
+      --_badge-px: 0.4375rem;
+      --_badge-font-size: 0.6875rem;
+      --_badge-icon-size: 0.6875rem;
+    }
+    &[data-size='lg'] {
+      --_badge-size: calc(var(--slp-size-selector) * 6);
+      --_badge-px: 0.625rem;
+      --_badge-font-size: 0.875rem;
+      --_badge-icon-size: 0.875rem;
+      gap: 0.3125rem;
+    }
+    &[data-size='xl'] {
+      --_badge-size: calc(var(--slp-size-selector) * 7);
+      --_badge-px: 0.75rem;
+      --_badge-font-size: 1rem;
+      --_badge-icon-size: 1rem;
+      gap: 0.375rem;
+    }
+
+    /* Round for a single character; a longer count grows into a pill instead of overflowing. */
+    &[data-circle] {
+      flex-shrink: 0;
+      min-width: var(--_badge-size);
+      padding-inline: calc(var(--_badge-size) / 5);
+    }
+  }
+
+  .label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}

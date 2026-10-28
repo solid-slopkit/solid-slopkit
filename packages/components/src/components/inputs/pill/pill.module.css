@@ -1,0 +1,152 @@
+/*
+ * Pill. A rounded tag on the base surface's second shade, or a tint of its color role with the text in the role,
+ * sized to fit inside an input of the same size, with an optional remove button at its end. Pill.Group lays pills out
+ * in a row that wraps.
+ *
+ * Public custom property (set on the pill or any ancestor):
+ *   --slp-pill-color    the color the tint and the text come from, defaults to the `color` prop's theme token
+ *
+ * Everything prefixed `--_pill-` is internal.
+ */
+@layer slopkit.components {
+  .pill {
+    /* Resolved color: the public override wins over the `data-color` theme token. Both may be unset, in which case
+       the pill uses the base colors. */
+    --_pill-color: var(--slp-pill-color, var(--_pill-theme-color));
+    /* Invalid while there's no color, so the background falls back to the base shade. The tint mixes with
+       transparent, so it sits on any surface. */
+    --_pill-tint: color-mix(in oklab, var(--_pill-color) 15%, transparent);
+    --_pill-bg: var(--_pill-tint, var(--slp-color-base-200));
+    --_pill-fg: var(--_pill-color, var(--slp-color-base-content));
+
+    --_pill-height: calc(var(--slp-size-field) * 5.5);
+    --_pill-px: 0.625rem;
+    --_pill-font-size: 0.75rem;
+
+    display: inline-flex;
+    align-items: center;
+    gap: 0.125rem;
+    box-sizing: border-box;
+    /* Shrinks in a crowded row, and the label truncates. */
+    min-width: 0;
+    max-width: 100%;
+    height: var(--_pill-height);
+    padding-inline: var(--_pill-px);
+    border-radius: calc(infinity * 1px);
+    background-color: var(--_pill-bg);
+    color: var(--_pill-fg);
+    font-size: var(--_pill-font-size);
+    font-weight: 500;
+    line-height: 1.25;
+    white-space: nowrap;
+    vertical-align: middle;
+
+    /* Colors */
+    &[data-color='neutral'] {
+      --_pill-theme-color: var(--slp-color-neutral);
+    }
+    &[data-color='primary'] {
+      --_pill-theme-color: var(--slp-color-primary);
+    }
+    &[data-color='secondary'] {
+      --_pill-theme-color: var(--slp-color-secondary);
+    }
+    &[data-color='accent'] {
+      --_pill-theme-color: var(--slp-color-accent);
+    }
+    &[data-color='info'] {
+      --_pill-theme-color: var(--slp-color-info);
+    }
+    &[data-color='success'] {
+      --_pill-theme-color: var(--slp-color-success);
+    }
+    &[data-color='warning'] {
+      --_pill-theme-color: var(--slp-color-warning);
+    }
+    &[data-color='error'] {
+      --_pill-theme-color: var(--slp-color-error);
+    }
+
+    /* The remove button sits in the end padding. */
+    &[data-with-remove] {
+      padding-inline-end: calc(var(--_pill-px) / 3);
+    }
+    &[data-disabled] {
+      opacity: 0.6;
+    }
+
+    &[data-size='xs'] {
+      --_pill-height: calc(var(--slp-size-field) * 4);
+      --_pill-px: 0.375rem;
+      --_pill-font-size: 0.625rem;
+    }
+    &[data-size='sm'] {
+      --_pill-height: calc(var(--slp-size-field) * 4.5);
+      --_pill-px: 0.5rem;
+      --_pill-font-size: 0.6875rem;
+    }
+    &[data-size='lg'] {
+      --_pill-height: calc(var(--slp-size-field) * 7);
+      --_pill-px: 0.75rem;
+      --_pill-font-size: 0.875rem;
+    }
+    &[data-size='xl'] {
+      --_pill-height: calc(var(--slp-size-field) * 8.5);
+      --_pill-px: 0.875rem;
+      --_pill-font-size: 1rem;
+    }
+  }
+
+  .label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* A round button a little smaller than the pill, tinted on hover. */
+  .remove {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    width: calc(var(--_pill-height) - 0.25rem);
+    height: calc(var(--_pill-height) - 0.25rem);
+    margin: 0;
+    padding: 0.1875rem;
+    border: 0;
+    border-radius: calc(infinity * 1px);
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+
+    & svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    &:hover:not(:disabled) {
+      background-color: color-mix(in oklab, currentColor 12%, transparent);
+    }
+    &:focus-visible {
+      outline: 2px solid var(--slp-color-base-content);
+      outline-offset: 0;
+    }
+    &:disabled {
+      cursor: not-allowed;
+    }
+  }
+
+  .group {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: calc(var(--slp-spacing) * 1.5);
+
+    &:is([data-size='xs'], [data-size='sm']) {
+      gap: calc(var(--slp-spacing) * 1);
+    }
+    &:is([data-size='lg'], [data-size='xl']) {
+      gap: calc(var(--slp-spacing) * 2);
+    }
+  }
+}

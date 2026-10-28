@@ -1,0 +1,47 @@
+/*
+ * NativeSelect. The select fills the box and draws nothing of its own (`appearance: none`). The chevron sits over
+ * its right end and lets clicks through, so clicking the chevron opens the list like the rest of the select does.
+ * Sized in em, so it follows the field's text size.
+ */
+@layer slopkit.components {
+  .nativeSelect {
+    /* The Input box: the wrapper's child that holds the control. */
+    & > :has(> [data-slot='input-control']) {
+      position: relative;
+    }
+
+    & [data-slot='input-control'] {
+      padding-inline-end: 2.25em;
+      appearance: none;
+      cursor: pointer;
+      text-overflow: ellipsis;
+
+      &:disabled {
+        cursor: not-allowed;
+      }
+
+      /* The placeholder option, while it's the one shown. */
+      &:has(> option[value='']:checked) {
+        color: color-mix(in oklab, var(--slp-color-base-content) 45%, transparent);
+      }
+
+      /* The options in the list keep the normal text color. */
+      & option {
+        color: var(--slp-color-base-content);
+      }
+    }
+
+    & [data-slot='input-right-section'] {
+      position: absolute;
+      inset-block: 0;
+      inset-inline-end: 0;
+      min-width: 2.25em;
+      pointer-events: none;
+    }
+  }
+
+  .nativeSelect [data-slot='native-select-chevron'] {
+    width: 1.1em;
+    height: 1.1em;
+  }
+}

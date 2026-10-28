@@ -1,0 +1,64 @@
+/*
+ * Paper. Padding, shadow, surface and radius come from data attributes on the root.
+ */
+@layer slopkit.components {
+  .paper {
+    display: block;
+    box-sizing: border-box;
+    border-radius: 1rem;
+    background-color: var(--slp-color-base-100);
+    color: var(--slp-color-base-content);
+    padding: calc(var(--slp-spacing) * 4);
+
+    &[data-with-border] {
+      border: 1px solid color-mix(in oklab, var(--slp-color-base-content) 12%, transparent);
+    }
+
+    /* Surfaces */
+    &[data-surface='base-200'] {
+      background-color: var(--slp-color-base-200);
+    }
+    &[data-surface='base-300'] {
+      background-color: var(--slp-color-base-300);
+    }
+
+    /* Padding */
+    &[data-padding='none'] {
+      padding: 0;
+    }
+    &[data-padding='xs'] {
+      padding: calc(var(--slp-spacing) * 2);
+    }
+    &[data-padding='sm'] {
+      padding: calc(var(--slp-spacing) * 3);
+    }
+    &[data-padding='lg'] {
+      padding: calc(var(--slp-spacing) * 6);
+    }
+    &[data-padding='xl'] {
+      padding: calc(var(--slp-spacing) * 8);
+    }
+
+    /* Shadows */
+    &[data-shadow='xs'] {
+      box-shadow: var(--slp-shadow-xs);
+    }
+    &[data-shadow='sm'] {
+      box-shadow: var(--slp-shadow-sm);
+    }
+    &[data-shadow='md'] {
+      box-shadow: var(--slp-shadow-md);
+    }
+    &[data-shadow='lg'] {
+      box-shadow: var(--slp-shadow-lg);
+    }
+    &[data-shadow='xl'] {
+      box-shadow: var(--slp-shadow-xl);
+    }
+
+    /* Radius */
+    &[data-radius='none'] {
+      border-radius: 0;
+    }
+  }
+}

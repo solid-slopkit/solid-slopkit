@@ -1,0 +1,12 @@
+/*
+ * Modals. A confirm modal's buttons, in a row at the end of the content.
+ */
+@layer slopkit.components {
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: calc(var(--slp-spacing) * 2);
+    margin-top: calc(var(--slp-spacing) * 5);
+  }
+}

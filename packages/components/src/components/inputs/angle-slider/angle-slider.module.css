@@ -1,0 +1,154 @@
+/*
+ * AngleSlider. A ring with a filled arc from the top to the angle (a conic gradient), a thumb on the ring turned to
+ * the angle, dots for marks, and the angle in the middle. Angles turn from the top, clockwise.
+ *
+ * Public custom properties (set on the slider or any ancestor):
+ *   --slp-angle-slider-color   arc and thumb, defaults to the `color` prop's theme token
+ *
+ * Everything prefixed `--_as-` is internal; `--_angle` is the current angle.
+ */
+@layer slopkit.components {
+  .angleSlider {
+    --_as-color: var(--slp-angle-slider-color, var(--_as-theme-color));
+    --_as-size: 5rem;
+    --_as-ring: 0.375rem;
+
+    &[data-size='xs'] {
+      --_as-size: 3rem;
+      --_as-ring: 0.25rem;
+    }
+    &[data-size='sm'] {
+      --_as-size: 4rem;
+      --_as-ring: 0.3125rem;
+    }
+    &[data-size='lg'] {
+      --_as-size: 6.25rem;
+      --_as-ring: 0.5rem;
+    }
+    &[data-size='xl'] {
+      --_as-size: 7.5rem;
+      --_as-ring: 0.625rem;
+    }
+
+    &[data-color='neutral'] {
+      --_as-theme-color: var(--slp-color-neutral);
+    }
+    &[data-color='primary'] {
+      --_as-theme-color: var(--slp-color-primary);
+    }
+    &[data-color='secondary'] {
+      --_as-theme-color: var(--slp-color-secondary);
+    }
+    &[data-color='accent'] {
+      --_as-theme-color: var(--slp-color-accent);
+    }
+    &[data-color='info'] {
+      --_as-theme-color: var(--slp-color-info);
+    }
+    &[data-color='success'] {
+      --_as-theme-color: var(--slp-color-success);
+    }
+    &[data-color='warning'] {
+      --_as-theme-color: var(--slp-color-warning);
+    }
+    &[data-color='error'] {
+      --_as-theme-color: var(--slp-color-error);
+    }
+
+    &[data-disabled] {
+      --_as-color: color-mix(in oklab, var(--slp-color-base-content) 30%, transparent);
+    }
+  }
+
+  .dial {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    align-self: flex-start;
+    box-sizing: border-box;
+    width: var(--_as-size);
+    height: var(--_as-size);
+    border-radius: 50%;
+    /* The ring: the filled arc up to the angle, the rest in the track color. The ::before disc covers the middle. */
+    background: conic-gradient(
+      var(--_as-color) var(--_angle),
+      color-mix(in oklab, var(--slp-color-base-content) 15%, var(--slp-color-base-100)) var(--_angle)
+    );
+    cursor: pointer;
+    touch-action: none;
+    user-select: none;
+    outline-offset: 3px;
+
+    &:focus-visible {
+      outline: 2px solid var(--_as-color);
+    }
+
+    [data-disabled] & {
+      cursor: not-allowed;
+    }
+  }
+
+  .dial::before {
+    content: '';
+    position: absolute;
+    inset: var(--_as-ring);
+    border-radius: 50%;
+    background-color: var(--slp-color-base-100);
+  }
+
+  .thumb,
+  .mark {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    height: 50%;
+    transform-origin: 50% 100%;
+    pointer-events: none;
+  }
+
+  .thumb {
+    width: calc(var(--_as-ring) * 2.25);
+    translate: -50% 0;
+    rotate: var(--_angle);
+
+    &::after {
+      content: '';
+      position: absolute;
+      top: calc(var(--_as-ring) / 2 - var(--_as-ring) * 1.125);
+      left: 0;
+      box-sizing: border-box;
+      width: 100%;
+      aspect-ratio: 1;
+      border: 2px solid var(--_as-color);
+      border-radius: 50%;
+      background-color: var(--slp-color-base-100);
+      box-shadow: 0 1px 3px oklch(0% 0 0 / 0.2);
+    }
+  }
+
+  .mark {
+    width: calc(var(--_as-ring) * 0.6);
+    translate: -50% 0;
+    rotate: var(--_mark);
+
+    &::after {
+      content: '';
+      position: absolute;
+      top: calc(var(--_as-ring) * 0.2);
+      left: 0;
+      width: 100%;
+      aspect-ratio: 1;
+      border-radius: 50%;
+      background-color: color-mix(in oklab, var(--slp-color-base-content) 40%, transparent);
+    }
+  }
+
+  .label {
+    position: relative;
+    color: var(--slp-color-base-content);
+    font-size: calc(var(--_as-size) / 5);
+    font-variant-numeric: tabular-nums;
+    font-weight: 500;
+  }
+}

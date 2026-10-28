@@ -1,0 +1,6 @@
+/* Textarea. Input draws the box and lets a textarea be resized vertically; an autosized one sizes itself. */
+@layer slopkit.components {
+  .textarea [data-slot='input-control'][data-autosize] {
+    resize: none;
+  }
+}

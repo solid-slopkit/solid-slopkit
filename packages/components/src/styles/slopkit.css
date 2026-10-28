@@ -1,0 +1,273 @@
+@layer slopkit.reset, slopkit.base, slopkit.themes, slopkit.components, slopkit.utilities;
+
+/*
+ * Named palettes: 14 colors × 10 shades.
+ * Values from Open Color (MIT, https://yeun.github.io/open-color/) plus a "dark" scale.
+ */
+@layer slopkit.base {
+  :root {
+    --slp-dark-0: #c9c9c9;
+    --slp-dark-1: #b8b8b8;
+    --slp-dark-2: #828282;
+    --slp-dark-3: #696969;
+    --slp-dark-4: #424242;
+    --slp-dark-5: #3b3b3b;
+    --slp-dark-6: #2e2e2e;
+    --slp-dark-7: #242424;
+    --slp-dark-8: #1f1f1f;
+    --slp-dark-9: #141414;
+
+    --slp-gray-0: #f8f9fa;
+    --slp-gray-1: #f1f3f5;
+    --slp-gray-2: #e9ecef;
+    --slp-gray-3: #dee2e6;
+    --slp-gray-4: #ced4da;
+    --slp-gray-5: #adb5bd;
+    --slp-gray-6: #868e96;
+    --slp-gray-7: #495057;
+    --slp-gray-8: #343a40;
+    --slp-gray-9: #212529;
+
+    --slp-red-0: #fff5f5;
+    --slp-red-1: #ffe3e3;
+    --slp-red-2: #ffc9c9;
+    --slp-red-3: #ffa8a8;
+    --slp-red-4: #ff8787;
+    --slp-red-5: #ff6b6b;
+    --slp-red-6: #fa5252;
+    --slp-red-7: #f03e3e;
+    --slp-red-8: #e03131;
+    --slp-red-9: #c92a2a;
+
+    --slp-pink-0: #fff0f6;
+    --slp-pink-1: #ffdeeb;
+    --slp-pink-2: #fcc2d7;
+    --slp-pink-3: #faa2c1;
+    --slp-pink-4: #f783ac;
+    --slp-pink-5: #f06595;
+    --slp-pink-6: #e64980;
+    --slp-pink-7: #d6336c;
+    --slp-pink-8: #c2255c;
+    --slp-pink-9: #a61e4d;
+
+    --slp-grape-0: #f8f0fc;
+    --slp-grape-1: #f3d9fa;
+    --slp-grape-2: #eebefa;
+    --slp-grape-3: #e599f7;
+    --slp-grape-4: #da77f2;
+    --slp-grape-5: #cc5de8;
+    --slp-grape-6: #be4bdb;
+    --slp-grape-7: #ae3ec9;
+    --slp-grape-8: #9c36b5;
+    --slp-grape-9: #862e9c;
+
+    --slp-violet-0: #f3f0ff;
+    --slp-violet-1: #e5dbff;
+    --slp-violet-2: #d0bfff;
+    --slp-violet-3: #b197fc;
+    --slp-violet-4: #9775fa;
+    --slp-violet-5: #845ef7;
+    --slp-violet-6: #7950f2;
+    --slp-violet-7: #7048e8;
+    --slp-violet-8: #6741d9;
+    --slp-violet-9: #5f3dc4;
+
+    --slp-indigo-0: #edf2ff;
+    --slp-indigo-1: #dbe4ff;
+    --slp-indigo-2: #bac8ff;
+    --slp-indigo-3: #91a7ff;
+    --slp-indigo-4: #748ffc;
+    --slp-indigo-5: #5c7cfa;
+    --slp-indigo-6: #4c6ef5;
+    --slp-indigo-7: #4263eb;
+    --slp-indigo-8: #3b5bdb;
+    --slp-indigo-9: #364fc7;
+
+    --slp-blue-0: #e7f5ff;
+    --slp-blue-1: #d0ebff;
+    --slp-blue-2: #a5d8ff;
+    --slp-blue-3: #74c0fc;
+    --slp-blue-4: #4dabf7;
+    --slp-blue-5: #339af0;
+    --slp-blue-6: #228be6;
+    --slp-blue-7: #1c7ed6;
+    --slp-blue-8: #1971c2;
+    --slp-blue-9: #1864ab;
+
+    --slp-cyan-0: #e3fafc;
+    --slp-cyan-1: #c5f6fa;
+    --slp-cyan-2: #99e9f2;
+    --slp-cyan-3: #66d9e8;
+    --slp-cyan-4: #3bc9db;
+    --slp-cyan-5: #22b8cf;
+    --slp-cyan-6: #15aabf;
+    --slp-cyan-7: #1098ad;
+    --slp-cyan-8: #0c8599;
+    --slp-cyan-9: #0b7285;
+
+    --slp-teal-0: #e6fcf5;
+    --slp-teal-1: #c3fae8;
+    --slp-teal-2: #96f2d7;
+    --slp-teal-3: #63e6be;
+    --slp-teal-4: #38d9a9;
+    --slp-teal-5: #20c997;
+    --slp-teal-6: #12b886;
+    --slp-teal-7: #0ca678;
+    --slp-teal-8: #099268;
+    --slp-teal-9: #087f5b;
+
+    --slp-green-0: #ebfbee;
+    --slp-green-1: #d3f9d8;
+    --slp-green-2: #b2f2bb;
+    --slp-green-3: #8ce99a;
+    --slp-green-4: #69db7c;
+    --slp-green-5: #51cf66;
+    --slp-green-6: #40c057;
+    --slp-green-7: #37b24d;
+    --slp-green-8: #2f9e44;
+    --slp-green-9: #2b8a3e;
+
+    --slp-lime-0: #f4fce3;
+    --slp-lime-1: #e9fac8;
+    --slp-lime-2: #d8f5a2;
+    --slp-lime-3: #c0eb75;
+    --slp-lime-4: #a9e34b;
+    --slp-lime-5: #94d82d;
+    --slp-lime-6: #82c91e;
+    --slp-lime-7: #74b816;
+    --slp-lime-8: #66a80f;
+    --slp-lime-9: #5c940d;
+
+    --slp-yellow-0: #fff9db;
+    --slp-yellow-1: #fff3bf;
+    --slp-yellow-2: #ffec99;
+    --slp-yellow-3: #ffe066;
+    --slp-yellow-4: #ffd43b;
+    --slp-yellow-5: #fcc419;
+    --slp-yellow-6: #fab005;
+    --slp-yellow-7: #f59f00;
+    --slp-yellow-8: #f08c00;
+    --slp-yellow-9: #e67700;
+
+    --slp-orange-0: #fff4e6;
+    --slp-orange-1: #ffe8cc;
+    --slp-orange-2: #ffd8a8;
+    --slp-orange-3: #ffc078;
+    --slp-orange-4: #ffa94d;
+    --slp-orange-5: #ff922b;
+    --slp-orange-6: #fd7e14;
+    --slp-orange-7: #f76707;
+    --slp-orange-8: #e8590c;
+    --slp-orange-9: #d9480f;
+  }
+}
+
+/*
+ * Color scheme. Follow the OS by default; [data-slp-color-scheme="light" | "dark"] on any element forces one
+ * scheme for its subtree. Themes resolve their light-dark() tokens against it. A single-scheme theme sets
+ * color-scheme itself in slopkit.themes, a later layer, which pins it.
+ */
+@layer slopkit.base {
+  :root {
+    color-scheme: light dark;
+  }
+
+  [data-slp-color-scheme='light'] {
+    color-scheme: light;
+  }
+
+  [data-slp-color-scheme='dark'] {
+    color-scheme: dark;
+  }
+}
+
+/*
+ * Default fonts. A system stack that ends with emoji fonts, so symbols and emoji do not send the browser
+ * hunting for a fallback font (the browser default, often Times, lacks most of them). Override
+ * --slp-font-family, or set font-family on body in your own unlayered CSS. --slp-font-family-monospace is
+ * for keys and code.
+ */
+@layer slopkit.base {
+  :root {
+    --slp-font-family:
+      system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif, 'Apple Color Emoji',
+      'Segoe UI Emoji', 'Segoe UI Symbol';
+    --slp-font-family-monospace: ui-monospace, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
+  }
+
+  body {
+    font-family: var(--slp-font-family);
+  }
+}
+
+/*
+ * Type scale and heading scale, in rem so they follow the root font size. Each size has a line height on a
+ * 0.25rem grid. Like the container widths, these live here rather than in a theme; a theme (a later layer) can
+ * still override them.
+ */
+@layer slopkit.base {
+  :root {
+    --slp-font-size-xs: 0.75rem;
+    --slp-font-size-sm: 0.875rem;
+    --slp-font-size-md: 1rem;
+    --slp-font-size-lg: 1.125rem;
+    --slp-font-size-xl: 1.25rem;
+    --slp-font-size-2xl: 1.5rem;
+    --slp-font-size-3xl: 1.875rem;
+    --slp-font-size-4xl: 2.25rem;
+    --slp-font-size-5xl: 3rem;
+    --slp-line-height-xs: 1rem;
+    --slp-line-height-sm: 1.25rem;
+    --slp-line-height-md: 1.5rem;
+    --slp-line-height-lg: 1.75rem;
+    --slp-line-height-xl: 1.75rem;
+    --slp-line-height-2xl: 2rem;
+    --slp-line-height-3xl: 2.25rem;
+    --slp-line-height-4xl: 2.5rem;
+    --slp-line-height-5xl: 3rem;
+
+    /* Headings, h1 to h6. */
+    --slp-heading-weight: 700;
+    --slp-heading-size-h1: 2.125rem;
+    --slp-heading-size-h2: 1.625rem;
+    --slp-heading-size-h3: 1.375rem;
+    --slp-heading-size-h4: 1.125rem;
+    --slp-heading-size-h5: 1rem;
+    --slp-heading-size-h6: 0.875rem;
+    --slp-heading-line-height-h1: 2.5rem;
+    --slp-heading-line-height-h2: 2rem;
+    --slp-heading-line-height-h3: 1.75rem;
+    --slp-heading-line-height-h4: 1.75rem;
+    --slp-heading-line-height-h5: 1.5rem;
+    --slp-heading-line-height-h6: 1.25rem;
+  }
+}
+
+/*
+ * Shadows, from black at low alpha so they read on light and dark surfaces alike. Like the scales above, a
+ * theme (a later layer) can override them.
+ */
+@layer slopkit.base {
+  :root {
+    --slp-shadow-xs: 0 1px 2px oklch(0% 0 0 / 0.08);
+    --slp-shadow-sm: 0 1px 3px oklch(0% 0 0 / 0.1), 0 1px 2px oklch(0% 0 0 / 0.06);
+    --slp-shadow-md: 0 4px 6px -1px oklch(0% 0 0 / 0.1), 0 2px 4px -2px oklch(0% 0 0 / 0.1);
+    --slp-shadow-lg: 0 10px 15px -3px oklch(0% 0 0 / 0.1), 0 4px 6px -4px oklch(0% 0 0 / 0.1);
+    --slp-shadow-xl: 0 20px 25px -5px oklch(0% 0 0 / 0.1), 0 8px 10px -6px oklch(0% 0 0 / 0.1);
+  }
+}
+
+/*
+ * Container widths, in rem so they follow the root font size. Layout, not look, so they live here rather
+ * than in a theme; a theme (a later layer) can still override them.
+ */
+@layer slopkit.base {
+  :root {
+    --slp-container-size-xs: 33.75rem;
+    --slp-container-size-sm: 45rem;
+    --slp-container-size-md: 60rem;
+    --slp-container-size-lg: 71.25rem;
+    --slp-container-size-xl: 82.5rem;
+    --slp-container-padding: calc(var(--slp-spacing) * 4);
+  }
+}

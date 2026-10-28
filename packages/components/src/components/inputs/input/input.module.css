@@ -1,0 +1,165 @@
+/*
+ * Input. The box is the root: it draws the border, background and focus ring, and lays out the sections and the
+ * control. The control itself has no box of its own. Heights match Button's, so a field and a button of the same
+ * size line up.
+ *
+ * Everything prefixed `--_input-` is internal.
+ */
+@layer slopkit.components {
+  .input {
+    --_input-height: calc(var(--slp-size-field) * 8);
+    --_input-px: 0.75rem;
+    --_input-font-size: 0.875rem;
+    --_input-icon-size: 1rem;
+    --_input-accent: var(--slp-color-primary);
+    --_input-border: color-mix(in oklab, var(--slp-color-base-content) 22%, transparent);
+    --_input-bg: var(--slp-color-base-100);
+
+    display: flex;
+    align-items: stretch;
+    box-sizing: border-box;
+    min-width: 0;
+    min-height: var(--_input-height);
+    border: 1px solid var(--_input-border);
+    border-radius: 10px;
+    background-color: var(--_input-bg);
+    color: var(--slp-color-base-content);
+    font-size: var(--_input-font-size);
+    cursor: text;
+    transition-property: border-color, box-shadow, background-color;
+    transition-duration: 0.15s;
+    transition-timing-function: ease;
+
+    /* A ring of the accent: the border plus a 1px shadow, so focusing doesn't shift the layout. */
+    &:focus-within {
+      --_input-border: var(--_input-accent);
+      box-shadow: 0 0 0 1px var(--_input-accent);
+    }
+
+    &[data-invalid] {
+      --_input-accent: var(--slp-color-error);
+      --_input-border: var(--slp-color-error);
+    }
+
+    /* Variants */
+    &[data-variant='soft'] {
+      --_input-bg: var(--slp-color-base-200);
+
+      &:not([data-invalid]) {
+        --_input-border: transparent;
+      }
+    }
+
+    &[data-variant='ghost'] {
+      --_input-bg: transparent;
+
+      &:not([data-invalid]) {
+        --_input-border: transparent;
+      }
+    }
+
+    /* Disabled by its own prop, or natively by a disabled fieldset around it. */
+    &:is([data-disabled], :has(> [data-slot='input-control']:disabled)) {
+      --_input-bg: color-mix(in oklab, var(--slp-color-base-content) 6%, var(--slp-color-base-100));
+      color: color-mix(in oklab, var(--slp-color-base-content) 50%, transparent);
+      cursor: not-allowed;
+    }
+
+    &[data-variant='ghost']:is([data-disabled], :has(> [data-slot='input-control']:disabled)) {
+      --_input-bg: transparent;
+    }
+
+    /* Sizes */
+    &[data-size='xs'] {
+      --_input-height: calc(var(--slp-size-field) * 6);
+      --_input-px: 0.5rem;
+      --_input-font-size: 0.75rem;
+      --_input-icon-size: 0.75rem;
+    }
+    &[data-size='sm'] {
+      --_input-height: calc(var(--slp-size-field) * 7);
+      --_input-px: 0.625rem;
+      --_input-font-size: 0.8125rem;
+      --_input-icon-size: 0.875rem;
+    }
+    &[data-size='lg'] {
+      --_input-height: calc(var(--slp-size-field) * 10);
+      --_input-px: 1rem;
+      --_input-font-size: 1rem;
+      --_input-icon-size: 1.125rem;
+    }
+    &[data-size='xl'] {
+      --_input-height: calc(var(--slp-size-field) * 12);
+      --_input-px: 1.25rem;
+      --_input-font-size: 1.125rem;
+      --_input-icon-size: 1.25rem;
+    }
+  }
+
+  .control {
+    flex: 1;
+    box-sizing: border-box;
+    min-width: 0;
+    margin: 0;
+    padding: 0 var(--_input-px);
+    border: 0;
+    border-radius: inherit;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    line-height: 1.5;
+    /* The box draws the focus ring. */
+    outline: none;
+
+    &::placeholder {
+      color: color-mix(in oklab, var(--slp-color-base-content) 45%, transparent);
+      opacity: 1;
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+    }
+
+    [data-with-left-section] > & {
+      padding-inline-start: 0;
+    }
+
+    [data-with-right-section] > & {
+      padding-inline-end: 0;
+    }
+
+    /* A textarea grows downwards, with the text starting where a one-line input's would. */
+    [data-multiline] > & {
+      padding-block: calc((var(--_input-height) - 2px - 1.5em) / 2);
+      resize: vertical;
+    }
+  }
+
+  /* Touch screens get at least 16px text in the control, so phones don't zoom in on focus. */
+  @media (pointer: coarse) {
+    .control {
+      font-size: max(1rem, 1em);
+    }
+  }
+
+  .section {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    min-width: calc(var(--_input-height) - 2px);
+    color: color-mix(in oklab, var(--slp-color-base-content) 60%, transparent);
+
+    & > svg {
+      width: var(--_input-icon-size);
+      height: var(--_input-icon-size);
+    }
+
+    /* Next to a textarea, sections stay on the first line. */
+    [data-multiline] > & {
+      align-self: flex-start;
+      height: calc(var(--_input-height) - 2px);
+    }
+  }
+}

@@ -1,0 +1,43 @@
+/*
+ * Kbd. A keycap: a raised surface with a thicker bottom border. Sized in em, so it follows the font size: the
+ * surrounding text's, or the type scale's with `size`.
+ */
+@layer slopkit.components {
+  .kbd {
+    --_kbd-border: color-mix(in oklab, var(--slp-color-base-content) 20%, transparent);
+
+    display: inline-block;
+    box-sizing: border-box;
+    min-width: 1.75em;
+    padding: 0.125em 0.4em;
+    border: 1px solid var(--_kbd-border);
+    border-bottom-width: 3px;
+    border-radius: 0.3em;
+    background-color: var(--slp-color-base-200);
+    color: var(--slp-color-base-content);
+    font-family: var(--slp-font-family-monospace);
+    font-size: 0.85em;
+    font-weight: 700;
+    line-height: 1.25;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+
+    /* Sizes */
+    &[data-size='xs'] {
+      font-size: var(--slp-font-size-xs);
+    }
+    &[data-size='sm'] {
+      font-size: var(--slp-font-size-sm);
+    }
+    &[data-size='md'] {
+      font-size: var(--slp-font-size-md);
+    }
+    &[data-size='lg'] {
+      font-size: var(--slp-font-size-lg);
+    }
+    &[data-size='xl'] {
+      font-size: var(--slp-font-size-xl);
+    }
+  }
+}

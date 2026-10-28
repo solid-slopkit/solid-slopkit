@@ -1,0 +1,42 @@
+/*
+ * Spoiler. The content is cut to `--_spoiler-max` and fades out at the bottom while collapsed; expanded, its
+ * max-height goes to `--_spoiler-full`, the measured height of the content, which the script writes. Content that
+ * fits isn't cut, and has no control.
+ *
+ * Everything prefixed `--_spoiler-` is internal.
+ */
+@layer slopkit.components {
+  .content {
+    max-height: var(--_spoiler-max);
+    /* Not hidden: a clipped box can't be scrolled, so focus or find in page never shift the content inside it. */
+    overflow: clip;
+    transition: max-height 200ms ease;
+
+    .spoiler[data-expanded] > & {
+      max-height: var(--_spoiler-full, none);
+    }
+    .spoiler:not([data-overflowing]) > & {
+      max-height: none;
+    }
+    .spoiler[data-overflowing]:not([data-expanded]) > & {
+      mask-image: linear-gradient(to bottom, black calc(100% - 2rem), transparent);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      transition: none;
+    }
+  }
+
+  /* An Anchor rendered as a button: the button's own look is undone. */
+  .control {
+    margin-top: calc(var(--slp-spacing) * 2);
+    padding: 0;
+    border: 0;
+    background: none;
+    font: inherit;
+
+    .spoiler:not([data-overflowing]) > & {
+      display: none;
+    }
+  }
+}

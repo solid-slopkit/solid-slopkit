@@ -1,0 +1,44 @@
+/*
+ * Fieldset. A column of fields with a gap. The legend is a caption inside the box, not cut into the border: floated,
+ * it stops being the fieldset's "rendered legend" and becomes the first item of the column.
+ */
+@layer slopkit.components {
+  .fieldset {
+    display: flex;
+    flex-direction: column;
+    gap: calc(var(--slp-spacing) * 4);
+    box-sizing: border-box;
+    min-width: 0;
+    margin: 0;
+    padding: calc(var(--slp-spacing) * 5);
+    border: 1px solid color-mix(in oklab, var(--slp-color-base-content) 15%, transparent);
+    border-radius: 0.75rem;
+    background-color: var(--slp-color-base-100);
+    color: var(--slp-color-base-content);
+
+    &[data-variant='soft'] {
+      border-color: transparent;
+      background-color: var(--slp-color-base-200);
+    }
+
+    &[data-variant='ghost'] {
+      padding: 0;
+      border: 0;
+      border-radius: 0;
+      background-color: transparent;
+    }
+  }
+
+  .legend {
+    float: inline-start;
+    width: 100%;
+    padding: 0;
+    font-size: var(--slp-font-size-md);
+    font-weight: 600;
+    line-height: var(--slp-line-height-md);
+
+    [data-disabled] > & {
+      color: color-mix(in oklab, var(--slp-color-base-content) 50%, transparent);
+    }
+  }
+}

@@ -1,0 +1,21 @@
+/*
+ * ColorInput. The field is an Input's box; the dropdown is the surface of the other overlays, sized to the
+ * ColorPicker in it.
+ */
+@layer slopkit.components {
+  .dropdown {
+    /* The floating position replaces a popover's centering. */
+    inset: auto;
+    margin: 0;
+    box-sizing: border-box;
+    max-width: calc(100vw - 1rem);
+    overflow: visible;
+    padding: calc(var(--slp-spacing) * 2);
+    border: 1px solid color-mix(in oklab, var(--slp-color-base-content) 12%, transparent);
+    border-radius: 0.75rem;
+    background-color: var(--slp-color-base-100);
+    color: var(--slp-color-base-content);
+    box-shadow: var(--slp-shadow-md);
+    font: inherit;
+  }
+}

@@ -1,0 +1,128 @@
+/*
+ * SemiCircleProgress. An SVG half ring over the top, from left to right: a muted track and an arc whose length is
+ * --_semi-value out of the path's pathLength of 100 (set inline by the component). Indeterminate, a band sweeps along
+ * the arc; with reduced motion, it sweeps slowly. Children are centered along the bottom, inside the arc.
+ *
+ * Public custom properties (set on the gauge or any ancestor):
+ *   --slp-semi-circle-progress-color   arc color, defaults to the `color` prop's theme token
+ *
+ * Everything prefixed `--_semi-` is internal.
+ */
+@layer slopkit.components {
+  .gauge {
+    --_semi-color: var(--slp-semi-circle-progress-color, var(--_semi-theme-color));
+    --_semi-width: 8rem;
+    --_semi-value: 0;
+
+    position: relative;
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: flex-end;
+    justify-content: center;
+    width: var(--_semi-width);
+    /* The viewBox is 100 × 55. */
+    height: calc(var(--_semi-width) * 0.55);
+    vertical-align: middle;
+
+    /* Colors */
+    &[data-color='neutral'] {
+      --_semi-theme-color: var(--slp-color-neutral);
+    }
+    &[data-color='primary'] {
+      --_semi-theme-color: var(--slp-color-primary);
+    }
+    &[data-color='secondary'] {
+      --_semi-theme-color: var(--slp-color-secondary);
+    }
+    &[data-color='accent'] {
+      --_semi-theme-color: var(--slp-color-accent);
+    }
+    &[data-color='info'] {
+      --_semi-theme-color: var(--slp-color-info);
+    }
+    &[data-color='success'] {
+      --_semi-theme-color: var(--slp-color-success);
+    }
+    &[data-color='warning'] {
+      --_semi-theme-color: var(--slp-color-warning);
+    }
+    &[data-color='error'] {
+      --_semi-theme-color: var(--slp-color-error);
+    }
+
+    /* Sizes */
+    &[data-size='xs'] {
+      --_semi-width: 4rem;
+    }
+    &[data-size='sm'] {
+      --_semi-width: 5.5rem;
+    }
+    &[data-size='lg'] {
+      --_semi-width: 11rem;
+    }
+    &[data-size='xl'] {
+      --_semi-width: 14rem;
+    }
+  }
+
+  .svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .track,
+  .arc {
+    fill: none;
+    stroke-width: 10;
+    stroke-linecap: round;
+  }
+
+  .track {
+    stroke: color-mix(in oklab, var(--slp-color-base-content) 10%, transparent);
+  }
+
+  .arc {
+    stroke: var(--_semi-color);
+    stroke-dasharray: var(--_semi-value) 100;
+    transition: stroke-dasharray 0.25s ease;
+
+    /* A round cap on an empty arc would still draw a dot. */
+    [data-empty] & {
+      stroke-opacity: 0;
+    }
+
+    [data-indeterminate] & {
+      stroke-dasharray: 25 100;
+      animation: slp-semi-circle-progress-sweep 1.4s ease-in-out infinite;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      transition: none;
+
+      [data-indeterminate] & {
+        animation-duration: 4s;
+      }
+    }
+  }
+
+  .label {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    max-width: 60%;
+    text-align: center;
+  }
+}
+
+/* From before the start to past the end of the 100-long path. */
+@keyframes slp-semi-circle-progress-sweep {
+  from {
+    stroke-dashoffset: 25;
+  }
+  to {
+    stroke-dashoffset: -100;
+  }
+}

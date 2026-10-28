@@ -1,0 +1,63 @@
+/*
+ * Blockquote. A bar on the start side sets the quote off from the text; the attribution sits below it, smaller
+ * and muted.
+ *
+ * Everything prefixed `--_blockquote-` is internal.
+ */
+@layer slopkit.components {
+  .blockquote {
+    --_blockquote-bar: color-mix(in oklab, var(--slp-color-base-content) 20%, transparent);
+
+    display: flex;
+    flex-direction: column;
+    gap: calc(var(--slp-spacing) * 2);
+    box-sizing: border-box;
+    margin: 0;
+    padding-block: calc(var(--slp-spacing) * 1);
+    padding-inline: calc(var(--slp-spacing) * 4) 0;
+    border-inline-start: 4px solid var(--_blockquote-bar);
+
+    /* Colors */
+    &[data-color='neutral'] {
+      --_blockquote-bar: var(--slp-color-neutral);
+    }
+    &[data-color='primary'] {
+      --_blockquote-bar: var(--slp-color-primary);
+    }
+    &[data-color='secondary'] {
+      --_blockquote-bar: var(--slp-color-secondary);
+    }
+    &[data-color='accent'] {
+      --_blockquote-bar: var(--slp-color-accent);
+    }
+    &[data-color='info'] {
+      --_blockquote-bar: var(--slp-color-info);
+    }
+    &[data-color='success'] {
+      --_blockquote-bar: var(--slp-color-success);
+    }
+    &[data-color='warning'] {
+      --_blockquote-bar: var(--slp-color-warning);
+    }
+    &[data-color='error'] {
+      --_blockquote-bar: var(--slp-color-error);
+    }
+  }
+
+  .quote {
+    margin: 0;
+
+    /* Paragraphs inside the quote space themselves; the quote's edges stay flush with the bar. */
+    & > :first-child {
+      margin-top: 0;
+    }
+    & > :last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  .attribution {
+    color: color-mix(in oklab, currentColor 65%, transparent);
+    font-size: 0.875em;
+  }
+}

@@ -1,0 +1,54 @@
+/* Page two, columns 6 and 7. */
+
+/* Lets a layout component fill a card part, or a row's label take the space left over. */
+.create-two-c-fill {
+  flex: 1;
+  min-width: 0;
+}
+
+.create-two-c-small-title {
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.create-two-c-dropzone {
+  padding: 2rem 1rem;
+  border-radius: 0.75rem;
+  text-align: center;
+}
+
+.create-two-c-usage {
+  padding-block: 0.4375rem;
+  font-size: 0.875rem;
+}
+
+/* A ring the size of a text glyph. */
+.create-two-c-ring {
+  --slp-ring-progress-color: var(--slp-color-base-content);
+
+  width: 0.875rem;
+  height: 0.875rem;
+
+  & circle {
+    stroke-width: 16;
+  }
+}
+
+.create-two-c-mono {
+  font-family: var(--slp-font-family-monospace);
+  font-size: 0.75rem;
+  white-space: nowrap;
+}
+
+.create-two-c-center {
+  padding-block: 2rem;
+  text-align: center;
+
+  & p {
+    max-width: 17rem;
+  }
+}
+
+.create-two-c-404 {
+  padding-block: 3.5rem;
+}

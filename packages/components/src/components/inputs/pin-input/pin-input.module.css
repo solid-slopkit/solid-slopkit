@@ -1,0 +1,91 @@
+/*
+ * PinInput. A row of square fields with the box look of Input (outline, soft, ghost), the same heights as Input and
+ * Button, and the character centered.
+ *
+ * Everything prefixed `--_pin-` is internal.
+ */
+@layer slopkit.components {
+  .fields {
+    display: flex;
+    flex-wrap: wrap;
+    gap: calc(var(--slp-spacing) * 2);
+  }
+
+  .field {
+    --_pin-size: calc(var(--slp-size-field) * 10);
+    --_pin-font-size: 1.125rem;
+    --_pin-accent: var(--slp-color-primary);
+    --_pin-border: color-mix(in oklab, var(--slp-color-base-content) 22%, transparent);
+    --_pin-bg: var(--slp-color-base-100);
+
+    box-sizing: border-box;
+    width: var(--_pin-size);
+    height: var(--_pin-size);
+    margin: 0;
+    padding: 0;
+    border: 1px solid var(--_pin-border);
+    border-radius: 10px;
+    background-color: var(--_pin-bg);
+    color: var(--slp-color-base-content);
+    font: inherit;
+    font-size: var(--_pin-font-size);
+    font-variant-numeric: tabular-nums;
+    text-align: center;
+    caret-color: transparent;
+    outline: none;
+    transition-property: border-color, box-shadow;
+    transition-duration: 0.15s;
+
+    &:focus {
+      --_pin-border: var(--_pin-accent);
+      box-shadow: 0 0 0 1px var(--_pin-accent);
+    }
+
+    &[aria-invalid='true'] {
+      --_pin-accent: var(--slp-color-error);
+      --_pin-border: var(--slp-color-error);
+    }
+
+    &[data-variant='soft'] {
+      --_pin-bg: var(--slp-color-base-200);
+
+      &:not([aria-invalid='true'], :focus) {
+        --_pin-border: transparent;
+      }
+    }
+
+    &[data-variant='ghost'] {
+      --_pin-bg: transparent;
+
+      &:not([aria-invalid='true'], :focus) {
+        --_pin-border: color-mix(in oklab, var(--slp-color-base-content) 12%, transparent);
+        border-width: 0 0 1px;
+        border-radius: 0;
+      }
+    }
+
+    &:disabled {
+      --_pin-bg: color-mix(in oklab, var(--slp-color-base-content) 6%, var(--slp-color-base-100));
+      color: color-mix(in oklab, var(--slp-color-base-content) 50%, transparent);
+      cursor: not-allowed;
+    }
+
+    /* Sizes: one step taller than a field of the same size, so a code reads at a glance. */
+    &[data-size='xs'] {
+      --_pin-size: calc(var(--slp-size-field) * 7);
+      --_pin-font-size: 0.875rem;
+    }
+    &[data-size='sm'] {
+      --_pin-size: calc(var(--slp-size-field) * 8);
+      --_pin-font-size: 1rem;
+    }
+    &[data-size='lg'] {
+      --_pin-size: calc(var(--slp-size-field) * 12);
+      --_pin-font-size: 1.375rem;
+    }
+    &[data-size='xl'] {
+      --_pin-size: calc(var(--slp-size-field) * 14);
+      --_pin-font-size: 1.625rem;
+    }
+  }
+}

@@ -1,0 +1,19 @@
+/* DateTimePicker. The dropdown stacks the calendar, the time and the done button. */
+@layer slopkit.components {
+  .panel {
+    display: flex;
+    flex-direction: column;
+    gap: calc(var(--slp-spacing) * 3);
+  }
+
+  .footer {
+    display: flex;
+    align-items: flex-end;
+    gap: calc(var(--slp-spacing) * 2);
+
+    & > :first-child {
+      flex: 1;
+      min-width: 0;
+    }
+  }
+}

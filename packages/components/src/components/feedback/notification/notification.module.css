@@ -1,0 +1,137 @@
+/*
+ * Notification. A card on the surface color with a shadow, so it reads as floating above the page. The role color
+ * marks it: a bar down the start edge, or the circle behind the icon. The text keeps the base colors.
+ *
+ * Public custom properties (set on the notification or any ancestor):
+ *   --slp-notification-color    accent color, defaults to the `color` prop's theme token
+ *   --slp-notification-content  icon color in the circle, defaults to the token's `-content`
+ *
+ * Everything prefixed `--_notification-` is internal.
+ */
+@layer slopkit.components {
+  .notification {
+    --_notification-color: var(--slp-notification-color, var(--_notification-theme-color));
+    --_notification-content: var(--slp-notification-content, var(--_notification-theme-content));
+
+    position: relative;
+    display: flex;
+    gap: calc(var(--slp-spacing) * 3);
+    box-sizing: border-box;
+    overflow: hidden;
+    padding: calc(var(--slp-spacing) * 3) calc(var(--slp-spacing) * 4);
+    border: 1px solid color-mix(in oklab, var(--slp-color-base-content) 12%, transparent);
+    border-radius: 0.75rem;
+    background-color: var(--slp-color-base-100);
+    box-shadow: var(--slp-shadow-lg);
+    color: var(--slp-color-base-content);
+    font-size: var(--slp-font-size-sm);
+    line-height: var(--slp-line-height-sm);
+
+    /* Without an icon, a bar of the color down the start edge. */
+    &:not(:has(> [data-slot='notification-icon'])) {
+      padding-inline-start: calc(var(--slp-spacing) * 5);
+
+      &::before {
+        content: '';
+        position: absolute;
+        inset-block: calc(var(--slp-spacing) * 2);
+        inset-inline-start: calc(var(--slp-spacing) * 2);
+        width: 4px;
+        border-radius: calc(infinity * 1px);
+        background-color: var(--_notification-color);
+      }
+    }
+
+    /* Colors */
+    &[data-color='neutral'] {
+      --_notification-theme-color: var(--slp-color-neutral);
+      --_notification-theme-content: var(--slp-color-neutral-content);
+    }
+    &[data-color='primary'] {
+      --_notification-theme-color: var(--slp-color-primary);
+      --_notification-theme-content: var(--slp-color-primary-content);
+    }
+    &[data-color='secondary'] {
+      --_notification-theme-color: var(--slp-color-secondary);
+      --_notification-theme-content: var(--slp-color-secondary-content);
+    }
+    &[data-color='accent'] {
+      --_notification-theme-color: var(--slp-color-accent);
+      --_notification-theme-content: var(--slp-color-accent-content);
+    }
+    &[data-color='info'] {
+      --_notification-theme-color: var(--slp-color-info);
+      --_notification-theme-content: var(--slp-color-info-content);
+    }
+    &[data-color='success'] {
+      --_notification-theme-color: var(--slp-color-success);
+      --_notification-theme-content: var(--slp-color-success-content);
+    }
+    &[data-color='warning'] {
+      --_notification-theme-color: var(--slp-color-warning);
+      --_notification-theme-content: var(--slp-color-warning-content);
+    }
+    &[data-color='error'] {
+      --_notification-theme-color: var(--slp-color-error);
+      --_notification-theme-content: var(--slp-color-error-content);
+    }
+  }
+
+  /* A filled circle of the color behind the icon; while loading, the Loader alone, in the color. */
+  .icon {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    background-color: var(--_notification-color);
+    color: var(--_notification-content);
+    font-size: 1.125rem;
+
+    & > svg {
+      width: 1.125rem;
+      height: 1.125rem;
+    }
+
+    [data-loading] > & {
+      background-color: transparent;
+      color: var(--_notification-color);
+      font-size: 1.5rem;
+    }
+  }
+
+  .content {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    justify-content: center;
+    gap: calc(var(--slp-spacing) * 0.5);
+    min-width: 0;
+    min-height: 2rem;
+  }
+
+  .title {
+    font-weight: 600;
+  }
+
+  /* Centered on the icon's row (a `sm` Button is `--slp-size-field` × 7 tall), and pulled toward the end edge so
+     the X lines up with the padding rather than the button's box. */
+  .closeButton {
+    align-self: flex-start;
+    margin-block: calc((2rem - var(--slp-size-field) * 7) / 2);
+    margin-inline-end: calc(var(--slp-spacing) * -2);
+  }
+
+  .message {
+    color: color-mix(in oklab, var(--slp-color-base-content) 75%, transparent);
+
+    & > :first-child {
+      margin-top: 0;
+    }
+    & > :last-child {
+      margin-bottom: 0;
+    }
+  }
+}

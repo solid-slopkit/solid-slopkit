@@ -1,0 +1,117 @@
+/*
+ * TimeGrid. A grid of times, `columns` to a row; each is a button with a light border, filled with the color when
+ * chosen.
+ *
+ * Public custom properties (set on the grid or any ancestor):
+ *   --slp-time-grid-color      the chosen time, defaults to the `color` prop's theme token
+ *   --slp-time-grid-content    text on the chosen time, defaults to the token's `-content`
+ *
+ * Everything prefixed `--_time-grid-` is internal.
+ */
+@layer slopkit.components {
+  .grid {
+    --_time-grid-color: var(--slp-time-grid-color, var(--_time-grid-theme-color));
+    --_time-grid-content: var(--slp-time-grid-content, var(--_time-grid-theme-content));
+    --_time-grid-height: calc(var(--slp-size-field) * 9);
+    --_time-grid-font-size: 0.875rem;
+
+    display: grid;
+    grid-template-columns: repeat(var(--_time-grid-columns, 3), minmax(0, 1fr));
+    gap: calc(var(--slp-spacing) * 2);
+    color: var(--slp-color-base-content);
+    font-size: var(--_time-grid-font-size);
+
+    &[data-size='xs'] {
+      --_time-grid-height: calc(var(--slp-size-field) * 7);
+      --_time-grid-font-size: 0.75rem;
+    }
+    &[data-size='sm'] {
+      --_time-grid-height: calc(var(--slp-size-field) * 8);
+      --_time-grid-font-size: 0.8125rem;
+    }
+    &[data-size='lg'] {
+      --_time-grid-height: calc(var(--slp-size-field) * 10);
+      --_time-grid-font-size: 1rem;
+    }
+    &[data-size='xl'] {
+      --_time-grid-height: calc(var(--slp-size-field) * 11);
+      --_time-grid-font-size: 1.125rem;
+    }
+
+    &[data-color='neutral'] {
+      --_time-grid-theme-color: var(--slp-color-neutral);
+      --_time-grid-theme-content: var(--slp-color-neutral-content);
+    }
+    &[data-color='primary'] {
+      --_time-grid-theme-color: var(--slp-color-primary);
+      --_time-grid-theme-content: var(--slp-color-primary-content);
+    }
+    &[data-color='secondary'] {
+      --_time-grid-theme-color: var(--slp-color-secondary);
+      --_time-grid-theme-content: var(--slp-color-secondary-content);
+    }
+    &[data-color='accent'] {
+      --_time-grid-theme-color: var(--slp-color-accent);
+      --_time-grid-theme-content: var(--slp-color-accent-content);
+    }
+    &[data-color='info'] {
+      --_time-grid-theme-color: var(--slp-color-info);
+      --_time-grid-theme-content: var(--slp-color-info-content);
+    }
+    &[data-color='success'] {
+      --_time-grid-theme-color: var(--slp-color-success);
+      --_time-grid-theme-content: var(--slp-color-success-content);
+    }
+    &[data-color='warning'] {
+      --_time-grid-theme-color: var(--slp-color-warning);
+      --_time-grid-theme-content: var(--slp-color-warning-content);
+    }
+    &[data-color='error'] {
+      --_time-grid-theme-color: var(--slp-color-error);
+      --_time-grid-theme-content: var(--slp-color-error-content);
+    }
+  }
+
+  .control {
+    box-sizing: border-box;
+    height: var(--_time-grid-height);
+    margin: 0;
+    padding: 0 calc(var(--slp-spacing) * 2);
+    border: 1px solid color-mix(in oklab, var(--slp-color-base-content) 15%, transparent);
+    border-radius: 0.5rem;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+    cursor: pointer;
+    user-select: none;
+
+    &:hover:not([data-disabled], [data-selected]) {
+      background-color: var(--slp-color-base-200);
+    }
+    &:focus-visible {
+      outline: 2px solid var(--_time-grid-color);
+      outline-offset: 2px;
+    }
+    &[data-selected] {
+      border-color: var(--_time-grid-color);
+      background-color: var(--_time-grid-color);
+      color: var(--_time-grid-content);
+      font-weight: 600;
+    }
+    &[data-disabled] {
+      cursor: not-allowed;
+      opacity: 0.4;
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .control {
+      transition:
+        background-color 150ms ease,
+        border-color 150ms ease,
+        color 150ms ease;
+    }
+  }
+}

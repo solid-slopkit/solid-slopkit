@@ -1,0 +1,28 @@
+// The `@solid-slopkit/components/primitives` entry: the behavior primitives the components are composed from, for building
+// your own. Only the stable, generally useful ones; the rest stay internal and may change shape.
+export {
+  createDismissal,
+  type DismissalOptions,
+  type DismissReason,
+  createFloating,
+  type Floating,
+  type FloatingOptions,
+  type FloatingPlacement,
+  type FloatingSide,
+  createFocusScope,
+  getTabbables,
+  type FocusScopeOptions,
+  createListNavigation,
+  type ListNavigation,
+  type ListNavigationOptions,
+  type ListNavigationOrientation,
+  createPresence,
+  type Presence,
+  type PresenceOptions,
+  type PresenceStatus,
+  createScrollLock,
+  type ScrollLockOptions,
+  createTypeahead,
+  type Typeahead,
+  type TypeaheadOptions,
+} from '../components/primitives';

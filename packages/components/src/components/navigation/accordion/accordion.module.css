@@ -1,0 +1,204 @@
+/*
+ * Accordion. Each item is a heading holding the control, and a panel whose one-row grid goes from 0fr to 1fr, which
+ * CSS can animate where it can't animate a height to or from auto. Closed, the panel is also `visibility: hidden`,
+ * which a transition only applies once the row has shrunk, so it leaves the tab order and the accessibility tree
+ * without leaving the DOM. The variants draw the items: lines between them (`divided`), one bordered box
+ * (`bordered`), or separate cards (`separated`).
+ *
+ * Public custom properties (set on the accordion or any ancestor):
+ *   --slp-accordion-radius            corner radius of the bordered box and the cards, defaults to 0.75rem
+ *   --slp-accordion-transition-duration    the panels' and the chevron's animation, defaults to 200ms
+ *
+ * Everything prefixed `--_accordion-` is internal.
+ */
+@layer slopkit.components {
+  .accordion {
+    --_accordion-padding: calc(var(--slp-spacing) * 4);
+    --_accordion-border: color-mix(in oklab, var(--slp-color-base-content) 15%, transparent);
+    --_accordion-radius: var(--slp-accordion-radius, 0.75rem);
+    --_accordion-duration: var(--slp-accordion-transition-duration, 200ms);
+
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  .item {
+    min-width: 0;
+  }
+
+  .heading {
+    margin: 0;
+    font: inherit;
+  }
+
+  .control {
+    display: flex;
+    align-items: center;
+    gap: calc(var(--slp-spacing) * 3);
+    box-sizing: border-box;
+    width: 100%;
+    margin: 0;
+    padding: var(--_accordion-padding);
+    border: 0;
+    border-radius: inherit;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    font-weight: 600;
+    text-align: start;
+    cursor: pointer;
+
+    &:hover:not(:disabled) {
+      background-color: color-mix(in oklab, var(--slp-color-base-content) 4%, transparent);
+    }
+    &:focus-visible {
+      outline: 2px solid var(--slp-color-base-content);
+      outline-offset: -2px;
+    }
+    &:disabled {
+      cursor: not-allowed;
+      opacity: 0.5;
+    }
+  }
+
+  .label {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .icon {
+    display: inline-flex;
+    flex: none;
+
+    & > svg {
+      width: 1.25em;
+      height: 1.25em;
+    }
+  }
+
+  .chevron {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: 1rem;
+    height: 1rem;
+    transition: transform var(--_accordion-duration) ease;
+
+    .control[data-chevron-position='right'] > & {
+      order: 1;
+    }
+    .control[data-rotate][data-opened] > & {
+      transform: rotate(180deg);
+    }
+
+    & > svg {
+      width: 1rem;
+      height: 1rem;
+    }
+  }
+
+  /* A chevron pointing down, drawn from two borders. */
+  .defaultChevron {
+    width: 0.5rem;
+    height: 0.5rem;
+    box-sizing: border-box;
+    border-right: 2px solid currentColor;
+    border-bottom: 2px solid currentColor;
+    transform: translateY(-25%) rotate(45deg);
+  }
+
+  .panel {
+    display: grid;
+    grid-template-rows: 0fr;
+    visibility: hidden;
+    transition-property: grid-template-rows, visibility;
+    transition-duration: var(--_accordion-duration);
+    transition-timing-function: ease;
+
+    &[data-opened] {
+      grid-template-rows: 1fr;
+      visibility: visible;
+    }
+  }
+
+  .body {
+    /* Lets the row shrink below the content, which it clips. Clipping also contains the content's margins. */
+    min-height: 0;
+    overflow: hidden;
+    padding-inline: var(--_accordion-padding);
+    /* A padding can't be clipped away, so it grows with the row. */
+    transition: padding-bottom var(--_accordion-duration) ease;
+
+    .panel[data-opened] > & {
+      padding-bottom: var(--_accordion-padding);
+    }
+  }
+
+  /* Divided: a line under each item. */
+  .accordion[data-variant='divided'] > .item {
+    border-bottom: 1px solid var(--_accordion-border);
+  }
+
+  /* Bordered: one rounded box, with lines between the items. */
+  .accordion[data-variant='bordered'] {
+    border: 1px solid var(--_accordion-border);
+    border-radius: var(--_accordion-radius);
+
+    & > .item + .item {
+      border-top: 1px solid var(--_accordion-border);
+    }
+    & > .item:first-child {
+      border-start-start-radius: inherit;
+      border-start-end-radius: inherit;
+    }
+    & > .item:last-child {
+      border-end-start-radius: inherit;
+      border-end-end-radius: inherit;
+    }
+    & > .item:last-child:not([data-opened]) .control {
+      border-end-start-radius: inherit;
+      border-end-end-radius: inherit;
+    }
+  }
+
+  /* Separated: each item a card on the base surface's second shade, with a gap; an open one on the first. */
+  .accordion[data-variant='separated'] {
+    gap: calc(var(--slp-spacing) * 2);
+
+    & > .item {
+      border: 1px solid transparent;
+      border-radius: var(--_accordion-radius);
+      background-color: var(--slp-color-base-200);
+      transition:
+        background-color var(--_accordion-duration) ease,
+        border-color var(--_accordion-duration) ease;
+    }
+    & > .item[data-opened] {
+      border-color: var(--_accordion-border);
+      background-color: var(--slp-color-base-100);
+    }
+  }
+
+  /* The heading and the control fill the item's rounded corners. */
+  .accordion[data-variant='bordered'] .heading,
+  .accordion[data-variant='separated'] .heading {
+    border-radius: inherit;
+  }
+  .accordion[data-variant='separated'] > .item:not([data-opened]) .heading {
+    border-radius: var(--_accordion-radius);
+  }
+  .accordion[data-variant='separated'] > .item[data-opened] .heading {
+    border-radius: var(--_accordion-radius) var(--_accordion-radius) 0 0;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .panel,
+    .body,
+    .chevron,
+    .accordion[data-variant='separated'] > .item {
+      transition: none;
+    }
+  }
+}

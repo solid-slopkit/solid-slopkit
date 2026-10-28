@@ -1,0 +1,90 @@
+/*
+ * Notifications. A region fixed to a corner or an edge of the viewport, in the top layer as a popover that's always
+ * open, with the popover's own box (border, background, centering) taken off. It lets presses through except on the
+ * notifications. Each one enters and leaves by growing from, and shrinking to, no height while it fades and slides,
+ * so the others move smoothly; the grid row goes from 0fr to 1fr, which CSS can animate where it can't animate a
+ * height to or from auto.
+ *
+ * Everything prefixed `--_notifications-` is internal.
+ */
+@layer slopkit.components {
+  .notifications {
+    --_notifications-gap: calc(var(--slp-spacing) * 2);
+    --_notifications-shift: 0.75rem;
+
+    position: fixed;
+    inset: auto;
+    box-sizing: border-box;
+    width: min(24rem, 100vw);
+    height: auto;
+    max-height: 100vh;
+    margin: 0;
+    padding: calc(var(--slp-spacing) * 4);
+    border: 0;
+    background: transparent;
+    color: inherit;
+    overflow: visible;
+    pointer-events: none;
+
+    &[data-position^='top'] {
+      top: 0;
+      --_notifications-shift: -0.75rem;
+    }
+    &[data-position^='bottom'] {
+      bottom: 0;
+    }
+    &[data-position$='start'] {
+      left: 0;
+    }
+    &[data-position$='end'] {
+      right: 0;
+    }
+    &[data-position$='center'] {
+      left: 50%;
+      translate: -50% 0;
+    }
+  }
+
+  .list {
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .item {
+    display: grid;
+    grid-template-rows: 1fr;
+    pointer-events: auto;
+    transition-property: grid-template-rows, opacity, translate;
+    transition-duration: 200ms;
+    transition-timing-function: ease;
+
+    &:not([data-status='open']) {
+      grid-template-rows: 0fr;
+      opacity: 0;
+      translate: 0 var(--_notifications-shift);
+    }
+  }
+
+  .body {
+    min-height: 0;
+    padding-block: calc(var(--_notifications-gap) / 2);
+    /* A padding can't be clipped away, so it shrinks with the row. */
+    transition: padding-block 200ms ease;
+
+    /* Clipped only while it moves, so the notification's shadow shows once it's there. */
+    .item:not([data-status='open']) > & {
+      overflow: hidden;
+      padding-block: 0;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .item,
+    .body {
+      transition: none;
+    }
+  }
+}

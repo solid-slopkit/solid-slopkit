@@ -1,0 +1,348 @@
+/* The theme builder: a header, a rail of pickers, and a canvas that carries the generated theme. Layout comes from
+   the library's layout components; this file sizes, scrolls and colors. Card-specific styles live next to the cards
+   (cards/*.css); the shared helpers they use and the drawings' styles are at the end. */
+
+.create {
+  height: 100dvh;
+  overflow: hidden;
+}
+
+.create-header {
+  flex: none;
+  padding: 0.625rem 1rem;
+}
+
+.create-header-nav {
+  font-size: 0.875rem;
+
+  & a {
+    color: var(--docs-muted);
+    text-decoration: none;
+
+    &:hover,
+    &[aria-current='page'] {
+      color: inherit;
+    }
+  }
+}
+
+.create-body {
+  flex: 1;
+  min-height: 0;
+  padding: 0 1rem 1rem;
+}
+
+/* Rail */
+
+.create-rail {
+  flex: none;
+  width: 13rem;
+  min-height: 0;
+
+  @media (width < 48em) {
+    width: auto;
+  }
+}
+
+.create-rail-panel {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  padding: 0.375rem;
+  border: var(--docs-border);
+  border-radius: 0.875rem;
+  background: var(--slp-color-base-100);
+}
+
+.create-rail-head {
+  padding: 0.5rem 0.625rem;
+
+  & h1 {
+    margin: 0;
+    font-size: 0.875rem;
+    font-weight: 600;
+  }
+
+  & svg {
+    width: 1rem;
+    height: 1rem;
+  }
+}
+
+.create-rail-group {
+  padding-block: 0.375rem;
+  border-top: var(--docs-border);
+
+  @media (width < 48em) {
+    border-top: 0;
+  }
+}
+
+/* A picker's trigger: a native button, so its inside is laid out here (a button can't hold the layout divs). */
+.create-rail-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.5rem 0.625rem;
+  border: 0;
+  border-radius: 0.5rem;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: start;
+  cursor: pointer;
+
+  &:hover,
+  &[aria-expanded='true'] {
+    background: var(--slp-color-base-200);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--slp-color-primary);
+    outline-offset: -2px;
+  }
+
+  @media (width < 48em) {
+    width: auto;
+    white-space: nowrap;
+  }
+}
+
+.create-rail-text {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.create-rail-label {
+  color: var(--docs-muted);
+  font-size: 0.75rem;
+  line-height: 1rem;
+}
+
+.create-rail-value {
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.25rem;
+}
+
+.create-rail-glyph {
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.create-rail-menu {
+  min-width: 10rem;
+  max-height: 22rem;
+  overflow-y: auto;
+}
+
+/* Stage: the canvas scrolls both ways; the pager floats in its corner. */
+
+.create-stage {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+}
+
+.create-canvas {
+  height: 100%;
+  overflow: auto;
+  border: var(--docs-border);
+  border-radius: 1rem;
+  background: var(--slp-color-base-200);
+  color: var(--slp-color-base-content);
+  font-family: var(--slp-font-family);
+
+  /* Chart colors for the preview's drawings: the primary, two lighter steps of it, the secondary, the neutral. */
+  --create-chart-1: var(--slp-color-primary);
+  --create-chart-2: color-mix(in oklab, var(--slp-color-primary) 55%, var(--slp-color-base-100));
+  --create-chart-3: color-mix(in oklab, var(--slp-color-primary) 30%, var(--slp-color-base-100));
+  --create-chart-4: var(--slp-color-secondary);
+  --create-chart-5: var(--slp-color-neutral);
+}
+
+.create-pager {
+  position: absolute;
+  right: 1rem;
+  bottom: 1rem;
+  padding: 0.25rem;
+  border: var(--docs-border);
+  border-radius: 0.625rem;
+  background: var(--slp-color-base-100);
+  box-shadow: var(--slp-shadow-md);
+
+  & button {
+    min-width: 2rem;
+    padding: 0.25rem 0.5rem;
+    border: 0;
+    border-radius: 0.375rem;
+    background: transparent;
+    color: var(--docs-muted);
+    font: inherit;
+    font-size: 0.75rem;
+    font-variant-numeric: tabular-nums;
+    cursor: pointer;
+
+    &[aria-pressed='true'] {
+      background: var(--slp-color-base-200);
+      color: inherit;
+    }
+  }
+}
+
+.create-modal-lead {
+  margin: 0 0 1rem;
+  font-size: 0.875rem;
+}
+
+/* Shared helpers for the cards. None lays anything out: wrap them in a Stack or Group. */
+
+/* A tinted panel inside a card, e.g. a stat block or a list row. */
+.create-inset {
+  padding: 0.75rem;
+  border-radius: 0.625rem;
+  background: var(--slp-color-base-200);
+}
+
+/* Small uppercase label over a number. */
+.create-eyebrow {
+  margin: 0;
+  color: color-mix(in oklab, var(--slp-color-base-content) 60%, transparent);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.create-muted {
+  color: color-mix(in oklab, var(--slp-color-base-content) 60%, transparent);
+}
+
+/* A big figure: a balance, a total. */
+.create-figure {
+  margin: 0;
+  font-size: 2rem;
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+
+/* A label/value row (a Group with justify="space-between"); consecutive rows get a line between them. */
+.create-kv {
+  font-size: 0.875rem;
+
+  & + & {
+    padding-top: 0.625rem;
+    border-top: 1px solid var(--slp-color-base-300);
+    margin-top: 0.625rem;
+  }
+}
+
+/* A centered empty state (a Stack with align="center"): icon, title, text, action. */
+.create-empty {
+  padding: 1.5rem 1rem;
+  text-align: center;
+
+  & p {
+    margin: 0;
+    max-width: 18rem;
+  }
+}
+
+/* Drawings (charts.tsx): sizes and colors; Flex and Stack arrange them. */
+
+.create-bar {
+  flex: 1;
+  min-height: 2px;
+  border-radius: 0.25rem 0.25rem 0 0;
+}
+
+.create-bar-group {
+  flex: 1;
+  height: 100%;
+}
+
+.create-bar-stack {
+  flex: 1;
+  overflow: hidden;
+  border-radius: 0.25rem;
+}
+
+.create-bars-labels {
+  color: color-mix(in oklab, var(--slp-color-base-content) 60%, transparent);
+  font-size: 0.6875rem;
+
+  & span {
+    flex: 1;
+    text-align: center;
+  }
+}
+
+.create-track {
+  flex: 1;
+  padding: 0.375rem 0.25rem 0.25rem;
+  border: 1px solid var(--slp-color-base-300);
+  border-radius: 0.5rem;
+}
+
+.create-track-label {
+  font-size: 0.6875rem;
+}
+
+.create-track-plot {
+  width: 100%;
+  overflow: hidden;
+  border-radius: 0.25rem;
+  background: var(--slp-color-base-200);
+
+  & span {
+    width: 100%;
+    border-radius: 0.25rem;
+    background: var(--create-chart-1);
+  }
+}
+
+.create-area {
+  display: block;
+  width: 100%;
+}
+
+.create-area-fill {
+  fill: var(--create-chart-2);
+  opacity: 0.6;
+}
+
+.create-area-line {
+  fill: none;
+  stroke: var(--create-chart-1);
+  stroke-width: 2;
+}
+
+.create-waveform {
+  height: 1.25rem;
+
+  & span {
+    flex: 1;
+    border-radius: 1px;
+    background: color-mix(in oklab, var(--slp-color-base-content) 35%, transparent);
+  }
+}
+
+.create-qr {
+  display: block;
+  fill: var(--slp-color-base-content);
+}
+
+.create-qr-bg {
+  fill: var(--slp-color-base-100);
+}
+
+.create-qr-ring {
+  stroke: var(--slp-color-base-content);
+  stroke-width: 1;
+}

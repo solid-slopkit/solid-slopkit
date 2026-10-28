@@ -1,0 +1,17 @@
+/*
+ * VisuallyHidden. Clipped to nothing and taken out of the flow, but still rendered, so it stays in the
+ * accessibility tree. `display: none`, `visibility: hidden` or a zero font size would remove it from there too.
+ */
+@layer slopkit.components {
+  .hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    border: 0;
+    white-space: nowrap;
+  }
+}

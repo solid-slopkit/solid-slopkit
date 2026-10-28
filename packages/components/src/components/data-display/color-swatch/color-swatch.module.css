@@ -1,0 +1,65 @@
+/*
+ * ColorSwatch. The color is a layer over a checkerboard, so a translucent one shows as translucent. A faint inset
+ * ring keeps a color close to the surface visible. Children, text included, are centered on top.
+ *
+ * The value arrives in --_swatch-color, set inline by the component.
+ */
+@layer slopkit.components {
+  .swatch {
+    --_swatch-size: 1.75rem;
+    --_swatch-check-a: var(--slp-color-base-100);
+    --_swatch-check-b: var(--slp-color-base-300);
+
+    position: relative;
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    width: var(--_swatch-size);
+    height: var(--_swatch-size);
+    overflow: hidden;
+    border-radius: 50%;
+    background-color: var(--_swatch-check-a);
+    background-image: conic-gradient(
+      var(--_swatch-check-b) 25%,
+      var(--_swatch-check-a) 0 50%,
+      var(--_swatch-check-b) 0 75%,
+      var(--_swatch-check-a) 0
+    );
+    background-size: 8px 8px;
+    vertical-align: middle;
+    /* A stacking context of its own, so the color layer below can sit between the checkerboard and the children. */
+    isolation: isolate;
+
+    /* The color itself, over the checkerboard, with the ring drawn on top of it. */
+    &::before {
+      content: '';
+      position: absolute;
+      z-index: -1;
+      inset: 0;
+      border-radius: inherit;
+      background-color: var(--_swatch-color);
+      box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--slp-color-base-content) 15%, transparent);
+    }
+
+    & > svg {
+      width: 60%;
+      height: 60%;
+    }
+
+    /* Sizes */
+    &[data-size='xs'] {
+      --_swatch-size: 1rem;
+    }
+    &[data-size='sm'] {
+      --_swatch-size: 1.25rem;
+    }
+    &[data-size='lg'] {
+      --_swatch-size: 2.25rem;
+    }
+    &[data-size='xl'] {
+      --_swatch-size: 2.75rem;
+    }
+  }
+}

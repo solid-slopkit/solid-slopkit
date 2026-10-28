@@ -1,0 +1,235 @@
+/*
+ * SegmentedControl. Each item is a visually hidden radio input and its label; the
+ * indicator is one element under the labels, moved over the active item by the component. Until it has been
+ * placed (server render, before hydration), the active label draws the indicator's look itself.
+ *
+ * Public custom properties (set on the control or any ancestor):
+ *   --slp-segmented-control-radius   corner radius, defaults to 10px
+ *   --slp-segmented-control-color    indicator color, defaults to the `color` prop's theme token
+ *   --slp-segmented-control-content  text color on a colored indicator, defaults to the token's `-content`
+ *
+ * Everything prefixed `--_sc-` is internal.
+ */
+@layer slopkit.components {
+  .root {
+    --_sc-color: var(--slp-segmented-control-color, var(--_sc-theme-color));
+    --_sc-content: var(--slp-segmented-control-content, var(--_sc-theme-content));
+    --_sc-radius: var(--slp-segmented-control-radius, 10px);
+    /* Same heights as Button, so the two line up. */
+    --_sc-size: calc(var(--slp-size-field) * 8);
+    --_sc-padding: 0.25rem;
+    --_sc-px: 0.75rem;
+    --_sc-font-size: 0.875rem;
+    --_sc-indicator-bg: var(--_sc-color, var(--slp-color-base-100));
+    --_sc-active-fg: var(--_sc-content, var(--slp-color-base-content));
+    --_sc-separator: color-mix(in oklab, var(--slp-color-base-content) 15%, transparent);
+
+    position: relative;
+    display: inline-flex;
+    box-sizing: border-box;
+    max-width: 100%;
+    padding: var(--_sc-padding);
+    border-radius: var(--_sc-radius);
+    background-color: var(--slp-color-base-200);
+    font-family: inherit;
+    font-size: var(--_sc-font-size);
+    line-height: 1;
+    overflow: hidden;
+
+    /* `width` as well as `display: flex`, like Button's fullWidth: a flex parent would shrink it to its content. */
+    &[data-full-width] {
+      display: flex;
+      width: 100%;
+    }
+
+    &[data-orientation='vertical'] {
+      flex-direction: column;
+    }
+  }
+
+  .indicator {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+    box-sizing: border-box;
+    border-radius: max(0px, calc(var(--_sc-radius) - var(--_sc-padding)));
+    background-color: var(--_sc-indicator-bg);
+    box-shadow:
+      0 1px 2px oklch(0% 0 0 / 0.08),
+      0 1px 1px oklch(0% 0 0 / 0.04);
+    /* Duration and easing are set inline from the props. */
+    transition-property: none;
+
+    .root:not([data-ready]) & {
+      display: none;
+    }
+
+    .root[data-ready] & {
+      transition-property: transform, width, height;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .root[data-ready] & {
+        transition-property: none;
+      }
+    }
+  }
+
+  .control {
+    position: relative;
+    display: flex;
+    /* As wide as its label; with `fullWidth`, an equal share of the row. A zero basis outside `fullWidth` would
+       split the control's content width equally and cut off the longest label. */
+    flex: 1 1 auto;
+    min-width: 0;
+
+    .root[data-full-width] & {
+      flex-basis: 0;
+    }
+
+    /* Separators between items, hidden next to the active one. */
+    .root[data-with-items-borders] & + &::before {
+      content: '';
+      position: absolute;
+      inset-block: 0.375rem;
+      inset-inline-start: 0;
+      border-inline-start: 1px solid var(--_sc-separator);
+      transition: opacity 0.15s;
+    }
+
+    .root[data-with-items-borders][data-orientation='vertical'] & + &::before {
+      inset-block: 0 auto;
+      inset-inline: 0.375rem;
+      border-inline-start: 0;
+      border-top: 1px solid var(--_sc-separator);
+    }
+
+    .root[data-with-items-borders] &[data-active]::before,
+    .root[data-with-items-borders] &[data-active] + &::before {
+      opacity: 0;
+    }
+  }
+
+  .input {
+    position: absolute;
+    width: 0;
+    height: 0;
+    margin: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    opacity: 0;
+  }
+
+  .label {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex: 1;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    min-width: 0;
+    height: calc(var(--_sc-size) - 2 * var(--_sc-padding));
+    padding-inline: var(--_sc-px);
+    border-radius: max(0px, calc(var(--_sc-radius) - var(--_sc-padding)));
+    color: color-mix(in oklab, var(--slp-color-base-content) 65%, transparent);
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    cursor: pointer;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    transition: color 0.15s;
+
+    &:hover {
+      color: var(--slp-color-base-content);
+    }
+
+    .control[data-active] & {
+      color: var(--_sc-active-fg);
+    }
+
+    /* Before the indicator is placed, the active label stands in for it. */
+    .root:not([data-ready]) .control[data-active] & {
+      background-color: var(--_sc-indicator-bg);
+      box-shadow:
+        0 1px 2px oklch(0% 0 0 / 0.08),
+        0 1px 1px oklch(0% 0 0 / 0.04);
+    }
+
+    .input:focus-visible + & {
+      outline: 2px solid var(--_sc-color, var(--slp-color-base-content));
+      outline-offset: -2px;
+    }
+
+    .control[data-disabled] & {
+      color: color-mix(in oklab, var(--slp-color-base-content) 30%, transparent);
+      cursor: not-allowed;
+    }
+
+    .root[data-read-only] & {
+      cursor: default;
+    }
+  }
+
+  /* Colors */
+  .root[data-color='neutral'] {
+    --_sc-theme-color: var(--slp-color-neutral);
+    --_sc-theme-content: var(--slp-color-neutral-content);
+  }
+  .root[data-color='primary'] {
+    --_sc-theme-color: var(--slp-color-primary);
+    --_sc-theme-content: var(--slp-color-primary-content);
+  }
+  .root[data-color='secondary'] {
+    --_sc-theme-color: var(--slp-color-secondary);
+    --_sc-theme-content: var(--slp-color-secondary-content);
+  }
+  .root[data-color='accent'] {
+    --_sc-theme-color: var(--slp-color-accent);
+    --_sc-theme-content: var(--slp-color-accent-content);
+  }
+  .root[data-color='info'] {
+    --_sc-theme-color: var(--slp-color-info);
+    --_sc-theme-content: var(--slp-color-info-content);
+  }
+  .root[data-color='success'] {
+    --_sc-theme-color: var(--slp-color-success);
+    --_sc-theme-content: var(--slp-color-success-content);
+  }
+  .root[data-color='warning'] {
+    --_sc-theme-color: var(--slp-color-warning);
+    --_sc-theme-content: var(--slp-color-warning-content);
+  }
+  .root[data-color='error'] {
+    --_sc-theme-color: var(--slp-color-error);
+    --_sc-theme-content: var(--slp-color-error-content);
+  }
+
+  /* Sizes */
+  .root[data-size='xs'] {
+    --_sc-size: calc(var(--slp-size-field) * 6);
+    --_sc-padding: 0.1875rem;
+    --_sc-px: 0.5rem;
+    --_sc-font-size: 0.75rem;
+  }
+  .root[data-size='sm'] {
+    --_sc-size: calc(var(--slp-size-field) * 7);
+    --_sc-padding: 0.1875rem;
+    --_sc-px: 0.625rem;
+    --_sc-font-size: 0.75rem;
+  }
+  .root[data-size='lg'] {
+    --_sc-size: calc(var(--slp-size-field) * 10);
+    --_sc-px: 1rem;
+    --_sc-font-size: 1.125rem;
+  }
+  .root[data-size='xl'] {
+    --_sc-size: calc(var(--slp-size-field) * 12);
+    --_sc-padding: 0.3125rem;
+    --_sc-px: 1.25rem;
+    --_sc-font-size: 1.375rem;
+  }
+}

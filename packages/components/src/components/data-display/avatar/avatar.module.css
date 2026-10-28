@@ -1,0 +1,142 @@
+/*
+ * Avatar. A round box: the picture fills it, or a placeholder (children, initials or an icon) is centered in it.
+ * Placeholder tints are mixed with the surface rather than transparent, so overlapping avatars don't show through.
+ *
+ * Public custom properties (set on the avatar or any ancestor):
+ *   --slp-avatar-color          placeholder color, defaults to the `color` prop's theme token
+ *   --slp-avatar-content        text color on a solid placeholder, defaults to the token's `-content`
+ *
+ * Everything prefixed `--_avatar-` is internal.
+ */
+@layer slopkit.components {
+  .avatar {
+    --_avatar-color: var(--slp-avatar-color, var(--_avatar-theme-color));
+    --_avatar-content: var(--slp-avatar-content, var(--_avatar-theme-content));
+    --_avatar-size: 2.5rem;
+
+    /* Soft, the default: a light tint of the color, with the color as text. */
+    --_avatar-bg: color-mix(in oklab, var(--_avatar-color, var(--slp-color-base-content)) 14%, var(--slp-color-base-100));
+    --_avatar-fg: var(--_avatar-color, color-mix(in oklab, var(--slp-color-base-content) 75%, transparent));
+    --_avatar-border: transparent;
+
+    position: relative;
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    width: var(--_avatar-size);
+    height: var(--_avatar-size);
+    overflow: hidden;
+    border: 1px solid var(--_avatar-border);
+    border-radius: 50%;
+    background-color: var(--_avatar-bg);
+    color: var(--_avatar-fg);
+    font-size: calc(var(--_avatar-size) * 0.4);
+    font-weight: 600;
+    line-height: 1;
+    vertical-align: middle;
+    user-select: none;
+
+    &[data-variant='solid'] {
+      --_avatar-bg: var(--_avatar-color, var(--slp-color-base-300));
+      --_avatar-fg: var(--_avatar-content, var(--slp-color-base-content));
+    }
+
+    &[data-variant='outline'] {
+      /* A faded text color: half the accent, or a fifth of the base text. Without an accent, --_avatar-outline is
+         invalid (it reads an unset --_avatar-color), so the base fallback applies. */
+      --_avatar-outline: color-mix(in oklab, var(--_avatar-color) 50%, transparent);
+      --_avatar-bg: var(--slp-color-base-100);
+      --_avatar-border: var(--_avatar-outline, color-mix(in oklab, var(--slp-color-base-content) 20%, transparent));
+    }
+
+    /* A picture covers the box edge to edge; the outline variant's border is only for a placeholder. */
+    &:not([data-placeholder]) {
+      border: 0;
+    }
+
+    /* Colors */
+    &[data-color='neutral'] {
+      --_avatar-theme-color: var(--slp-color-neutral);
+      --_avatar-theme-content: var(--slp-color-neutral-content);
+    }
+    &[data-color='primary'] {
+      --_avatar-theme-color: var(--slp-color-primary);
+      --_avatar-theme-content: var(--slp-color-primary-content);
+    }
+    &[data-color='secondary'] {
+      --_avatar-theme-color: var(--slp-color-secondary);
+      --_avatar-theme-content: var(--slp-color-secondary-content);
+    }
+    &[data-color='accent'] {
+      --_avatar-theme-color: var(--slp-color-accent);
+      --_avatar-theme-content: var(--slp-color-accent-content);
+    }
+    &[data-color='info'] {
+      --_avatar-theme-color: var(--slp-color-info);
+      --_avatar-theme-content: var(--slp-color-info-content);
+    }
+    &[data-color='success'] {
+      --_avatar-theme-color: var(--slp-color-success);
+      --_avatar-theme-content: var(--slp-color-success-content);
+    }
+    &[data-color='warning'] {
+      --_avatar-theme-color: var(--slp-color-warning);
+      --_avatar-theme-content: var(--slp-color-warning-content);
+    }
+    &[data-color='error'] {
+      --_avatar-theme-color: var(--slp-color-error);
+      --_avatar-theme-content: var(--slp-color-error-content);
+    }
+
+    /* Sizes */
+    &[data-size='xs'] {
+      --_avatar-size: 1.5rem;
+    }
+    &[data-size='sm'] {
+      --_avatar-size: 2rem;
+    }
+    &[data-size='lg'] {
+      --_avatar-size: 3.5rem;
+    }
+    &[data-size='xl'] {
+      --_avatar-size: 5rem;
+    }
+  }
+
+  .image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .placeholder {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+
+    & > svg {
+      width: 60%;
+      height: 60%;
+    }
+  }
+
+  /* Each avatar after the first tucks under its neighbour by a quarter of its size, ringed in the surface color. */
+  .group {
+    display: inline-flex;
+    align-items: center;
+
+    & > .avatar {
+      box-shadow: 0 0 0 2px var(--slp-color-base-100);
+    }
+
+    & > .avatar + .avatar {
+      margin-inline-start: calc(var(--_avatar-size) * -0.25);
+    }
+  }
+}

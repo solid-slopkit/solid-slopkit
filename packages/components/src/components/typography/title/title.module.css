@@ -1,0 +1,102 @@
+/*
+ * Title. The level's look comes from `data-size`, which is the order's unless `size` overrides it.
+ *
+ * Everything prefixed `--_title-` is internal.
+ */
+@layer slopkit.components {
+  .title {
+    margin: 0;
+    color: var(--_title-color, inherit);
+    font-family: inherit;
+    font-weight: var(--slp-heading-weight);
+    text-wrap: balance;
+
+    /* Colors */
+    &[data-color='neutral'] {
+      --_title-color: var(--slp-color-neutral);
+    }
+    &[data-color='primary'] {
+      --_title-color: var(--slp-color-primary);
+    }
+    &[data-color='secondary'] {
+      --_title-color: var(--slp-color-secondary);
+    }
+    &[data-color='accent'] {
+      --_title-color: var(--slp-color-accent);
+    }
+    &[data-color='info'] {
+      --_title-color: var(--slp-color-info);
+    }
+    &[data-color='success'] {
+      --_title-color: var(--slp-color-success);
+    }
+    &[data-color='warning'] {
+      --_title-color: var(--slp-color-warning);
+    }
+    &[data-color='error'] {
+      --_title-color: var(--slp-color-error);
+    }
+
+    /* Dimmed: the theme's muted content color, or a role's color mixed toward transparent. */
+    &[data-dimmed] {
+      color: var(--slp-color-muted-content);
+    }
+    &[data-dimmed][data-color] {
+      color: color-mix(in oklab, var(--_title-color) 65%, transparent);
+    }
+
+    /* Sizes */
+    &[data-size='h1'] {
+      font-size: var(--slp-heading-size-h1);
+      line-height: var(--slp-heading-line-height-h1);
+    }
+    &[data-size='h2'] {
+      font-size: var(--slp-heading-size-h2);
+      line-height: var(--slp-heading-line-height-h2);
+    }
+    &[data-size='h3'] {
+      font-size: var(--slp-heading-size-h3);
+      line-height: var(--slp-heading-line-height-h3);
+    }
+    &[data-size='h4'] {
+      font-size: var(--slp-heading-size-h4);
+      line-height: var(--slp-heading-line-height-h4);
+    }
+    &[data-size='h5'] {
+      font-size: var(--slp-heading-size-h5);
+      line-height: var(--slp-heading-line-height-h5);
+    }
+    &[data-size='h6'] {
+      font-size: var(--slp-heading-size-h6);
+      line-height: var(--slp-heading-line-height-h6);
+    }
+
+    /* Weights */
+    &[data-weight='normal'] {
+      font-weight: 400;
+    }
+    &[data-weight='medium'] {
+      font-weight: 500;
+    }
+    &[data-weight='semibold'] {
+      font-weight: 600;
+    }
+    &[data-weight='bold'] {
+      font-weight: 700;
+    }
+
+    /* Alignment */
+    &[data-align='start'] {
+      text-align: start;
+    }
+    &[data-align='center'] {
+      text-align: center;
+    }
+    &[data-align='end'] {
+      text-align: end;
+    }
+    &[data-align='justify'] {
+      text-align: justify;
+    }
+  }
+}

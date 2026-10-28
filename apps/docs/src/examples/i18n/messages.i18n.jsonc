@@ -1,0 +1,24 @@
+{
+  "en": {
+    "users": "{count, plural, =0 {No users} one {# user} other {# users}}",
+    "role": "{role, select, admin {You can manage everything.} other {You can edit pages.}}",
+    "price": "Total: {amount, number}",
+    "share": "{ratio, number, percent} of the quota used",
+    "joined": "Joined on {date, date, long}",
+  },
+  "de": {
+    "users": "{count, plural, =0 {Keine Benutzer} one {# Benutzer} other {# Benutzer}}",
+    "role": "{role, select, admin {Sie können alles verwalten.} other {Sie können Seiten bearbeiten.}}",
+    "price": "Summe: {amount, number}",
+    "share": "{ratio, number, percent} des Kontingents verbraucht",
+    "joined": "Beigetreten am {date, date, long}",
+  },
+  "uk": {
+    // Ukrainian has four plural categories: one, few, many and other.
+    "users": "{count, plural, =0 {Немає користувачів} one {# користувач} few {# користувачі} many {# користувачів} other {# користувача}}",
+    "role": "{role, select, admin {Ви можете керувати всім.} other {Ви можете редагувати сторінки.}}",
+    "price": "Разом: {amount, number}",
+    "share": "Використано {ratio, number, percent} квоти",
+    "joined": "Приєднався {date, date, long}",
+  },
+}

@@ -1,0 +1,66 @@
+/* A child that takes the rest of its row, such as a Group filling a card header or footer. */
+.create-two-b-grow {
+  flex: 1;
+}
+
+.create-two-b-donut {
+  --slp-ring-progress-color: var(--create-chart-1);
+}
+
+.create-two-b-donut-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+
+.create-two-b-donut-label {
+  color: color-mix(in oklab, var(--slp-color-base-content) 60%, transparent);
+  font-size: 0.75rem;
+}
+
+.create-two-b-legend {
+  font-size: 0.75rem;
+}
+
+.create-two-b-dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 2px;
+}
+
+.create-two-b-dashed {
+  border: 1px dashed var(--slp-color-base-300);
+  border-radius: 0.75rem;
+}
+
+.create-two-b-slots.slp-segmented-control {
+  --slp-segmented-control-color: var(--slp-color-base-200);
+
+  background: transparent;
+}
+
+.create-two-b-note {
+  border: 1px solid var(--slp-color-base-300);
+  border-radius: 0.625rem;
+}
+
+.create-two-b-stats {
+  text-align: center;
+
+  & dl {
+    margin: 0;
+  }
+
+  & dt {
+    color: color-mix(in oklab, var(--slp-color-base-content) 60%, transparent);
+    font-size: 0.75rem;
+  }
+
+  & dd {
+    margin: 0;
+    font-size: 0.875rem;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+}

@@ -1,0 +1,19 @@
+/*
+ * AspectRatio. The generated class sets `--_aspect-ratio`; the ratio goes on the children rather than the
+ * wrapper, so an img, video or iframe gets it directly and fills the width. `:where()` keeps these rules at
+ * zero specificity, so a child's own classes still win.
+ */
+@layer slopkit.components {
+  :where(.aspectRatio) {
+    max-width: 100%;
+  }
+
+  :where(.aspectRatio) > :where(*:not(style)) {
+    aspect-ratio: var(--_aspect-ratio);
+    width: 100%;
+  }
+
+  :where(.aspectRatio) > :where(img, video) {
+    object-fit: cover;
+  }
+}

@@ -1,0 +1,471 @@
+/*
+ * The Flow's stylesheet. Import it after the @solid-slopkit/components stylesheets (ADR 0016).
+ *
+ * Public custom properties (set on the Flow or any ancestor). Each defaults to a components theme token, so a theme
+ * switch restyles the Flow with the rest of the app:
+ *   --slp-flow-background       the Flow's surface
+ *   --slp-flow-pattern-color    Background dots and lines
+ *   --slp-flow-edge-color       Edge lines and markers
+ *   --slp-flow-port-color       Ports
+ *   --slp-flow-selection-color  selected Nodes and Edges, the selection box, a valid Connection target
+ *   --slp-flow-panel-background Controls and the MiniMap
+ *   --slp-flow-minimap-node-color  Nodes in the MiniMap
+ *   --slp-flow-minimap-mask-color  the MiniMap outside the visible area
+ *
+ * Everything prefixed `--_flow-` is internal. Every rule lives in the components' cascade layer, so unlayered app CSS
+ * overrides it.
+ */
+@layer slopkit.reset, slopkit.base, slopkit.themes, slopkit.components, slopkit.utilities;
+
+@layer slopkit.components {
+  .slp-flow {
+    --_flow-background: var(--slp-flow-background, var(--slp-color-base-100));
+    --_flow-pattern-color: var(--slp-flow-pattern-color, var(--slp-color-base-300));
+    --_flow-edge-color: var(--slp-flow-edge-color, var(--slp-color-muted-content));
+    --_flow-port-color: var(--slp-flow-port-color, var(--slp-color-neutral));
+    --_flow-selection-color: var(--slp-flow-selection-color, var(--slp-color-primary));
+    --_flow-panel-background: var(--slp-flow-panel-background, var(--slp-color-base-100));
+    --_flow-minimap-node-color: var(--slp-flow-minimap-node-color, var(--slp-color-base-300));
+    --_flow-minimap-mask-color: var(
+      --slp-flow-minimap-mask-color,
+      color-mix(in srgb, var(--slp-color-base-content) 8%, transparent)
+    );
+
+    position: relative;
+    /* Clipped, not hidden: focusing a Node out of sight must not scroll the Flow's content, only pan the Viewport. */
+    overflow: clip;
+    background: var(--_flow-background);
+    color: var(--slp-color-base-content);
+    /* Every gesture is the Flow's own (ADR 0022): no browser panning or pinch zooming. */
+    touch-action: none;
+
+    &[data-panning] {
+      user-select: none;
+      cursor: grabbing;
+    }
+
+    &[data-connecting] {
+      user-select: none;
+      cursor: crosshair;
+    }
+
+    /* Focusable for the keyboard and the clipboard; the ring shows only for keyboard focus. */
+    &:focus {
+      outline: none;
+    }
+    &:focus-visible {
+      outline: 2px solid var(--_flow-selection-color);
+      outline-offset: -2px;
+    }
+  }
+
+  /* Shift-drag on empty space; drawn in pixels over the Flow, outside the Viewport's transform. */
+  .slp-flow-selection-box {
+    position: absolute;
+    inset: 0 auto auto 0;
+    box-sizing: border-box;
+    border: 1px solid var(--_flow-selection-color);
+    background: color-mix(in srgb, var(--_flow-selection-color) 10%, transparent);
+    pointer-events: none;
+  }
+
+  /* One transformed box for the Viewport (ADR 0015). It has no size: the layers inside overflow it. */
+  .slp-flow-viewport {
+    position: absolute;
+    inset: 0 auto auto 0;
+    width: 0;
+    height: 0;
+    transform-origin: 0 0;
+  }
+
+  /* The layers, in paint order: Edges under the Nodes, Edge labels above them. */
+  .slp-flow-edges,
+  .slp-flow-nodes,
+  .slp-flow-labels {
+    position: absolute;
+    inset: 0 auto auto 0;
+  }
+
+  .slp-flow-edges {
+    width: 1px;
+    height: 1px;
+    overflow: visible;
+    pointer-events: none;
+  }
+
+  .slp-flow-labels {
+    pointer-events: none;
+  }
+
+  /* An Edge's markers are defined inside it, so they take its color: recolor an Edge with `color`. */
+  .slp-flow-edge {
+    color: var(--_flow-edge-color);
+
+    &[data-selected] {
+      color: var(--_flow-selection-color);
+    }
+
+    /* Keyboard focus: a halo along the Edge, on its hit line in an interactive Flow, else a thicker line. */
+    &:focus {
+      outline: none;
+    }
+    &:focus-visible .slp-flow-edge-hit {
+      stroke: color-mix(in srgb, var(--_flow-selection-color) 35%, transparent);
+    }
+    &:focus-visible .slp-flow-edge-path {
+      stroke-width: 3;
+    }
+  }
+
+  /* Hidden while its end is dragged: the Connection line stands in for it. */
+  .slp-flow-edge[data-reconnecting] {
+    visibility: hidden;
+  }
+
+  /* A wide invisible line along the Edge that takes clicks, so a thin Edge is easy to select. */
+  .slp-flow-edge-hit {
+    fill: none;
+    stroke: transparent;
+    stroke-width: 12;
+    pointer-events: stroke;
+    cursor: pointer;
+  }
+
+  /* An invisible handle on each end; under the Nodes, so a press on the Port itself starts a new Connection. */
+  .slp-flow-edge-end {
+    fill: transparent;
+    stroke: none;
+    pointer-events: all;
+    cursor: move;
+  }
+
+  .slp-flow-edge-path {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.5;
+  }
+
+  .slp-flow-marker path {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .slp-flow-marker[data-marker='arrow-closed'] path {
+    fill: currentColor;
+  }
+
+  /* Centred on the Edge's label point; its content is the app's HTML, so it takes pointer input. */
+  .slp-flow-edge-label {
+    position: absolute;
+    inset: 0 auto auto 0;
+    pointer-events: auto;
+    white-space: nowrap;
+  }
+
+  /* A Node is positioned by transform from its top-left corner; its content sets its size unless it has a Declared one. */
+  .slp-flow-node {
+    position: absolute;
+    inset: 0 auto auto 0;
+    /* The Node layer has no width, so without this a content-sized Node would shrink to its narrowest content. A
+       Declared size is set inline and wins. */
+    width: max-content;
+    box-sizing: border-box;
+
+    &[data-draggable] {
+      cursor: grab;
+    }
+
+    &[data-dragging] {
+      cursor: grabbing;
+    }
+
+    /* Keyboard focus: a lighter ring further out; with the Selection's, a thicker one. */
+    &:focus {
+      outline: none;
+    }
+    &:focus-visible {
+      outline: 2px solid color-mix(in srgb, var(--_flow-selection-color) 50%, transparent);
+      outline-offset: 4px;
+    }
+
+    &[data-selected] {
+      outline: 2px solid var(--_flow-selection-color);
+      outline-offset: 2px;
+    }
+
+    &[data-selected]:focus-visible {
+      outline-width: 3px;
+      outline-offset: 4px;
+    }
+
+    &[data-drop-target] {
+      outline: 2px dashed var(--_flow-selection-color);
+      outline-offset: 4px;
+    }
+  }
+
+  /* A Port is centred on its side, `--_flow-port-offset` along it. Without a side, the app places it. */
+  .slp-flow-port {
+    --_flow-port-size: 8px;
+
+    position: absolute;
+    width: var(--_flow-port-size);
+    height: var(--_flow-port-size);
+    translate: -50% -50%;
+    box-sizing: border-box;
+    border-radius: 50%;
+    background: var(--_flow-port-color);
+
+    &[data-flow-port-side='top'] {
+      top: 0;
+      left: calc(var(--_flow-port-offset) * 100%);
+    }
+    &[data-flow-port-side='right'] {
+      top: calc(var(--_flow-port-offset) * 100%);
+      left: 100%;
+    }
+    &[data-flow-port-side='bottom'] {
+      top: 100%;
+      left: calc(var(--_flow-port-offset) * 100%);
+    }
+    &[data-flow-port-side='left'] {
+      top: calc(var(--_flow-port-offset) * 100%);
+      left: 0;
+    }
+
+    &[data-connectable] {
+      cursor: crosshair;
+    }
+
+    &[data-connection-target] {
+      background: var(--_flow-selection-color);
+      scale: 1.5;
+    }
+
+    &:focus {
+      outline: none;
+    }
+    &:focus-visible {
+      outline: 2px solid var(--_flow-selection-color);
+      outline-offset: 2px;
+    }
+  }
+
+  .slp-flow-resizer {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  .slp-flow-resizer-handle {
+    --_flow-handle-size: 8px;
+
+    position: absolute;
+    width: var(--_flow-handle-size);
+    height: var(--_flow-handle-size);
+    translate: -50% -50%;
+    box-sizing: border-box;
+    border: 1px solid var(--_flow-selection-color);
+    border-radius: 2px;
+    background: var(--_flow-background);
+    pointer-events: auto;
+    touch-action: none;
+
+    &[data-handle^='top'] {
+      top: 0;
+    }
+    &[data-handle^='bottom'] {
+      top: 100%;
+    }
+    &[data-handle='left'],
+    &[data-handle='right'] {
+      top: 50%;
+    }
+    &[data-handle$='left'] {
+      left: 0;
+    }
+    &[data-handle$='right'] {
+      left: 100%;
+    }
+    &[data-handle='top'],
+    &[data-handle='bottom'] {
+      left: 50%;
+    }
+
+    &[data-handle='top-left'],
+    &[data-handle='bottom-right'] {
+      cursor: nwse-resize;
+    }
+    &[data-handle='top-right'],
+    &[data-handle='bottom-left'] {
+      cursor: nesw-resize;
+    }
+    &[data-handle='top'],
+    &[data-handle='bottom'] {
+      cursor: ns-resize;
+    }
+    &[data-handle='left'],
+    &[data-handle='right'] {
+      cursor: ew-resize;
+    }
+  }
+
+  /* The Connection being dragged, above the Nodes: dashed until it snaps to a Port it may end on. */
+  .slp-flow-connection {
+    position: absolute;
+    inset: 0 auto auto 0;
+    width: 1px;
+    height: 1px;
+    overflow: visible;
+    pointer-events: none;
+  }
+
+  .slp-flow-connection-path {
+    fill: none;
+    stroke: var(--_flow-edge-color);
+    stroke-width: 1.5;
+    stroke-dasharray: 5 4;
+
+    &[data-valid] {
+      stroke: var(--_flow-selection-color);
+      stroke-dasharray: none;
+    }
+  }
+
+  /* Alignment guides while dragging, above the Nodes. */
+  .slp-flow-guides {
+    position: absolute;
+    inset: 0 auto auto 0;
+    width: 1px;
+    height: 1px;
+    overflow: visible;
+    pointer-events: none;
+
+    & line {
+      stroke: var(--_flow-selection-color);
+      stroke-width: 1px;
+      stroke-dasharray: 4 3;
+      vector-effect: non-scaling-stroke;
+    }
+  }
+
+  /* A palette entry: dragged with the pointer, following it until it is dropped. */
+  .slp-flow-draggable {
+    touch-action: none;
+    cursor: grab;
+    user-select: none;
+
+    &[data-dragging] {
+      position: relative;
+      z-index: 1000;
+      cursor: grabbing;
+      opacity: 0.8;
+    }
+
+    &[data-disabled] {
+      cursor: default;
+    }
+  }
+
+  /* A Background fills the Flow under the Viewport; empty space still takes the gestures, on the root under it. */
+  .slp-flow-background {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    color: var(--_flow-pattern-color);
+
+    & circle {
+      fill: currentColor;
+    }
+    & path {
+      fill: none;
+      stroke: currentColor;
+    }
+  }
+
+  /* Controls and the MiniMap: over the Viewport, in a corner. */
+  .slp-flow-panel {
+    position: absolute;
+    z-index: 5;
+    margin: calc(var(--slp-spacing) * 3);
+    border: 1px solid var(--slp-color-base-300);
+    border-radius: 0.5rem;
+    background: var(--_flow-panel-background);
+    box-shadow: var(--slp-shadow-sm);
+    cursor: default;
+
+    &[data-position='top-left'] {
+      top: 0;
+      left: 0;
+    }
+    &[data-position='top-right'] {
+      top: 0;
+      right: 0;
+    }
+    &[data-position='bottom-left'] {
+      bottom: 0;
+      left: 0;
+    }
+    &[data-position='bottom-right'] {
+      right: 0;
+      bottom: 0;
+    }
+  }
+
+  .slp-flow-controls {
+    display: flex;
+    flex-direction: column;
+    gap: calc(var(--slp-spacing) * 0.5);
+    padding: calc(var(--slp-spacing) * 0.5);
+
+    &[data-orientation='horizontal'] {
+      flex-direction: row;
+    }
+  }
+
+  .slp-flow-icon {
+    display: block;
+  }
+
+  .slp-flow-minimap {
+    overflow: hidden;
+
+    & svg {
+      display: block;
+      touch-action: none;
+    }
+    & svg[data-pannable] {
+      cursor: grab;
+    }
+    & svg:focus {
+      outline: none;
+    }
+    & svg:focus-visible {
+      outline: 2px solid var(--_flow-selection-color);
+      outline-offset: -2px;
+    }
+  }
+
+  .slp-flow-minimap-node {
+    fill: var(--_flow-minimap-node-color);
+
+    &[data-selected] {
+      fill: color-mix(in srgb, var(--_flow-selection-color) 60%, var(--_flow-minimap-node-color));
+    }
+  }
+
+  .slp-flow-minimap-mask {
+    fill: var(--_flow-minimap-mask-color);
+  }
+
+  .slp-flow-minimap-view {
+    fill: none;
+    stroke: var(--_flow-selection-color);
+    stroke-width: 1.5;
+  }
+}

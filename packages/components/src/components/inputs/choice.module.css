@@ -1,0 +1,99 @@
+/*
+ * The layout shared by Checkbox, Radio and Switch: the control, then a column of label, description and error.
+ * With the label on the left, the text fills the row and the control sits at its end, as in a settings list.
+ * The control is centered on the label's first line. Sizes set the control's size and the text sizes together.
+ *
+ * Everything prefixed `--_choice-` is internal; each control reads `--_choice-size`.
+ */
+@layer slopkit.components {
+  .choice {
+    --_choice-size: 1.25rem;
+    --_choice-label-size: var(--slp-font-size-sm);
+    --_choice-label-line-height: var(--slp-line-height-sm);
+    --_choice-text-size: var(--slp-font-size-xs);
+    --_choice-text-line-height: var(--slp-line-height-xs);
+    --_choice-error-text: color-mix(in oklab, var(--slp-color-error) 60%, var(--slp-color-base-content));
+
+    display: flex;
+    align-items: flex-start;
+    gap: 0.625rem;
+    color: var(--slp-color-base-content);
+
+    &[data-label-position='left'] {
+      flex-direction: row-reverse;
+    }
+
+    &[data-size='xs'] {
+      --_choice-size: 0.875rem;
+      --_choice-label-size: var(--slp-font-size-xs);
+      --_choice-label-line-height: var(--slp-line-height-xs);
+      gap: 0.5rem;
+    }
+    &[data-size='sm'] {
+      --_choice-size: 1rem;
+      gap: 0.5rem;
+    }
+    &[data-size='lg'] {
+      --_choice-size: 1.5rem;
+      --_choice-label-size: var(--slp-font-size-md);
+      --_choice-label-line-height: var(--slp-line-height-md);
+      --_choice-text-size: var(--slp-font-size-sm);
+      --_choice-text-line-height: var(--slp-line-height-sm);
+      gap: 0.75rem;
+    }
+    &[data-size='xl'] {
+      --_choice-size: 1.875rem;
+      --_choice-label-size: var(--slp-font-size-lg);
+      --_choice-label-line-height: var(--slp-line-height-lg);
+      --_choice-text-size: var(--slp-font-size-md);
+      --_choice-text-line-height: var(--slp-line-height-md);
+      gap: 0.875rem;
+    }
+
+    /* The control, centered on the first line of the label (or, without one, on its own). */
+    & > :first-child {
+      flex-shrink: 0;
+      margin-block: max(0px, calc((var(--_choice-label-line-height) - var(--_choice-size)) / 2));
+    }
+  }
+
+  .text {
+    display: flex;
+    flex-direction: column;
+    gap: calc(var(--slp-spacing) * 0.5);
+    min-width: 0;
+    /* A control taller than the line pushes the text down to stay centered on it. */
+    padding-block: max(0px, calc((var(--_choice-size) - var(--_choice-label-line-height)) / 2));
+
+    [data-label-position='left'] > & {
+      flex-grow: 1;
+    }
+  }
+
+  .label {
+    font-size: var(--_choice-label-size);
+    line-height: var(--_choice-label-line-height);
+    cursor: pointer;
+    overflow-wrap: anywhere;
+
+    [data-disabled] & {
+      color: color-mix(in oklab, var(--slp-color-base-content) 50%, transparent);
+      cursor: not-allowed;
+    }
+  }
+
+  .description,
+  .error {
+    font-size: var(--_choice-text-size);
+    line-height: var(--_choice-text-line-height);
+    overflow-wrap: anywhere;
+  }
+
+  .description {
+    color: color-mix(in oklab, var(--slp-color-base-content) 65%, transparent);
+  }
+
+  .error {
+    color: var(--_choice-error-text);
+  }
+}

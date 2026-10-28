@@ -1,0 +1,63 @@
+@layer slopkit.components {
+  .transition {
+    transition-property: opacity, translate, scale, rotate;
+    transition-duration: var(--_transition-duration);
+    transition-timing-function: var(--_transition-timing-function);
+
+    &[data-status='ending'] {
+      transition-duration: var(--_transition-exit-duration);
+    }
+
+    /* The hidden end of each animation: where entering starts and exiting ends. */
+    &:is([data-status='starting'], [data-status='ending']):not([data-transition='none']) {
+      opacity: 0;
+
+      &[data-transition='fade-up'] {
+        translate: 0 1rem;
+      }
+      &[data-transition='fade-down'] {
+        translate: 0 -1rem;
+      }
+      &[data-transition='fade-left'] {
+        translate: 1rem 0;
+      }
+      &[data-transition='fade-right'] {
+        translate: -1rem 0;
+      }
+      &[data-transition='scale'] {
+        scale: 0;
+      }
+      &[data-transition='scale-x'] {
+        scale: 0 1;
+      }
+      &[data-transition='scale-y'] {
+        scale: 1 0;
+      }
+      &[data-transition='pop'] {
+        scale: 0.9;
+      }
+      &[data-transition='slide-up'] {
+        translate: 0 100%;
+      }
+      &[data-transition='slide-down'] {
+        translate: 0 -100%;
+      }
+      &[data-transition='slide-left'] {
+        translate: 100% 0;
+      }
+      &[data-transition='slide-right'] {
+        translate: -100% 0;
+      }
+      &[data-transition='rotate-left'] {
+        rotate: 15deg;
+      }
+      &[data-transition='rotate-right'] {
+        rotate: -15deg;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      transition: none;
+    }
+  }
+}

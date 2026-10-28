@@ -1,0 +1,219 @@
+/*
+ * Calendar. Columns side by side, each a header (previous, the period's name, next) above a grid of square days, or
+ * of months or years three to a row. Cells are plain until hovered; today is outlined, selected cells are filled
+ * with the color, and a range between them is tinted.
+ *
+ * Public custom properties (set on the calendar or any ancestor):
+ *   --slp-calendar-color      selected cells, defaults to the `color` prop's theme token
+ *   --slp-calendar-content    text on selected cells, defaults to the token's `-content`
+ *   --slp-calendar-radius     the cells' corners, defaults to 0.5rem
+ *
+ * Everything prefixed `--_calendar-` is internal.
+ */
+@layer slopkit.components {
+  .calendar {
+    --_calendar-color: var(--slp-calendar-color, var(--_calendar-theme-color));
+    --_calendar-content: var(--slp-calendar-content, var(--_calendar-theme-content));
+    --_calendar-radius: var(--slp-calendar-radius, 0.5rem);
+    --_calendar-cell: calc(var(--slp-size-field) * 9);
+    --_calendar-font-size: 0.875rem;
+    --_calendar-muted: color-mix(in oklab, var(--slp-color-base-content) 50%, transparent);
+
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: calc(var(--slp-spacing) * 6);
+    color: var(--slp-color-base-content);
+    font-size: var(--_calendar-font-size);
+
+    &[data-size='xs'] {
+      --_calendar-cell: calc(var(--slp-size-field) * 7);
+      --_calendar-font-size: 0.75rem;
+    }
+    &[data-size='sm'] {
+      --_calendar-cell: calc(var(--slp-size-field) * 8);
+      --_calendar-font-size: 0.8125rem;
+    }
+    &[data-size='lg'] {
+      --_calendar-cell: calc(var(--slp-size-field) * 10);
+      --_calendar-font-size: 1rem;
+    }
+    &[data-size='xl'] {
+      --_calendar-cell: calc(var(--slp-size-field) * 11);
+      --_calendar-font-size: 1.125rem;
+    }
+
+    &[data-color='neutral'] {
+      --_calendar-theme-color: var(--slp-color-neutral);
+      --_calendar-theme-content: var(--slp-color-neutral-content);
+    }
+    &[data-color='primary'] {
+      --_calendar-theme-color: var(--slp-color-primary);
+      --_calendar-theme-content: var(--slp-color-primary-content);
+    }
+    &[data-color='secondary'] {
+      --_calendar-theme-color: var(--slp-color-secondary);
+      --_calendar-theme-content: var(--slp-color-secondary-content);
+    }
+    &[data-color='accent'] {
+      --_calendar-theme-color: var(--slp-color-accent);
+      --_calendar-theme-content: var(--slp-color-accent-content);
+    }
+    &[data-color='info'] {
+      --_calendar-theme-color: var(--slp-color-info);
+      --_calendar-theme-content: var(--slp-color-info-content);
+    }
+    &[data-color='success'] {
+      --_calendar-theme-color: var(--slp-color-success);
+      --_calendar-theme-content: var(--slp-color-success-content);
+    }
+    &[data-color='warning'] {
+      --_calendar-theme-color: var(--slp-color-warning);
+      --_calendar-theme-content: var(--slp-color-warning-content);
+    }
+    &[data-color='error'] {
+      --_calendar-theme-color: var(--slp-color-error);
+      --_calendar-theme-content: var(--slp-color-error-content);
+    }
+  }
+
+  .column {
+    display: flex;
+    flex-direction: column;
+    gap: calc(var(--slp-spacing) * 2);
+    /* Seven days wide, whatever the level. */
+    width: calc(var(--_calendar-cell) * 7);
+  }
+
+  .header {
+    display: grid;
+    grid-template-columns: var(--_calendar-cell) 1fr var(--_calendar-cell);
+    align-items: center;
+    height: var(--_calendar-cell);
+  }
+
+  .spacer {
+    width: var(--_calendar-cell);
+  }
+
+  .grid {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+  }
+
+  .weekday {
+    height: var(--_calendar-cell);
+    padding: 0;
+    color: var(--_calendar-muted);
+    font-size: 0.85em;
+    font-weight: 500;
+    text-align: center;
+  }
+
+  .cell {
+    padding: 0;
+    text-align: center;
+  }
+
+  .control {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    width: 100%;
+    height: var(--_calendar-cell);
+    margin: 0;
+    padding: 0 calc(var(--slp-spacing) * 2);
+    border: 0;
+    border-radius: var(--_calendar-radius);
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+    cursor: pointer;
+    user-select: none;
+    transition:
+      background-color 150ms ease,
+      color 150ms ease;
+
+    &:hover:not([data-disabled], [data-selected], [data-first-in-range], [data-last-in-range]) {
+      background-color: var(--slp-color-base-200);
+    }
+    &:focus-visible {
+      outline: 2px solid var(--_calendar-color);
+      outline-offset: 2px;
+    }
+    &[data-disabled] {
+      cursor: not-allowed;
+      opacity: 0.4;
+    }
+
+    & > svg {
+      width: 1.15em;
+      height: 1.15em;
+    }
+  }
+
+  .header > [data-slot='calendar-level'] {
+    font-weight: 600;
+  }
+  .header > [data-slot='calendar-level'][data-disabled] {
+    cursor: default;
+    opacity: 1;
+  }
+
+  /* Months and years sit three to a row, as tall as two days. */
+  .calendar:not([data-level='month']) .control:is([data-slot='calendar-month'], [data-slot='calendar-year']) {
+    height: calc(var(--_calendar-cell) * 1.5);
+  }
+
+  .control[data-slot='calendar-day'] {
+    aspect-ratio: 1;
+    height: auto;
+    padding: 0;
+  }
+
+  .control[data-outside] {
+    color: var(--_calendar-muted);
+  }
+  .control[data-weekend]:not([data-selected], [data-first-in-range], [data-last-in-range]) {
+    color: color-mix(in oklab, var(--slp-color-error) 85%, var(--slp-color-base-content));
+  }
+  .control[data-outside][data-weekend]:not([data-selected], [data-first-in-range], [data-last-in-range]) {
+    color: color-mix(in oklab, var(--slp-color-error) 45%, transparent);
+  }
+  .control[data-today]:not([data-selected], [data-first-in-range], [data-last-in-range]) {
+    box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--slp-color-base-content) 35%, transparent);
+    font-weight: 700;
+  }
+
+  /* A range: tinted between its ends, which are filled. */
+  .control[data-in-range]:not([data-first-in-range], [data-last-in-range]) {
+    border-radius: 0;
+    background-color: color-mix(in oklab, var(--_calendar-color) 18%, transparent);
+  }
+  .control:is([data-selected], [data-first-in-range], [data-last-in-range]) {
+    background-color: var(--_calendar-color);
+    color: var(--_calendar-content);
+    font-weight: 600;
+  }
+  .control[data-first-in-range]:not([data-last-in-range]) {
+    border-start-end-radius: 0;
+    border-end-end-radius: 0;
+  }
+  .control[data-last-in-range]:not([data-first-in-range]) {
+    border-start-start-radius: 0;
+    border-end-start-radius: 0;
+  }
+  .control[data-first-in-range][data-last-in-range] {
+    border-radius: var(--_calendar-radius);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .control {
+      transition: none;
+    }
+  }
+}

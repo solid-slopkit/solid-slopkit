@@ -1,0 +1,32 @@
+/*
+ * FloatingIndicator. Placed at the parent's top left corner and moved over the target with a transform; the script
+ * writes the width, height and transform. It animates only once placed (`data-placed`), so the first placement
+ * doesn't slide in from the corner.
+ */
+@layer slopkit.components {
+  .indicator {
+    position: absolute;
+    top: 0;
+    left: 0;
+    box-sizing: border-box;
+    border-radius: 0.5rem;
+    background-color: var(--slp-color-base-100);
+    box-shadow: var(--slp-shadow-sm);
+    pointer-events: none;
+
+    &[data-hidden] {
+      visibility: hidden;
+    }
+    &[data-placed] {
+      transition-property: transform, width, height;
+      transition-duration: 200ms;
+      transition-timing-function: ease;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      &[data-placed] {
+        transition: none;
+      }
+    }
+  }
+}

@@ -1,0 +1,125 @@
+/*
+ * Collapse. The content is a one-row grid whose row goes from 0fr to 1fr, which CSS can animate where it can't
+ * animate a height to or from auto. The body inside it clips what doesn't fit yet. Closed, the content is also
+ * `visibility: hidden`, which a transition only applies once the row has shrunk, so it's out of the tab order and the
+ * accessibility tree without leaving the DOM.
+ *
+ * Everything prefixed `--_collapse-` is internal.
+ */
+@layer slopkit.components {
+  .collapse {
+    --_collapse-padding: calc(var(--slp-spacing) * 4);
+
+    display: block;
+    min-width: 0;
+    border-radius: 1rem;
+  }
+
+  .title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--_collapse-padding);
+    box-sizing: border-box;
+    width: 100%;
+    margin: 0;
+    padding: var(--_collapse-padding);
+    border: 0;
+    border-radius: inherit;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    font-weight: 600;
+    text-align: start;
+    cursor: pointer;
+
+    &:focus-visible {
+      outline: 2px solid var(--slp-color-base-content);
+      outline-offset: -2px;
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+      opacity: 0.5;
+    }
+
+    /* The indicator, drawn rather than typed so it adds nothing to the button's accessible name. */
+    &[data-icon]::after {
+      content: '';
+      flex: none;
+      box-sizing: border-box;
+      transition:
+        transform 200ms ease,
+        background-size 200ms ease;
+    }
+
+    /* A chevron pointing down, which turns to point up. */
+    &[data-icon='arrow']::after {
+      width: 0.5rem;
+      height: 0.5rem;
+      margin-inline: 0.25rem;
+      border-right: 2px solid currentColor;
+      border-bottom: 2px solid currentColor;
+      transform: translateY(-25%) rotate(45deg);
+    }
+
+    &[data-icon='arrow'][data-opened]::after {
+      transform: translateY(25%) rotate(225deg);
+    }
+
+    /* A plus, whose vertical bar shrinks away to leave a minus. */
+    &[data-icon='plus']::after {
+      width: 0.75rem;
+      height: 0.75rem;
+      margin-inline: 0.125rem;
+      background:
+        linear-gradient(currentColor, currentColor) center / 100% 2px no-repeat,
+        linear-gradient(currentColor, currentColor) center / 2px 100% no-repeat;
+    }
+
+    &[data-icon='plus'][data-opened]::after {
+      background-size:
+        100% 2px,
+        2px 0;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      &::after {
+        transition: none;
+      }
+    }
+  }
+
+  .content {
+    display: grid;
+    grid-template-rows: 0fr;
+    visibility: hidden;
+    transition-property: grid-template-rows, visibility;
+    transition-duration: 200ms;
+    transition-timing-function: ease;
+
+    &[data-opened] {
+      grid-template-rows: 1fr;
+      visibility: visible;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      transition: none;
+    }
+  }
+
+  .body {
+    /* Lets the row shrink below the content, which it clips. Clipping also contains the content's margins. */
+    min-height: 0;
+    overflow: hidden;
+    padding-inline: var(--_collapse-padding);
+    /* A padding can't be clipped away, so it grows with the row. Timed like the row, so one selector retimes both. */
+    transition-property: padding-bottom;
+    transition-duration: inherit;
+    transition-timing-function: inherit;
+
+    .content[data-opened] > & {
+      padding-bottom: var(--_collapse-padding);
+    }
+  }
+}

@@ -1,0 +1,186 @@
+/*
+ * ColorPicker. The saturation area is the hue with white mixed in from the left and black from the bottom; the hue
+ * slider is the color wheel unrolled; the alpha slider is the color fading over a checkerboard. Thumbs are white
+ * rings with a shadow, so they read on any color.
+ *
+ * The hue slider's gradient is the spectrum itself, not theme colors.
+ *
+ * Everything prefixed `--_cp-` is internal: `--_cp-hue` is the pure hue, `--_cp-color` the opaque color.
+ */
+@layer slopkit.components {
+  .colorPicker {
+    --_cp-width: 14rem;
+    --_cp-line: 0.75rem;
+
+    &[data-size='xs'] {
+      --_cp-width: 10rem;
+      --_cp-line: 0.625rem;
+    }
+    &[data-size='sm'] {
+      --_cp-width: 12rem;
+    }
+    &[data-size='lg'] {
+      --_cp-width: 16rem;
+      --_cp-line: 0.875rem;
+    }
+    &[data-size='xl'] {
+      --_cp-width: 18rem;
+      --_cp-line: 1rem;
+    }
+  }
+
+  .body {
+    display: flex;
+    flex-direction: column;
+    gap: calc(var(--slp-spacing) * 3);
+    box-sizing: border-box;
+    width: var(--_cp-width);
+    max-width: 100%;
+
+    [data-full-width] > & {
+      width: 100%;
+    }
+
+    [data-disabled] > & {
+      opacity: 0.6;
+    }
+  }
+
+  .saturation {
+    position: relative;
+    aspect-ratio: 5 / 3;
+    border-radius: 0.5rem;
+    background: linear-gradient(to top, #000, transparent), linear-gradient(to right, #fff, transparent), var(--_cp-hue);
+    cursor: crosshair;
+    touch-action: none;
+    outline-offset: 2px;
+
+    &:focus-visible {
+      outline: 2px solid var(--slp-color-base-content);
+    }
+
+    [data-disabled] & {
+      cursor: not-allowed;
+    }
+  }
+
+  .row {
+    display: flex;
+    align-items: center;
+    gap: calc(var(--slp-spacing) * 3);
+  }
+
+  .lines {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: calc(var(--slp-spacing) * 2);
+    min-width: 0;
+  }
+
+  .line {
+    position: relative;
+    height: var(--_cp-line);
+    margin-inline: calc(var(--_cp-line) / 2);
+    border-radius: calc(infinity * 1px);
+    cursor: pointer;
+    touch-action: none;
+    outline-offset: 2px;
+
+    /* The track runs under the thumb's half at each end. */
+    &::before {
+      content: '';
+      position: absolute;
+      inset-block: 0;
+      inset-inline: calc(var(--_cp-line) / -2);
+      border-radius: inherit;
+      background: var(--_cp-line-background);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--slp-color-base-content);
+    }
+
+    [data-disabled] & {
+      cursor: not-allowed;
+    }
+  }
+
+  .hue {
+    --_cp-line-background: linear-gradient(to right, #f00, #ff0, #0f0, #0ff, #00f, #f0f, #f00);
+  }
+
+  .alpha {
+    --_cp-checker: repeating-conic-gradient(color-mix(in oklab, #000 20%, #fff) 0 25%, #fff 0 50%) 0 0 / 0.5rem 0.5rem;
+    --_cp-line-background: linear-gradient(to right, transparent, var(--_cp-color)), var(--_cp-checker);
+  }
+
+  .thumb {
+    position: absolute;
+    top: 50%;
+    box-sizing: border-box;
+    width: calc(var(--_cp-line) + 0.25rem);
+    height: calc(var(--_cp-line) + 0.25rem);
+    border: 2px solid #fff;
+    border-radius: 50%;
+    box-shadow:
+      0 0 0 1px oklch(0% 0 0 / 0.3),
+      0 1px 3px oklch(0% 0 0 / 0.3);
+    translate: -50% -50%;
+    pointer-events: none;
+
+    .saturation > & {
+      top: auto;
+      width: 0.875rem;
+      height: 0.875rem;
+    }
+  }
+
+  .preview,
+  .swatch {
+    position: relative;
+    box-sizing: border-box;
+    border-radius: 0.375rem;
+    background:
+      linear-gradient(var(--_cp-preview), var(--_cp-preview)),
+      repeating-conic-gradient(color-mix(in oklab, #000 20%, #fff) 0 25%, #fff 0 50%) 0 0 / 0.5rem 0.5rem;
+    box-shadow: inset 0 0 0 1px oklch(0% 0 0 / 0.15);
+  }
+
+  .preview {
+    flex-shrink: 0;
+    width: calc(var(--_cp-line) * 2 + var(--slp-spacing) * 2 + 0.25rem);
+    aspect-ratio: 1;
+  }
+
+  .swatches {
+    display: grid;
+    gap: calc(var(--slp-spacing) * 1.5);
+  }
+
+  .swatch {
+    aspect-ratio: 1;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    cursor: pointer;
+    outline-offset: 2px;
+
+    &:focus-visible {
+      outline: 2px solid var(--slp-color-base-content);
+    }
+
+    &[aria-pressed='true']::after {
+      content: '';
+      position: absolute;
+      inset: 25%;
+      border: 2px solid #fff;
+      border-radius: 50%;
+      box-shadow: 0 0 0 1px oklch(0% 0 0 / 0.3);
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+    }
+  }
+}
