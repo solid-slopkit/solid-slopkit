@@ -205,9 +205,9 @@ export function attachNodeDrag(
   };
   const onPointerUp = (event: PointerEvent) => finish(event, false);
   const onPointerCancel = (event: PointerEvent) => finish(event, true);
-  // A press that may drag the Node owns the gesture. Text in a Node stays selectable, and a press on selected text (as
-  // after Shift-clicking a second Node on Linux, which selects the text between them) or on a link or an image would
-  // otherwise start the browser's own drag, which cancels the pointer and puts the Nodes back.
+  // A press that may drag the Node owns the gesture. Otherwise the browser can start its own drag of the Node's content
+  // (Chromium on Linux does on the press after a Shift-click on a Node), which cancels the pointer and puts the Nodes
+  // back.
   const onDragStart = (event: DragEvent) => {
     if (drag) event.preventDefault();
   };

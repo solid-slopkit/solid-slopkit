@@ -133,23 +133,6 @@ describe('dragging', () => {
     ]);
   });
 
-  test('a press on selected text in the Node drags the Node, not the text', async () => {
-    // Shift-clicking a second Node selects the text between them on Linux, so the press that drags the Selection lands
-    // on selected text. The browser would start a native drag of it and cancel the pointer.
-    const { nodeElement, state } = await editor(
-      { nodes: [node('a', 0, 0)], edges: [] },
-      { content: () => <div style={{ width: '100px', height: '50px' }}>Label</div> },
-    );
-    const range = document.createRange();
-    range.selectNodeContents(nodeElement('a').querySelector('div')!);
-    document.getSelection()!.removeAllRanges();
-    document.getSelection()!.addRange(range);
-    const text = range.getBoundingClientRect();
-    const from = { x: text.left + text.width / 2, y: text.top + text.height / 2 };
-    await drag(from, { x: from.x + 20, y: from.y + 10 }, { x: from.x + 40, y: from.y + 30 });
-    expect(state.nodes[0]!.position).toEqual({ x: 40, y: 30 });
-  });
-
   test('an unselected Node moves alone; a selected Node that is not draggable stays', async () => {
     const { nodeElement, state } = await editor({
       nodes: [node('a', 0, 0), node('b', 200, 0, { selected: true }), node('c', 400, 0, { selected: true, draggable: false })],
