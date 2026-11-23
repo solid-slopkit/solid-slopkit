@@ -37,7 +37,7 @@ import { AppShell, useAppShell } from '@solid-slopkit/components';
           </AppShell.GroupAction>
           <AppShell.Menu>
             <AppShell.MenuItem>
-              <AppShell.MenuButton as={A} href="/projects/design" icon={<Folder />} tooltip="Design">
+              <AppShell.MenuButton href="/projects/design" icon={<Folder />} tooltip="Design">
                 Design
               </AppShell.MenuButton>
               <AppShell.MenuAction label="More for Design" showOnHover>

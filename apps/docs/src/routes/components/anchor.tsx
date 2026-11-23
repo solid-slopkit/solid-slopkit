@@ -47,14 +47,11 @@ export default function AnchorPage() {
 
       <H2 id="router-links">Router links</H2>
       <p>
-        <code>as</code> renders another link component and passes it every other prop. For a new tab, pass{' '}
-        <code>target="_blank"</code> and <code>rel="noreferrer"</code> yourself.
+        Anchor renders an <code>a</code>, and <code>@solidjs/router</code> handles every <code>a</code> with an <code>href</code>,
+        so inside the router an Anchor navigates without loading a new page. <code>as</code> renders another link component and
+        passes it every other prop. For a new tab, pass <code>target="_blank"</code> and <code>rel="noreferrer"</code> yourself.
       </p>
-      <CodeBlock
-        code={`import { A } from '@solidjs/router';
-
-<Anchor as={A} href="/settings">Settings</Anchor>`}
-      />
+      <CodeBlock code={`<Anchor as={MyLink} href="/settings">Settings</Anchor>`} />
 
       <H2 id="props">Props</H2>
       <p>

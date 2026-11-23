@@ -20,7 +20,7 @@ import { Anchor } from '@solid-slopkit/components';
 - **Color:** `primary` unless `color` names another color role. `dimmed` mutes it.
 - **Underline:** `always` (the default), `hover` or `never`. Keep `always` for links inside body text, so they stand out without relying on color. Use `hover` for navigation-style links.
 - **Text props:** `weight`, `dimmed`, `align`, `tabularNums`, `transform`, `truncate` and `lineClamp` work as on Text.
-- **Router links:** `as` renders another link component and passes it every other prop, e.g. `<Anchor as={A} href="/settings">` with a router's `A`.
+- **Router links:** Anchor renders an `a`, and `@solidjs/router` handles every `a` with an `href`, so inside the router an Anchor navigates without loading a new page. `as` renders another link component and passes it every other prop, e.g. `<Anchor as={MyLink} href="/settings">`.
 - Links open as the browser decides. For a new tab, pass `target="_blank"` and `rel="noreferrer"` yourself.
 
 ## Props

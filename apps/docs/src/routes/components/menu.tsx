@@ -46,8 +46,8 @@ export default function MenuPage() {
 
       <H2 id="links">Links</H2>
       <p>
-        <code>as="a"</code> renders an item as a link, or pass a router's link component. Here the target is an ActionIcon, and
-        the menu lines up with its end.
+        <code>as="a"</code> renders an item as a link, or pass another link component. Here the target is an ActionIcon, and the
+        menu lines up with its end.
       </p>
       <Example component={Links} code={linksCode} />
 
