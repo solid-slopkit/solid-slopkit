@@ -156,8 +156,10 @@ export function sceneComponent<C extends SceneClass>(Class: C): SceneComponent<C
       : ownedInstance(Class, props, name);
 
     // Whether the Instance is a camera (and takes `active`) and an Object3D (and takes pointer event handlers) is
-    // decided once.
-    const first = untrack(instance) as Partial<Camera>;
+    // decided once. While `args` or `object` waits on an Asset the read throws to the Loading boundary around the
+    // component, which runs this body again once the Asset has loaded. `false` keeps the dev check from taking that
+    // wait for a read of a pending value made in this body, which would never resolve.
+    const first = untrack(instance, false) as Partial<Camera>;
     const camera = first.isCamera === true;
     const object3d = first.isObject3D === true;
     const own = new Set([...(camera ? CAMERA_PROPS : []), ...(object3d ? POINTER_EVENT_PROPS : [])]);
