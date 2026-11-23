@@ -1,6 +1,6 @@
 {
   "name": "@solid-slopkit/threejs",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "three.js scenes as SolidJS 2.x components",
   "homepage": "https://solid-slopkit.github.io/solid-slopkit/threejs/",
   "license": "MIT",
